@@ -1,30 +1,14 @@
-const scenes = {
-  morning: {
-    title: 'Утро',
-    art: 'wake',
-    alt: 'Серёжа просыпается в кровати. Тёмную комнату освещают монитор и RGB-подсветка компьютера.',
-    line: 'Открываю глаза. Компьютер, похоже, и не ложился. Так, что бы выпить с утра?',
-  },
-  coffee: {
-    title: 'Большой латте',
-    art: 'coffee',
-    alt: 'Серёжа залпом выпивает гигантскую кружку кофе с молоком. На столе стоят две канистры.',
-    line: 'Наливаю полканистры кофе и полканистры молока. Два глотка, две секунды. Теперь я слышу, как мигает подсветка.',
-  },
-  tea: {
-    title: 'Чай на балконе',
-    art: 'tea',
-    alt: 'Серёжа в халате стоит на балконе с чашкой чая и смотрит на восход над крышами Петербурга.',
-    line: 'Накидываю халат и выхожу на балкон с чаем. Над крышами встаёт солнце. Вот бы Диана тоже это увидела.',
-  },
-};
-
 const catalog = document.querySelector('#catalog');
 const novel = document.querySelector('#novel');
 const menu = document.querySelector('#game-menu');
 const story = document.querySelector('#story');
 const ending = document.querySelector('#ending');
 const sceneArt = document.querySelector('#scene-art');
+const scenePicture = document.querySelector('#story-picture');
+const routeCaption = document.querySelector('#route-caption');
+const routeStep = document.querySelector('#route-step');
+const shoppingLabels = document.querySelector('#shopping-labels');
+const phoneProjection = document.querySelector('#phone-projection');
 const sceneTitle = document.querySelector('#scene-title');
 const sceneLine = document.querySelector('#scene-line');
 const choices = document.querySelector('#choices');
@@ -32,6 +16,7 @@ const continueButton = document.querySelector('#continue');
 const backLink = document.querySelector('#game-back');
 
 function showScreen(screen) {
+  if (screen !== 'story') stopRouteAnimation();
   catalog.hidden = screen !== 'catalog';
   novel.hidden = screen === 'catalog';
   menu.hidden = screen !== 'menu';
@@ -42,15 +27,56 @@ function showScreen(screen) {
   backLink.textContent = screen === 'menu' ? 'К играм' : 'В меню игры';
 }
 
+const preloadedArt = new Set();
+let activeScene;
+
+function artPath(art) {
+  return `assets/${['wake', 'coffee', 'tea'].includes(art) ? '' : 'route/'}${art}.webp`;
+}
+
+function preloadScene(key) {
+  const path = artPath(scenes[key].art);
+  if (preloadedArt.has(path)) return;
+  preloadedArt.add(path);
+  new Image().src = path;
+}
+
 function renderScene(key) {
   const scene = scenes[key];
-  sceneArt.src = `assets/${scene.art}.webp`;
+  activeScene = scene;
+  const onRoute = scene.routeIndex !== undefined;
+  scenePicture.classList.toggle('is-route', onRoute);
+  routeMap.hidden = !onRoute;
+  routeCaption.hidden = !onRoute;
+  shoppingLabels.hidden = scene.prop !== 'shopping';
+  phoneProjection.hidden = scene.prop !== 'phone';
+
+  sceneArt.src = artPath(scene.art);
   sceneArt.alt = scene.alt;
   sceneTitle.textContent = scene.title;
   sceneLine.textContent = scene.line;
-  choices.hidden = key !== 'morning';
-  continueButton.hidden = key === 'morning';
+  choices.replaceChildren();
+  for (const [label, next] of scene.options ?? []) {
+    const button = document.createElement('button');
+    button.className = 'choice';
+    button.type = 'button';
+    button.textContent = label;
+    button.addEventListener('click', () => renderScene(next));
+    choices.append(button);
+    preloadScene(next);
+  }
+  if (scene.next) preloadScene(scene.next);
+
+  choices.hidden = !scene.options;
+  continueButton.hidden = Boolean(scene.options);
   showScreen('story');
+  if (onRoute) {
+    routeStep.textContent = `${scene.routeIndex + 1} / ${workTrip.length}`;
+    routeMap.setAttribute('aria-label', `Путь Серёжи из Пигелево. Сейчас: ${scene.title}.`);
+    showRouteStop(scene.routeIndex);
+  } else {
+    stopRouteAnimation();
+  }
   sceneTitle.focus({ preventScroll: true });
   window.scrollTo(0, 0);
 }
@@ -65,16 +91,13 @@ function syncRoute(moveFocus = false) {
   }
 }
 
-document.querySelector('#play').addEventListener('click', () => {
-  renderScene('morning');
-  for (const key of ['coffee', 'tea']) {
-    new Image().src = `assets/${scenes[key].art}.webp`;
-  }
-});
-for (const button of choices.querySelectorAll('button')) {
-  button.addEventListener('click', () => renderScene(button.dataset.next));
-}
+document.querySelector('#play').addEventListener('click', () => renderScene('morning'));
 continueButton.addEventListener('click', () => {
+  if (activeScene.next) {
+    renderScene(activeScene.next);
+    return;
+  }
+
   showScreen('ending');
   document.querySelector('#ending-title').focus();
 });

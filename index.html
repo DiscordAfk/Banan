@@ -7,6 +7,9 @@
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
   <link rel="stylesheet" href="style.css">
+  <script src="story.js" defer></script>
+  <script src="coastlines.js" defer></script>
+  <script src="route-map.js" defer></script>
   <script src="game.js" defer></script>
 </head>
 <body>
@@ -64,15 +67,23 @@
       </section>
 
       <section id="story" class="story" aria-label="Сцена новеллы" hidden>
-        <div class="story-picture"><img id="scene-art" alt=""></div>
+        <div class="story-picture" id="story-picture">
+          <canvas id="route-map" width="960" height="540" role="img" hidden></canvas>
+          <img id="scene-art" alt="">
+          <div id="route-caption" class="route-caption" hidden>
+            <span>Маршрут на работу</span>
+            <strong id="route-step"></strong>
+          </div>
+          <span id="phone-projection" class="phone-projection" aria-hidden="true" hidden>Porn<span>hub</span></span>
+          <div id="shopping-labels" class="shopping-labels" aria-hidden="true" hidden>
+            <span>Вкусности</span><span>Игральные карты</span><span>Warhammer</span><span>Steam</span>
+          </div>
+        </div>
         <div class="dialogue">
           <p class="genre" id="speaker">Серёжа</p>
           <h1 id="scene-title" tabindex="-1"></h1>
           <p id="scene-line"></p>
-          <div id="choices" class="choices" aria-label="Выбери, что выпить">
-            <button class="choice" type="button" data-next="coffee">Выпить кофе</button>
-            <button class="choice" type="button" data-next="tea">Выпить чай</button>
-          </div>
+          <div id="choices" class="choices" role="group" aria-labelledby="scene-title" hidden></div>
           <button id="continue" class="pixel-button" type="button" hidden>Дальше</button>
         </div>
       </section>

@@ -276,3 +276,96 @@ h1, h2, h3, p { margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; }
 }
+
+.story-picture {
+  position: relative;
+  overflow: hidden;
+}
+
+.story-picture.is-route {
+  aspect-ratio: 16 / 9;
+  background: #100d20;
+  isolation: isolate;
+}
+
+#route-map {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.is-route #scene-art {
+  position: absolute;
+  inset: 9% 0 8% auto;
+  width: 43%;
+  height: 83%;
+  object-fit: contain;
+  object-position: center;
+  opacity: .82;
+  mask-image: linear-gradient(90deg, transparent, #000 22%);
+}
+
+.route-caption {
+  position: absolute;
+  top: 4.25%;
+  right: 3%;
+  display: grid;
+  gap: .22rem;
+  padding: .55rem .7rem;
+  color: var(--text);
+  background: #160f26e8;
+  border: 1px solid #9f799f;
+  font-size: .875rem;
+  line-height: 1.2;
+}
+
+.route-caption strong {
+  color: #ffabb5;
+  font: 400 .68rem/1.5 var(--pixel);
+}
+
+.phone-projection {
+  position: absolute;
+  top: 12%;
+  right: 9%;
+  color: #fff7ee;
+  font: 900 clamp(1rem, 5vw, 3.4rem)/1 Arial, sans-serif;
+  letter-spacing: -.06em;
+  text-shadow: 0 0 18px #fff3d37a;
+  transform: rotate(-5deg) skewY(-3deg);
+  opacity: .86;
+  user-select: none;
+}
+.phone-projection span {
+  margin-left: .09em;
+  padding: .02em .1em;
+  border-radius: .08em;
+  background: #f99e17;
+  color: #160f18;
+  box-shadow: 0 0 18px #f99e177d;
+}
+
+.shopping-labels {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  pointer-events: none;
+}
+.shopping-labels span {
+  align-self: end;
+  justify-self: start;
+  margin: 0 0 .55rem .55rem;
+  padding: .28rem .5rem;
+  background: #160f26e8;
+  color: #f7edff;
+  font-size: .875rem;
+  font-weight: 750;
+}
+
+@media (max-width: 540px) {
+  .route-caption { padding: .3rem .4rem; font-size: .78rem; }
+  .route-caption strong { font-size: .6rem; }
+  .choices .choice { justify-content: flex-start; width: 100%; flex-basis: 100%; padding-inline: .9rem; text-align: left; }
+}
