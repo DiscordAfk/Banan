@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0c0b16">
+  <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
+  <title>Minigames</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <main id="catalog" class="catalog">
+    <header class="masthead">
+      <div class="masthead-rule" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="tetromino tetromino-left" aria-hidden="true"></div>
+      <div class="tetromino tetromino-right" aria-hidden="true"></div>
+      <h1 class="wordmark" aria-label="Minigames"><span>M</span><span>i</span><span>n</span><span>i</span><span>g</span><span>a</span><span>m</span><span>e</span><span>s</span></h1>
+      <p class="subtitle">Коллекция мини-игр</p>
+    </header>
+
+    <section class="collection" aria-labelledby="collection-title">
+      <div class="section-heading">
+        <h2 id="collection-title"><span class="grid-icon" aria-hidden="true"></span> Игры</h2>
+        <span class="section-rule" aria-hidden="true"></span>
+      </div>
+      <div class="game-list">
+        <article class="game-card">
+          <div class="cover">
+            <img src="assets/cover.webp" alt="Серёжа и Диана гуляют по Петербургу, а на другой половине Серёжа сидит за компьютером в тёмной комнате">
+            <span class="monitor-title" aria-hidden="true">WAR<br>THUNDER</span>
+          </div>
+          <div class="card-content">
+            <div class="game-icon" aria-hidden="true"><span class="cup-icon"></span></div>
+            <p class="genre">Визуальная новелла</p>
+            <h3>День Серёжи</h3>
+            <p class="summary">Один день студента ГУАП. Всё начинается с выбора, что выпить утром.</p>
+            <a class="pixel-button" href="#seryozha"><span class="play-icon" aria-hidden="true"></span> Открыть игру</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer class="footer"><span class="footer-mark" aria-hidden="true"><i></i><i></i><i></i></span> Minigames</footer>
+  </main>
+
+  <main id="novel" class="novel" hidden>
+    <nav class="game-nav" aria-label="Управление игрой">
+      <a class="nav-link" id="game-back" href="#">К играм</a>
+      <span id="game-label">День Серёжи</span>
+    </nav>
+
+    <div class="stage">
+      <section id="game-menu" class="game-menu">
+        <div class="cover">
+          <img src="assets/cover.webp" alt="Два возможных вечера Серёжи — прогулка с Дианой по Петербургу и игра за компьютером в одиночестве">
+          <span class="monitor-title" aria-hidden="true">WAR<br>THUNDER</span>
+        </div>
+        <div class="menu-content">
+          <p class="genre">Визуальная новелла</p>
+          <h1 id="menu-title" tabindex="-1">День Серёжи</h1>
+          <button id="play" class="pixel-button" type="button"><span class="play-icon" aria-hidden="true"></span> Play</button>
+        </div>
+      </section>
+
+      <section id="story" class="story" aria-label="Сцена новеллы" hidden>
+        <div class="story-picture"><img id="scene-art" alt=""></div>
+        <div class="dialogue">
+          <p class="genre" id="speaker">Серёжа</p>
+          <h1 id="scene-title" tabindex="-1"></h1>
+          <p id="scene-line"></p>
+          <div id="choices" class="choices" aria-label="Выбери, что выпить">
+            <button class="choice" type="button" data-next="coffee">Выпить кофе</button>
+            <button class="choice" type="button" data-next="tea">Выпить чай</button>
+          </div>
+          <button id="continue" class="pixel-button" type="button" hidden>Дальше</button>
+        </div>
+      </section>
+
+      <section id="ending" class="ending" hidden>
+        <h1 id="ending-title" tabindex="-1" lang="en">Soon ...</h1>
+        <a class="nav-link" href="#seryozha">В меню игры</a>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
