@@ -33,6 +33,17 @@ const workTrip = [
   { art: 'work-foreman', title: 'Прораб в Мурино', line: 'Прораб встречает меня у дверей мастерской: «Серёжа, хорошо, что подошёл. Ты как, близко живёшь?»', via: [[30.46, 60.06]] },
 ];
 
+const endings = [
+  { id: 'game-over', number: 1, title: 'Скончался', art: 'phone-game-over' },
+  { id: 'time-loop', number: 2, title: 'Конец или нет?!...', art: 'phone-loop' },
+];
+
+const phoneRounds = [
+  { label: 'Написать Диане', alternative: 'Sweetie Fox', message: 'Привет, Диана! Как ты?' },
+  { label: 'Позвать Диану делать игру летом', alternative: 'Diana Rider', message: 'Хочешь летом вместе сделать игру?' },
+  { label: 'Позвать Диану гулять', alternative: 'Luxury Girl', message: 'Может, сходим погулять?' },
+];
+
 const scenes = {
   morning: {
     title: 'Утро', art: 'wake',
@@ -73,6 +84,32 @@ const scenes = {
     title: '?????????', art: 'home-phone', prop: 'phone',
     alt: 'Серёжа лежит под одеялом и смотрит в телефон. На стене светится только логотип Pornhub.',
     line: 'Ныряю под одеяло. Экран телефона вдруг работает как проектор.',
+    next: 'phone-quiz',
+  },
+  'phone-quiz': {
+    title: 'Что выберешь?', art: 'phone-quiz',
+    alt: 'Серёжа смотрит на подсвеченный экран телефона.',
+    line: 'Телефон в руке. Что мне делать?',
+    quiz: true,
+  },
+  'phone-game-over': {
+    title: 'Скончался', art: 'phone-game-over',
+    alt: 'Серёжа лежит на кровати с мультяшными крестиками вместо глаз. Вокруг брызги молока.',
+    line: 'Телефон гаснет. Последний кадр этого дня.',
+    ending: 'game-over',
+  },
+  'phone-chat': {
+    title: 'Переписка с Дианой', art: 'phone-chat', prop: 'chat',
+    alt: 'Серёжа улыбается, глядя в телефон.',
+    line: 'Смотрю на экран. Диана ответила.',
+  },
+  'phone-loop': {
+    title: 'Конец или нет?!...', art: 'phone-loop',
+    alt: 'Вихрь света вытягивает Серёжу из кровати прямо в экран телефона.',
+    line: 'Экран тянет меня внутрь. На секунду всё плывёт…',
+    ending: 'time-loop',
+    next: 'morning',
+    continueLabel: 'Проснуться',
   },
   'home-shopping': {
     title: 'Листаю Ozon', art: 'home-shopping', prop: 'shopping',

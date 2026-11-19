@@ -22,7 +22,12 @@
       <p class="subtitle">Коллекция мини-игр</p>
     </header>
 
-    <section class="collection" aria-labelledby="collection-title">
+    <nav class="collection collection-tabs" aria-label="Разделы Minigames">
+      <a id="games-tab" href="#" aria-current="page">Игры</a>
+      <a id="achievements-tab" href="#achievements">Достижения</a>
+    </nav>
+
+    <section class="collection" id="games-panel" aria-labelledby="collection-title">
       <div class="section-heading">
         <h2 id="collection-title"><span class="grid-icon" aria-hidden="true"></span> Игры</h2>
         <span class="section-rule" aria-hidden="true"></span>
@@ -42,6 +47,18 @@
           </div>
         </article>
       </div>
+    </section>
+
+    <section class="collection" id="achievements-panel" aria-labelledby="achievements-title" hidden>
+      <div class="section-heading">
+        <h2 id="achievements-title" tabindex="-1">Достижения</h2>
+        <span class="section-rule" aria-hidden="true"></span>
+      </div>
+      <div class="achievement-heading">
+        <h3>День Серёжи</h3>
+        <p id="achievement-progress"></p>
+      </div>
+      <div id="achievement-list" class="achievement-list"></div>
     </section>
 
     <footer class="footer"><span class="footer-mark" aria-hidden="true"><i></i><i></i><i></i></span> Minigames</footer>
@@ -67,6 +84,10 @@
       </section>
 
       <section id="story" class="story" aria-label="Сцена новеллы" hidden>
+        <header id="phone-scoreboard" class="phone-scoreboard" hidden>
+          <span id="phone-round-label"></span>
+          <strong id="phone-score" role="status"></strong>
+        </header>
         <div class="story-picture" id="story-picture">
           <canvas id="route-map" width="960" height="540" role="img" hidden></canvas>
           <img id="scene-art" alt="">
@@ -75,6 +96,12 @@
             <strong id="route-step"></strong>
           </div>
           <span id="phone-projection" class="phone-projection" aria-hidden="true" hidden>Porn<span>hub</span></span>
+          <p id="game-over-title" class="game-over-title" aria-hidden="true" hidden>Скончался</p>
+          <aside id="ending-award" class="ending-award" aria-label="Открыта концовка" hidden></aside>
+          <section id="diana-chat" class="diana-chat" aria-label="Переписка с Дианой" hidden>
+            <h2>Диана</h2>
+            <ol id="chat-messages"></ol>
+          </section>
           <div id="shopping-labels" class="shopping-labels" aria-hidden="true" hidden>
             <span>Вкусности</span><span>Игральные карты</span><span>Warhammer</span><span>Steam</span>
           </div>
@@ -84,6 +111,7 @@
           <h1 id="scene-title" tabindex="-1"></h1>
           <p id="scene-line"></p>
           <div id="choices" class="choices" role="group" aria-labelledby="scene-title" hidden></div>
+          <p id="answer-feedback" class="answer-feedback" role="status"></p>
           <button id="continue" class="pixel-button" type="button" hidden>Дальше</button>
         </div>
       </section>
