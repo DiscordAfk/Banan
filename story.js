@@ -99,8 +99,8 @@ const doorShift = [
 ];
 
 const endings = [
-  { id: 'game-over', number: 1, title: 'Скончался', art: 'phone-game-over' },
-  { id: 'time-loop', number: 2, title: 'Конец или нет?!...', art: 'phone-loop' },
+  { id: 'game-over', number: 1, title: 'Скончался', art: 'phone-game-over', branch: 'home-phone' },
+  { id: 'time-loop', number: 2, title: 'Конец или нет?!...', art: 'phone-loop', branch: 'home-phone' },
 ];
 
 const phoneRounds = [

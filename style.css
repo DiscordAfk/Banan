@@ -705,7 +705,7 @@ h1, h2, h3, p { margin: 0; }
 }
 .story-board {
   --branch-line: #6c5797;
-  --branch-gap: 1.55rem;
+  --branch-gap: 1.1rem;
   padding: clamp(1rem, 3.9vw, 2.5rem);
   border: 1px solid #5d477f;
   background:
@@ -726,7 +726,7 @@ h1, h2, h3, p { margin: 0; }
   gap: var(--branch-gap);
   min-width: 0;
 }
-.story-tree-node { width: clamp(134px, 16vw, 182px); min-width: 0; flex: none; }
+.story-tree-node { width: clamp(118px, 14vw, 153px); min-width: 0; flex: none; }
 .story-branches {
   display: grid;
   gap: .85rem;
@@ -799,10 +799,10 @@ h1, h2, h3, p { margin: 0; }
 .story-morning-options { display: flex; gap: .35rem; margin-top: .55rem; }
 .story-point-small { font-size: .875rem; padding: .45rem .2rem; }
 
-@media (max-width: 880px) {
-  .story-board { --branch-gap: 1rem; }
+@media (max-width: 920px) {
+  .story-board { --branch-gap: .75rem; }
   .story-tree li { display: grid; justify-items: start; gap: .65rem; }
-  .story-tree-node { width: clamp(150px, 52vw, 260px); }
+  .story-tree-node { width: clamp(130px, 40vw, 240px); }
   .story-branches { margin-inline-start: .45rem; gap: .75rem; }
   .story-branches::before { display: none; }
   .story-branches > li::before { top: 1.44rem; }
@@ -818,3 +818,41 @@ h1, h2, h3, p { margin: 0; }
   .collection-tabs a { padding-inline: .6rem; }
   .game-nav #game-label { display: none; }
 }
+
+.story-endings .result-card { position: relative; }
+.story-endings .result-info { padding: .5rem .6rem; gap: .35rem; }
+.story-endings .result-info .genre { font-size: .64rem; }
+.story-endings .result-info h4 { font-size: .7rem; }
+.result-preview-trigger {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  cursor: zoom-in;
+  background: transparent;
+}
+.result-preview-trigger:hover { box-shadow: inset 0 0 0 2px var(--accent); }
+.result-preview-trigger:focus-visible { outline-offset: -4px; }
+
+.ending-preview {
+  width: min(920px, calc(100% - 2rem));
+  max-height: calc(100% - 2rem);
+  padding: 0;
+  border: 1px solid var(--accent);
+  color: var(--text);
+  background: #1c152c;
+  box-shadow: 0 16px 85px #000b;
+}
+.ending-preview::backdrop { background: #08060adc; }
+.ending-preview-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .65rem 1rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: .7rem 1rem;
+}
+.ending-preview-header h2 { font: 400 clamp(.72rem, 2vw, 1.05rem)/1.6 var(--pixel); }
+.ending-preview-header .choice { min-width: 0; padding: .5rem .75rem; }
+.ending-preview img { display: block; width: 100%; max-height: 74svh; object-fit: contain; background: #100b17; }

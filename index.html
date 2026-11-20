@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=story-map">
-  <script src="story.js" defer></script>
+  <link rel="stylesheet" href="style.css?v=ending-preview">
+  <script src="story.js?v=ending-preview" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=story-map" defer></script>
+  <script src="game.js?v=ending-preview" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -132,7 +132,12 @@
                     </div>
                     <ul class="story-branches story-home-options">
                       <li><div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-blender"><strong>Blender</strong></button></div></li>
-                      <li><div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-phone"><strong>?????????</strong></button></div></li>
+                      <li>
+                        <div class="story-tree-node">
+                          <button class="story-point" type="button" data-story-start="home-phone"><strong>?????????</strong></button>
+                        </div>
+                        <ul class="story-branches story-endings" data-story-endings="home-phone" aria-label="Концовки этой ветки"></ul>
+                      </li>
                       <li><div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-shopping"><strong>Ozon</strong></button></div></li>
                     </ul>
                   </li>
@@ -224,5 +229,12 @@
       </section>
     </div>
   </main>
+  <dialog id="ending-preview" class="ending-preview" aria-labelledby="ending-preview-title">
+    <header class="ending-preview-header">
+      <h2 id="ending-preview-title"></h2>
+      <button id="close-ending-preview" class="choice" type="button" autofocus>Закрыть</button>
+    </header>
+    <img id="ending-preview-art" alt="">
+  </dialog>
 </body>
 </html>

@@ -22,6 +22,10 @@ const storyMapPanel = document.querySelector('#story-map-panel');
 const storyMapTab = document.querySelector('#story-map-tab');
 const resumeButton = document.querySelector('#resume-decision');
 const resumeDetail = document.querySelector('#resume-detail');
+const storyEndingBranches = storyMapPanel.querySelectorAll('[data-story-endings]');
+const endingPreview = document.querySelector('#ending-preview');
+const endingPreviewTitle = document.querySelector('#ending-preview-title');
+const endingPreviewArt = document.querySelector('#ending-preview-art');
 const achievementList = document.querySelector('#achievement-list');
 const achievementProgress = document.querySelector('#achievement-progress');
 const endingAward = document.querySelector('#ending-award');
@@ -116,7 +120,7 @@ function unlockEnding(id) {
   }
 }
 
-function endingCard(result, unlocked, headingTag) {
+function endingCard(result, unlocked, headingTag, preview = false) {
   const card = document.createElement('article');
   card.className = 'result-card';
   const thumbnail = document.createElement('div');
@@ -140,6 +144,15 @@ function endingCard(result, unlocked, headingTag) {
   title.textContent = unlocked ? result.title : hiddenEndingTitle;
   info.append(number, title);
   card.append(thumbnail, info);
+  if (unlocked && preview) {
+    const trigger = document.createElement('button');
+    trigger.className = 'result-preview-trigger';
+    trigger.type = 'button';
+    trigger.setAttribute('aria-label', `Увеличить изображение: концовка #${result.number} «${result.title}»`);
+    trigger.setAttribute('aria-haspopup', 'dialog');
+    trigger.addEventListener('click', () => showEndingPreview(result));
+    card.append(trigger);
+  }
   return card;
 }
 
@@ -149,6 +162,27 @@ function renderAchievements() {
   achievementList.replaceChildren(...endings.map(
     (result) => endingCard(result, unlockedEndings.has(result.id), 'h4'),
   ));
+}
+
+function showEndingPreview(result) {
+  endingPreviewTitle.textContent = `Концовка #${result.number} «${result.title}»`;
+  endingPreviewArt.src = artPath(result.art);
+  endingPreviewArt.alt = scenes[result.art].alt;
+  endingPreview.showModal();
+}
+
+function renderStoryEndings() {
+  readEndings();
+  for (const branch of storyEndingBranches) {
+    const leaves = endings.filter((result) => result.branch === branch.dataset.storyEndings);
+    branch.replaceChildren(...leaves.map((result) => {
+      const leaf = document.createElement('li');
+      const card = endingCard(result, unlockedEndings.has(result.id), 'h4', true);
+      card.classList.add('story-tree-node');
+      leaf.append(card);
+      return leaf;
+    }));
+  }
 }
 
 function renderDianaChat() {
@@ -353,7 +387,12 @@ function syncRoute(moveFocus = false) {
   achievementsPanel.hidden = !inAchievements;
   storyMapPanel.hidden = !inStoryMap;
   if (inAchievements) renderAchievements();
-  if (inStoryMap) renderLastDecision();
+  if (inStoryMap) {
+    renderLastDecision();
+    renderStoryEndings();
+  } else if (endingPreview.open) {
+    endingPreview.close();
+  }
 
   const pageTitle = inStoryMap ? 'Карта сюжета' : inAchievements ? 'Достижения' : 'День Серёжи';
   document.title = inGame || inAchievements || inStoryMap ? `${pageTitle} — Minigames` : 'Minigames';
@@ -419,9 +458,14 @@ novel.addEventListener('click', (event) => {
     syncRoute(true);
   }
 });
+document.querySelector('#close-ending-preview').addEventListener('click', () => endingPreview.close());
+endingPreview.addEventListener('click', (event) => {
+  if (event.target === endingPreview) endingPreview.close();
+});
 window.addEventListener('hashchange', () => syncRoute(true));
 window.addEventListener('storage', (event) => {
   if (event.key === endingsStorageKey && window.location.hash === '#achievements') renderAchievements();
+  if (event.key === endingsStorageKey && window.location.hash === '#story-map' && !endingPreview.open) renderStoryEndings();
   if (event.key === decisionStorageKey && window.location.hash === '#story-map') renderLastDecision();
 });
 syncRoute();
