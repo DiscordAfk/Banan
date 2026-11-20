@@ -3,6 +3,7 @@ const novel = document.querySelector('#novel');
 const menu = document.querySelector('#game-menu');
 const story = document.querySelector('#story');
 const ending = document.querySelector('#ending');
+const endingTitle = document.querySelector('#ending-title');
 const sceneArt = document.querySelector('#scene-art');
 const scenePicture = document.querySelector('#story-picture');
 const routeCaption = document.querySelector('#route-caption');
@@ -11,6 +12,11 @@ const shoppingLabels = document.querySelector('#shopping-labels');
 const phoneProjection = document.querySelector('#phone-projection');
 const sceneTitle = document.querySelector('#scene-title');
 const sceneLine = document.querySelector('#scene-line');
+const sceneSpeaker = document.querySelector('#speaker');
+const workCall = document.querySelector('#work-call');
+const workCallMessages = workCall.querySelectorAll('[data-call-message]');
+const workCallDesigner = document.querySelector('#work-call-designer');
+const workCallProgrammer = document.querySelector('#work-call-programmer');
 const choices = document.querySelector('#choices');
 const continueButton = document.querySelector('#continue');
 const sceneBackButtons = document.querySelectorAll('[data-scene-back]');
@@ -325,15 +331,28 @@ function renderIntertitle(scene) {
   const visible = Boolean(scene.intertitle);
   if (!intertitle.hidden) intertitleAudio.pause();
   intertitle.hidden = !visible;
-  scenePicture.hidden = visible;
   dialogue.hidden = visible;
   if (!visible) return;
 
   intertitleArt.src = scene.poster;
+  intertitleArt.alt = scene.title;
   intertitleStatus.textContent = '';
   intertitleSound.setAttribute('aria-pressed', 'false');
   if (intertitleAudio.getAttribute('src') !== scene.audio) intertitleAudio.src = scene.audio;
   intertitleAudio.currentTime = 0;
+}
+
+function renderWorkCall(stage) {
+  workCall.hidden = stage === undefined;
+  if (workCall.hidden) return;
+
+  for (const message of workCallMessages) {
+    const cue = scenes[message.dataset.callMessage];
+    message.hidden = cue.callStage > stage;
+    message.querySelector('span').textContent = cue.line;
+  }
+  workCallProgrammer.classList.toggle('work-person-speaking', stage === 1);
+  workCallDesigner.classList.toggle('work-person-speaking', stage === 2);
 }
 
 function renderScene(key, { phone, remember = true } = {}) {
@@ -343,6 +362,8 @@ function renderScene(key, { phone, remember = true } = {}) {
   updateSceneBack();
   if (remember && scene.options) rememberDecision(key);
   renderIntertitle(scene);
+  renderWorkCall(scene.callStage);
+  scenePicture.hidden = Boolean(scene.intertitle) || !workCall.hidden;
   thoughtBubble.hidden = !scene.thought;
   thoughtBubble.classList.toggle('thought-angry', Boolean(scene.thought?.angry));
   thoughtMoney.hidden = !scene.thought?.money;
@@ -354,7 +375,7 @@ function renderScene(key, { phone, remember = true } = {}) {
   } else if (phone) {
     phoneQuiz = { ...phone };
   }
-  const showScore = scene.quiz || scene.ending || scene.prop === 'chat';
+  const showScore = scene.quiz || scene.phoneResult || scene.prop === 'chat';
   phoneScoreboard.hidden = !showScore;
   phoneRoundLabel.hidden = !scene.quiz;
   if (showScore) {
@@ -385,7 +406,9 @@ function renderScene(key, { phone, remember = true } = {}) {
     sceneArt.alt = scene.alt;
   }
   sceneTitle.textContent = scene.title;
-  sceneLine.textContent = scene.line;
+  sceneSpeaker.textContent = scene.speaker ?? 'Серёжа';
+  sceneLine.hidden = !scene.line || scene.callStage > 0;
+  sceneLine.textContent = scene.line ?? '';
   choices.replaceChildren();
   for (const [label, next] of scene.options ?? []) {
     addChoice(label, () => goToScene(next));
@@ -466,8 +489,9 @@ continueButton.addEventListener('click', () => {
 
   sceneHistory.push(activePosition);
   updateSceneBack();
+  endingTitle.textContent = activeScene.endCard ?? 'Soon ...';
   showScreen('ending');
-  document.querySelector('#ending-title').focus();
+  endingTitle.focus();
 });
 intertitleNext.addEventListener('click', () => goToScene(activeScene.next));
 intertitleSound.addEventListener('click', () => {

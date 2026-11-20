@@ -42,7 +42,7 @@ const doorShift = [
     line: 'Прораб говорит, надо только поставить ручки на двери. Уже представляю, как пересчитываю деньги.',
     thought: { text: 'Вот это я заработаю!', money: true },
   },
-  { id: 'shift-intertitle', title: '3 hours later', intertitle: true, poster: 'assets/shift/three-hours-later.webp', audio: 'assets/shift/three-hours-later-spongebob.mp3' },
+  { id: 'shift-intertitle', title: '3 Hours Later...', intertitle: true, poster: 'assets/shift/three-hours-later.webp', audio: 'assets/shift/three-hours-later-spongebob.mp3' },
   {
     id: 'shift-anger', title: 'Три часа спустя',
     alt: 'Измученный Серёжа хмурится у дверей. Над ним облачко мыслей.',
@@ -96,11 +96,59 @@ const doorShift = [
     line: 'В комнате тихо. Только указательный палец вдруг чуть шевелится.',
     prop: 'finger',
   },
+  {
+    id: 'shift-rise', title: 'Ещё не всё',
+    alt: 'Серёжа с усилием поднимается с кровати в тёмной комнате.',
+    line: 'Собираю остатки сил, сажусь на край кровати и иду на кухню.',
+  },
+  {
+    id: 'shift-dinner', title: 'Ужин на одного',
+    alt: 'На кухне Серёжа сидит один перед целым столом еды и берёт первую порцию.',
+    line: 'На кухне стол заставлен тарелками. Для одного человека, конечно, многовато. Ну и ладно.',
+  },
+  {
+    id: 'shift-burp', title: 'Пф…',
+    alt: 'Тарелки пустые, у Серёжи живот круглый как шар. Он еле слышно рыгает.',
+    line: 'Съедаю всё. Живот раздулся как шар, а отрыжка вышла такая тихая, что я сам едва услышал.',
+  },
+  {
+    id: 'shift-connect', title: 'За компьютер',
+    alt: 'Серёжа снова выглядит как обычно. Он сел за компьютер и запускает голосовой чат.',
+    line: 'Возвращаюсь в комнату, сажусь за компьютер и захожу в голосовой канал.',
+  },
+  {
+    id: 'shift-call', title: 'В голосовом канале',
+    callStage: 0,
+    line: 'В звонке уже Дима.',
+  },
+  {
+    id: 'shift-idea', title: 'Идея Димы',
+    callStage: 1,
+    speaker: 'Дима',
+    line: 'Ну чё может сайт сделаем по физике?',
+  },
+  {
+    id: 'shift-agree', title: 'Договорились',
+    callStage: 2,
+    line: 'Давай. Я возьмусь за сайт по физике.',
+  },
+  {
+    id: 'shift-six-hours', title: 'Six Hours Later...', intertitle: true,
+    poster: 'assets/shift/six-hours-later.webp', audio: 'assets/shift/six-hours-later-spongebob.mp3',
+  },
+  {
+    id: 'shift-present', title: 'Достигнуто настоящее',
+    alt: 'Уставшие Серёжа и Дима сидят по разные стороны перегородки. Оба с лёгкой улыбкой смотрят в свои мониторы. У Серёжи на экране сайт по физике, у Димы — Minigames.',
+    line: 'Дима вайбкодит сайт с мини-играми, я доделываю сайт по физике. Сидим уже шесть часов, глаза горят, и расходиться пока никто не собирается.',
+    ending: 'present',
+    endCard: 'Some day...',
+  },
 ];
 
 const endings = [
   { id: 'game-over', number: 1, title: 'Скончался', art: 'phone-game-over', branch: 'home-phone' },
   { id: 'time-loop', number: 2, title: 'Конец или нет?!...', art: 'phone-loop', branch: 'home-phone' },
+  { id: 'present', number: 3, title: 'Достигнуто настоящее', art: 'shift-present', branch: 'shift-rise' },
 ];
 
 const phoneRounds = [
@@ -162,6 +210,7 @@ const scenes = {
     alt: 'Серёжа лежит на кровати с мультяшными крестиками вместо глаз. Вокруг брызги молока.',
     line: 'Телефон гаснет. Последний кадр этого дня.',
     ending: 'game-over',
+    phoneResult: true,
   },
   'phone-chat': {
     title: 'Переписка с Дианой', art: 'phone-chat', prop: 'chat',
@@ -173,6 +222,7 @@ const scenes = {
     alt: 'Вихрь света вытягивает Серёжу из кровати прямо в экран телефона.',
     line: 'Экран тянет меня внутрь. На секунду всё плывёт…',
     ending: 'time-loop',
+    phoneResult: true,
     next: 'morning',
     continueLabel: 'Проснуться',
   },
@@ -194,7 +244,7 @@ for (const [index, stop] of workTrip.entries()) {
 for (const [index, { id, ...scene }] of doorShift.entries()) {
   scenes[id] = {
     ...scene,
-    art: scene.intertitle ? undefined : scene.art ?? id,
+    art: scene.intertitle || scene.callStage !== undefined ? undefined : scene.art ?? id,
     next: doorShift[index + 1]?.id,
   };
 }

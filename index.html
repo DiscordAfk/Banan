@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=scene-back">
-  <script src="story.js?v=ending-preview" defer></script>
+  <link rel="stylesheet" href="style.css?v=after-shift">
+  <script src="story.js?v=after-shift" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=scene-back" defer></script>
+  <script src="game.js?v=after-shift" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -115,11 +115,13 @@
                     </div>
                     <ul class="story-branches">
                       <li>
-                        <div class="story-tree-node">
+                        <div class="story-tree-node story-chapter-points">
                           <button class="story-point" type="button" data-story-start="shift-money">
                             <span class="story-point-type">После дороги</span><strong>В мастерской</strong>
                           </button>
+                          <button class="story-point" type="button" data-story-start="shift-rise"><strong>После смены</strong></button>
                         </div>
+                        <ul class="story-branches story-endings" data-story-endings="shift-rise" aria-label="Концовки рабочей ветки"></ul>
                       </li>
                     </ul>
                   </li>
@@ -200,6 +202,46 @@
             <span>Вкусности</span><span>Игральные карты</span><span>Warhammer</span><span>Steam</span>
           </div>
         </div>
+        <section id="work-call" class="work-call" aria-label="Голосовой канал «Только тундра, никакого сна»" hidden>
+          <header class="work-call-header">
+            <span class="work-call-signal" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <div><span>Голосовой канал</span><h2>Только тундра, никакого сна</h2></div>
+          </header>
+          <div class="work-call-layout">
+            <div class="work-call-main">
+              <ul class="work-call-tiles" aria-label="В эфире">
+                <li class="work-call-stream">
+                  <span class="work-call-stream-icon" aria-hidden="true"><i></i><i></i><i></i></span>
+                  <span>Демонстрация экрана</span>
+                </li>
+                <li id="work-call-designer" class="work-person work-person-designer">
+                  <img src="assets/shift/avatar-designer.webp" alt="" width="68" height="68" loading="lazy">
+                  <strong>Лучший дизайнер</strong>
+                </li>
+                <li id="work-call-programmer" class="work-person work-person-programmer">
+                  <img src="assets/shift/avatar-programmer.webp" alt="" width="68" height="68" loading="lazy">
+                  <strong>Лучший программист</strong>
+                </li>
+              </ul>
+              <ol class="work-call-lines" aria-label="Разговор">
+                <li data-call-message="shift-idea" hidden><strong>Лучший программист</strong><span></span></li>
+                <li data-call-message="shift-agree" hidden><strong>Лучший дизайнер</strong><span></span></li>
+              </ol>
+            </div>
+            <aside class="work-call-members">
+              <h3>Участники — 7</h3>
+              <ul>
+                <li><span class="work-member-badge work-member-initial" aria-hidden="true">B</span>BARDUR</li>
+                <li><img class="work-member-badge" src="assets/shift/avatar-programmer.webp" alt="" width="24" height="24" loading="lazy">долдол</li>
+                <li><span class="work-member-badge work-member-initial work-member-lady" aria-hidden="true">L</span>Lady</li>
+                <li><span class="work-member-badge work-member-initial work-member-justic" aria-hidden="true">J</span>Justic</li>
+                <li><span class="work-member-badge work-member-initial work-member-chiku" aria-hidden="true">C</span>Chiku</li>
+                <li><span class="work-member-badge work-member-initial work-member-smile" aria-hidden="true">☺</span>Пидорас</li>
+                <li><img class="work-member-badge" src="assets/shift/avatar-designer.webp" alt="" width="24" height="24" loading="lazy">Дианадроч <span class="work-member-crown" aria-hidden="true">♛</span></li>
+              </ul>
+            </aside>
+          </div>
+        </section>
         <section id="intertitle" class="intertitle" aria-label="Перебивка" hidden>
           <button id="intertitle-next" class="intertitle-next" type="button" aria-label="Продолжить после перебивки">
             <img id="intertitle-art" lang="en" alt="3 Hours Later..." width="1280" height="720">

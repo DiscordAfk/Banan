@@ -422,7 +422,7 @@ h1, h2, h3, p { margin: 0; }
 .achievement-heading p { color: var(--muted); }
 .achievement-list {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 1rem;
 }
 .result-card {
@@ -872,3 +872,193 @@ h1, h2, h3, p { margin: 0; }
 .ending-preview-header h2 { font: 400 clamp(.72rem, 2vw, 1.05rem)/1.6 var(--pixel); }
 .ending-preview-header .choice { min-width: 0; padding: .5rem .75rem; }
 .ending-preview img { display: block; width: 100%; max-height: 74svh; object-fit: contain; background: #100b17; }
+
+.story-chapter-points { display: grid; gap: .55rem; }
+
+.silhouette-present::before {
+  inset: 18% 9% 11%;
+  clip-path: polygon(0 84%, 4% 58%, 19% 49%, 17% 38%, 10% 34%, 9% 20%, 18% 10%, 33% 12%, 39% 23%, 35% 41%, 31% 52%, 36% 61%, 48% 66%, 48% 85%, 62% 80%, 62% 64%, 71% 54%, 66% 45%, 62% 31%, 66% 17%, 76% 11%, 89% 16%, 93% 32%, 86% 43%, 88% 55%, 96% 63%, 100% 84%, 100% 99%, 0 99%);
+}
+.silhouette-present::after {
+  inset: 29% 33% 30%;
+  clip-path: polygon(0 0, 44% 0, 44% 77%, 33% 77%, 33% 100%, 16% 100%, 16% 77%, 0 77%, 0 0, 56% 0, 100% 0, 100% 77%, 84% 77%, 84% 100%, 67% 100%, 67% 77%, 56% 77%, 56% 0);
+}
+
+.work-call {
+  --call-border: #4e3a6d;
+  --call-surface: #201733;
+  --call-mint: #9bf6d6;
+  padding: clamp(.85rem, 2.2vw, 1.4rem);
+  background:
+    linear-gradient(165deg, #2e204b62, transparent 55%),
+    radial-gradient(circle, #a694de25 1px, transparent 1px) 0 0 / 16px 16px,
+    #130f20;
+}
+.work-call-header {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-bottom: 1rem;
+}
+.work-call-header span:not(.work-call-signal) {
+  color: var(--call-mint);
+  font-size: .8rem;
+}
+.work-call-header h2 {
+  margin: .25rem 0;
+  color: var(--text);
+  font: 400 clamp(.72rem, 2.1vw, 1.05rem)/1.65 var(--pixel);
+}
+.work-call-signal {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 3px;
+  width: 42px;
+  height: 42px;
+  flex: none;
+  padding: 10px;
+  border: 1px solid #68528f;
+  background: #261a3f;
+}
+.work-call-signal i { width: 3px; height: 6px; background: var(--call-mint); }
+.work-call-signal i:nth-child(2) { height: 10px; }
+.work-call-signal i:nth-child(3) { height: 14px; }
+.work-call-signal i:nth-child(4) { height: 18px; }
+
+.work-call-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(145px, 22%);
+  gap: .8rem;
+}
+.work-call-main { min-width: 0; }
+.work-call-tiles,
+.work-call-lines,
+.work-call-members ul { list-style: none; margin: 0; padding: 0; }
+.work-call-tiles {
+  display: grid;
+  grid-template-columns: minmax(0, .85fr) repeat(2, minmax(0, 1fr));
+  gap: .55rem;
+}
+.work-call-tiles > li {
+  min-height: 150px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: .7rem;
+  padding: .7rem .3rem;
+  border: 1px solid var(--call-border);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.work-call-stream {
+  color: #cfbfed;
+  background: #211a32;
+  font-size: .8rem;
+}
+.work-call-stream-icon {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 4px;
+  width: 62%;
+  max-width: 88px;
+  aspect-ratio: 5 / 3;
+  border: 2px solid #8b72b5;
+  box-shadow: inset 0 0 0 2px #11101c, 0 3px #140d21;
+  background: #302144;
+}
+.work-call-stream-icon i { width: 65%; height: 2px; background: #9b82c7; }
+.work-call-stream-icon i:nth-child(2) { width: 46%; background: #79c5b9; }
+.work-call-stream-icon i:nth-child(3) { width: 52%; }
+
+.work-person-designer {
+  --person-glow: #b498fb;
+  background: radial-gradient(ellipse at 50% 45%, #48336c, #231a39 70%);
+}
+.work-person-programmer {
+  --person-glow: #a1f2ca;
+  background: radial-gradient(ellipse at 50% 45%, #354e45, #1c2930 70%);
+}
+.work-person img {
+  display: block;
+  width: clamp(44px, 8vw, 68px);
+  height: auto;
+  aspect-ratio: 1;
+  border: 2px solid var(--person-glow);
+  border-radius: 50%;
+  image-rendering: pixelated;
+}
+.work-person strong {
+  color: #fcf6ff;
+  font-size: clamp(.75rem, 2vw, .95rem);
+}
+.work-call-tiles .work-person-speaking {
+  border-color: var(--person-glow);
+  box-shadow: inset 0 0 0 1px var(--person-glow);
+}
+
+.work-call-lines { display: grid; gap: .45rem; padding-top: .55rem; }
+.work-call-lines li {
+  display: grid;
+  gap: .18rem;
+  border: 1px solid var(--call-border);
+  border-inline-start: 3px solid #ad8ee4;
+  padding: .4rem .65rem;
+  color: #fbf3ff;
+  background: var(--call-surface);
+  line-height: 1.4;
+}
+.work-call-lines li:first-child { border-inline-start-color: var(--call-mint); }
+.work-call-lines strong { color: #d3bafa; font-size: .75rem; }
+.work-call-lines li:first-child strong { color: var(--call-mint); }
+
+.work-call-members {
+  min-width: 0;
+  padding: .7rem .65rem;
+  border: 1px solid var(--call-border);
+  background: #191326;
+}
+.work-call-members h3 {
+  padding-bottom: .45rem;
+  margin: 0 0 .44rem;
+  border-bottom: 1px solid var(--call-border);
+  color: #d3bafa;
+  font-size: .85rem;
+}
+.work-call-members ul { display: grid; gap: .4rem; }
+.work-call-members li {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  min-width: 0;
+  color: #ebe4fb;
+  font-size: .84rem;
+  overflow-wrap: anywhere;
+}
+.work-member-badge {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+.work-member-initial { background: #3f3753; color: #f0e8ff; font-size: .71rem; }
+.work-member-lady { background: #664758; }
+.work-member-justic { background: #413862; }
+.work-member-chiku { background: #70426b; }
+.work-member-smile { background: #5b4968; color: #ffd281; font-size: .9rem; }
+.work-member-crown { color: #ffd281; }
+
+@media (max-width: 590px) {
+  .work-call-layout { grid-template-columns: minmax(0, 1fr) minmax(105px, 28%); gap: .45rem; }
+  .work-call-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem; }
+  .work-call-tiles > li { min-height: 90px; padding: .35rem .2rem; gap: .4rem; }
+  .work-call-tiles > .work-call-stream { grid-column: 1 / -1; min-height: 2.6rem; grid-auto-flow: column; align-items: center; justify-content: center; }
+  .work-call-stream-icon { width: 24px; }
+  .work-call-stream-icon i { display: none; }
+  .work-call-members { padding: .45rem .35rem; }
+  .work-call-members li { font-size: .72rem; gap: .25rem; }
+  .work-member-badge { width: 18px; height: 18px; }
+}
