@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=ending-preview">
+  <link rel="stylesheet" href="style.css?v=scene-back">
   <script src="story.js?v=ending-preview" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=ending-preview" defer></script>
+  <script src="game.js?v=scene-back" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -207,6 +207,7 @@
           <button id="intertitle-sound" class="intertitle-sound" type="button" aria-label="Включить озвучку">
             <span class="speaker-icon" aria-hidden="true"></span>
           </button>
+          <button class="choice intertitle-back" type="button" data-scene-back>Назад</button>
           <audio id="intertitle-audio" preload="none"></audio>
           <p id="intertitle-status" class="intertitle-status" role="status"></p>
         </section>
@@ -216,13 +217,17 @@
           <p id="scene-line"></p>
           <div id="choices" class="choices" role="group" aria-labelledby="scene-title" hidden></div>
           <p id="answer-feedback" class="answer-feedback" role="status"></p>
-          <button id="continue" class="pixel-button" type="button" hidden>Дальше</button>
+          <div class="scene-actions">
+            <button class="choice" type="button" data-scene-back>Назад</button>
+            <button id="continue" class="pixel-button" type="button" hidden>Дальше</button>
+          </div>
         </div>
       </section>
 
       <section id="ending" class="ending" hidden>
         <h1 id="ending-title" tabindex="-1" lang="en">Soon ...</h1>
         <div class="ending-links">
+          <button class="choice" type="button" data-scene-back>Назад</button>
           <a class="nav-link" href="#seryozha">В меню игры</a>
           <a class="nav-link" href="#story-map">Карта сюжета</a>
         </div>

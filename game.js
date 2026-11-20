@@ -13,6 +13,7 @@ const sceneTitle = document.querySelector('#scene-title');
 const sceneLine = document.querySelector('#scene-line');
 const choices = document.querySelector('#choices');
 const continueButton = document.querySelector('#continue');
+const sceneBackButtons = document.querySelectorAll('[data-scene-back]');
 const backLink = document.querySelector('#game-back');
 const gamesPanel = document.querySelector('#games-panel');
 const achievementsPanel = document.querySelector('#achievements-panel');
@@ -213,7 +214,9 @@ function updatePhoneScore() {
 }
 
 function renderPhoneRound() {
+  activePosition.phone = { index: phoneQuiz.index, correct: phoneQuiz.correct };
   rememberDecision('phone-quiz', phoneQuiz);
+  updateSceneBack();
   const round = phoneRounds[phoneQuiz.index];
   phoneRoundLabel.textContent = `Раунд ${phoneQuiz.index + 1} из ${phoneRounds.length}`;
   phoneRoundLabel.hidden = false;
@@ -251,6 +254,8 @@ function answerPhoneRound(button, correct) {
 function advancePhoneRound() {
   if (!phoneQuiz.answered) return;
   if (phoneQuiz.index + 1 < phoneRounds.length) {
+    sceneHistory.push(activePosition);
+    activePosition = { key: activePosition.key };
     phoneQuiz.index += 1;
     renderPhoneRound();
     sceneTitle.focus({ preventScroll: true });
@@ -258,7 +263,7 @@ function advancePhoneRound() {
   }
 
   const { correct } = phoneQuiz;
-  renderScene(correct === 0 ? 'phone-game-over' : correct === phoneRounds.length ? 'phone-chat' : 'phone-loop');
+  goToScene(correct === 0 ? 'phone-game-over' : correct === phoneRounds.length ? 'phone-chat' : 'phone-loop');
 }
 
 function showScreen(screen) {
@@ -278,6 +283,27 @@ function showScreen(screen) {
 
 const preloadedArt = new Set();
 let activeScene;
+let activePosition;
+const sceneHistory = [];
+
+function updateSceneBack() {
+  for (const button of sceneBackButtons) button.disabled = !sceneHistory.length;
+}
+
+function startStory(key, options) {
+  sceneHistory.length = 0;
+  renderScene(key, options);
+}
+
+function goToScene(key, options) {
+  sceneHistory.push(activePosition);
+  renderScene(key, options);
+}
+
+function goBackScene() {
+  const previous = sceneHistory.pop();
+  if (previous) renderScene(previous.key, { phone: previous.phone });
+}
 
 function artPath(art) {
   let folder = 'route/';
@@ -313,6 +339,8 @@ function renderIntertitle(scene) {
 function renderScene(key, { phone, remember = true } = {}) {
   const scene = scenes[key];
   activeScene = scene;
+  activePosition = { key };
+  updateSceneBack();
   if (remember && scene.options) rememberDecision(key);
   renderIntertitle(scene);
   thoughtBubble.hidden = !scene.thought;
@@ -323,11 +351,16 @@ function renderScene(key, { phone, remember = true } = {}) {
   if (scene.quiz) {
     phoneQuiz = { index: 0, correct: 0, ...phone, answered: false };
     for (const next of ['phone-game-over', 'phone-chat', 'phone-loop']) preloadScene(next);
+  } else if (phone) {
+    phoneQuiz = { ...phone };
   }
   const showScore = scene.quiz || scene.ending || scene.prop === 'chat';
   phoneScoreboard.hidden = !showScore;
   phoneRoundLabel.hidden = !scene.quiz;
-  if (showScore) updatePhoneScore();
+  if (showScore) {
+    activePosition.phone = { index: phoneQuiz.index, correct: phoneQuiz.correct };
+    updatePhoneScore();
+  }
   answerFeedback.hidden = true;
   gameOverTitle.hidden = scene.ending !== 'game-over';
   endingAward.hidden = !scene.ending;
@@ -355,7 +388,7 @@ function renderScene(key, { phone, remember = true } = {}) {
   sceneLine.textContent = scene.line;
   choices.replaceChildren();
   for (const [label, next] of scene.options ?? []) {
-    addChoice(label, () => renderScene(next));
+    addChoice(label, () => goToScene(next));
     preloadScene(next);
   }
   if (scene.next) preloadScene(scene.next);
@@ -399,7 +432,7 @@ function syncRoute(moveFocus = false) {
   const start = pendingStoryStart;
   pendingStoryStart = undefined;
   if (inGame && start) {
-    renderScene(start.scene, { phone: start.phone });
+    startStory(start.scene, { phone: start.phone });
     return;
   }
 
@@ -418,21 +451,25 @@ resumeButton.addEventListener('click', () => {
   if (lastDecision) openStoryAt(lastDecision);
 });
 
-document.querySelector('#play').addEventListener('click', () => renderScene('morning'));
+for (const button of sceneBackButtons) button.addEventListener('click', goBackScene);
+
+document.querySelector('#play').addEventListener('click', () => startStory('morning'));
 continueButton.addEventListener('click', () => {
   if (activeScene.quiz) {
     advancePhoneRound();
     return;
   }
   if (activeScene.next) {
-    renderScene(activeScene.next, { remember: activeScene.ending !== 'time-loop' });
+    goToScene(activeScene.next, { remember: activeScene.ending !== 'time-loop' });
     return;
   }
 
+  sceneHistory.push(activePosition);
+  updateSceneBack();
   showScreen('ending');
   document.querySelector('#ending-title').focus();
 });
-intertitleNext.addEventListener('click', () => renderScene(activeScene.next));
+intertitleNext.addEventListener('click', () => goToScene(activeScene.next));
 intertitleSound.addEventListener('click', () => {
   if (!intertitleAudio.paused) {
     intertitleAudio.pause();
