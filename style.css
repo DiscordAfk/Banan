@@ -307,6 +307,34 @@ h1, h2, h3, p { margin: 0; }
   overflow: hidden;
 }
 
+.door-nameplate {
+  position: absolute;
+  top: 42.2%;
+  left: 50%;
+  width: 43%;
+  transform: translate(-50%, -50%);
+  font: 400 clamp(.6rem, 2.8vw, 1.3rem)/1.25 var(--pixel);
+  color: #f8dfb1;
+  text-align: center;
+  text-shadow: 1px 1px #211620, 0 0 5px #211620;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .story-picture.is-fainting, .story-picture.is-opening-eyes { background: #08060e; }
+  .is-fainting #scene-art { animation: faint-to-black 1.9s ease-in both; }
+  .is-opening-eyes #scene-art { animation: open-eyes 1.7s ease-out both; }
+}
+@keyframes faint-to-black {
+  0%, 22% { filter: blur(0) brightness(1); opacity: 1; }
+  65% { filter: blur(6px) brightness(.65); opacity: .8; }
+  100% { filter: blur(11px) brightness(.4); opacity: 0; }
+}
+@keyframes open-eyes {
+  0%, 10% { clip-path: ellipse(74% 0% at 50% 52%); filter: blur(7px) brightness(.65); }
+  42% { clip-path: ellipse(75% 20% at 50% 51%); filter: blur(3px) brightness(.9); }
+  100% { clip-path: ellipse(78% 78% at 50% 50%); filter: blur(0) brightness(1); }
+}
+
 .storm-light {
   position: absolute;
   inset: 0;

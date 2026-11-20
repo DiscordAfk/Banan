@@ -8,6 +8,7 @@ const endingNote = document.querySelector('#ending-note');
 const sceneArt = document.querySelector('#scene-art');
 const stormLight = document.querySelector('#storm-light');
 const stormAudio = document.querySelector('#storm-audio');
+const doorNameplate = document.querySelector('#door-nameplate');
 const scenePicture = document.querySelector('#story-picture');
 const routeCaption = document.querySelector('#route-caption');
 const routeStep = document.querySelector('#route-step');
@@ -413,6 +414,9 @@ function renderScene(key, { phone, remember = true } = {}) {
   if (scene.prop === 'chat') renderDianaChat(scene.dianaReply);
   scenePicture.classList.toggle('is-dull-view', scene.prop === 'dull-view');
   scenePicture.classList.toggle('is-rain-reveal', scene.prop === 'rain-reveal');
+  scenePicture.classList.toggle('is-fainting', scene.prop === 'fainting');
+  scenePicture.classList.toggle('is-opening-eyes', scene.prop === 'opening-eyes');
+  doorNameplate.hidden = scene.prop !== 'door-nameplate';
   const onRoute = scene.routeIndex !== undefined;
   scenePicture.classList.toggle('is-route', onRoute);
   routeMap.hidden = !onRoute;

@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=kirill-guap">
-  <script src="story.js?v=kirill-guap" defer></script>
+  <link rel="stylesheet" href="style.css?v=history-class">
+  <script src="story.js?v=history-class" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=kirill-guap" defer></script>
+  <script src="game.js?v=history-class" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -107,8 +107,9 @@
                     </div>
                     <ul class="story-branches">
                       <li>
-                        <div class="story-tree-node">
+                        <div class="story-tree-node story-chapter-points">
                           <button class="story-point" type="button" data-story-start="kirill-shadow"><strong>Внутри ГУАП</strong></button>
+                          <button class="story-point" type="button" data-story-start="guap-classmates"><strong>После грома</strong></button>
                         </div>
                       </li>
                     </ul>
@@ -192,6 +193,7 @@
           <div id="storm-light" class="storm-light" aria-hidden="true" hidden>
             <span class="storm-sound">БА-БАХ!</span>
           </div>
+          <span id="door-nameplate" class="door-nameplate" aria-hidden="true" hidden>Любовники Кирилла</span>
           <div id="finger-movement" class="finger-movement" aria-hidden="true" hidden></div>
           <div id="thought-bubble" class="thought-bubble" hidden>
             <div id="thought-money" class="thought-money" aria-hidden="true" hidden><i>₽</i><i>₽</i><i>₽</i></div>
