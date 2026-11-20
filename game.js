@@ -13,6 +13,7 @@ const scenePicture = document.querySelector('#story-picture');
 const routeCaption = document.querySelector('#route-caption');
 const routeStep = document.querySelector('#route-step');
 const shoppingLabels = document.querySelector('#shopping-labels');
+const ozonNametags = document.querySelector('#ozon-nametags');
 const phoneProjection = document.querySelector('#phone-projection');
 const sceneTitle = document.querySelector('#scene-title');
 const sceneLine = document.querySelector('#scene-line');
@@ -392,6 +393,21 @@ function renderWorkCall(stage) {
   workCallDesigner.classList.toggle('work-person-speaking', stage === 2);
 }
 
+function renderSceneTitle(scene) {
+  const showPrice = scene.prop === 'ozon-price';
+  sceneTitle.classList.toggle('ozon-price', showPrice);
+  if (!showPrice) {
+    sceneTitle.textContent = scene.title;
+    return;
+  }
+
+  const amount = scene.title.replace(/ ₽$/, '');
+  const digit = document.createElement('span');
+  digit.className = 'ozon-price-digit';
+  digit.textContent = amount.at(-1);
+  sceneTitle.replaceChildren(amount.slice(0, -1), digit, scene.title.slice(amount.length));
+}
+
 function renderScene(key, { phone, remember = true } = {}) {
   const scene = scenes[key];
   activeScene = scene;
@@ -443,13 +459,14 @@ function renderScene(key, { phone, remember = true } = {}) {
   routeMap.hidden = !onRoute;
   routeCaption.hidden = !onRoute;
   shoppingLabels.hidden = scene.prop !== 'shopping';
+  ozonNametags.hidden = scene.prop !== 'ozon-nametags';
   phoneProjection.hidden = scene.prop !== 'phone';
 
   if (scene.art) {
     sceneArt.src = artPath(scene.art);
     sceneArt.alt = scene.alt;
   }
-  sceneTitle.textContent = scene.title;
+  renderSceneTitle(scene);
   sceneSpeaker.textContent = scene.speaker ?? 'Серёжа';
   sceneLine.hidden = !scene.line || scene.callStage > 0;
   sceneLine.textContent = scene.line ?? '';

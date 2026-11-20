@@ -249,6 +249,8 @@ h1, h2, h3, p { margin: 0; }
 .story-picture img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: contain; }
 .dialogue { border-top: 1px solid #513e70; padding: clamp(1rem, 3.6vw, 2rem); }
 .dialogue h1 { margin: .4rem 0 .7rem; font: 400 clamp(1rem, 2.8vw, 1.45rem)/1.5 var(--pixel); }
+.dialogue h1.ozon-price { font-size: clamp(1.2rem, 4vw, 2.2rem); white-space: nowrap; }
+.ozon-price-digit { color: #ffd276; }
 #scene-line { color: #e6ddef; font-size: clamp(1rem, 2vw, 1.15rem); }
 .choices { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 1.3rem; }
 .choice { background: #28213c; color: var(--text); border-color: #8c67bf; box-shadow: inset 0 -3px #1b142b; min-width: 155px; }
@@ -306,6 +308,18 @@ h1, h2, h3, p { margin: 0; }
   position: relative;
   overflow: hidden;
 }
+
+.ozon-nametags { position: absolute; inset: 0; pointer-events: none; }
+.ozon-nametag {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  padding: .3em .6em;
+  background: #100b1dd4;
+  font: 400 clamp(.45rem, 1.35vw, .88rem)/1.45 var(--pixel);
+  white-space: nowrap;
+}
+.ozon-nametag-angel { left: 29.3%; top: 15.7%; color: #ffe0a3; }
+.ozon-nametag-devil { left: 68.8%; top: 14.7%; color: #ff9eb1; }
 
 .door-nameplate {
   position: absolute;
