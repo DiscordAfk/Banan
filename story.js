@@ -485,7 +485,7 @@ const ozonEpisode = [
   },
   {
     id: 'ozon-pin', title: 'Не договорил',
-    sound: 'assets/route/ozon-impact.mp3',
+    sound: 'assets/route/ozon-impact-ring.mp3',
     alt: 'Зубочистка со вспышкой прихватывает красный воротник Кириллазара к комоду. Серёжа спокойно сидит на кровати с телефоном и опускает свободную руку.',
   },
 ];
