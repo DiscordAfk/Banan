@@ -33,10 +33,9 @@ const dialogue = document.querySelector('#dialogue');
 const thoughtBubble = document.querySelector('#thought-bubble');
 const thoughtText = document.querySelector('#thought-text');
 const thoughtMoney = document.querySelector('#thought-money');
-const universitySign = document.querySelector('#university-sign');
 const fingerMovement = document.querySelector('#finger-movement');
 const intertitle = document.querySelector('#intertitle');
-const intertitleText = document.querySelector('#intertitle-text');
+const intertitleArt = document.querySelector('#intertitle-art');
 const intertitleNext = document.querySelector('#intertitle-next');
 const intertitleSound = document.querySelector('#intertitle-sound');
 const intertitleAudio = document.querySelector('#intertitle-audio');
@@ -206,10 +205,9 @@ function artPath(art) {
 }
 
 function preloadScene(key) {
-  const art = scenes[key].art;
-  if (!art) return;
-  const path = artPath(art);
-  if (preloadedArt.has(path)) return;
+  const { art, poster } = scenes[key];
+  const path = poster ?? (art && artPath(art));
+  if (!path || preloadedArt.has(path)) return;
   preloadedArt.add(path);
   new Image().src = path;
 }
@@ -222,7 +220,7 @@ function renderIntertitle(scene) {
   dialogue.hidden = visible;
   if (!visible) return;
 
-  intertitleText.textContent = scene.title;
+  intertitleArt.src = scene.poster;
   intertitleStatus.textContent = '';
   intertitleSound.setAttribute('aria-pressed', 'false');
   if (intertitleAudio.getAttribute('src') !== scene.audio) intertitleAudio.src = scene.audio;
@@ -237,7 +235,6 @@ function renderScene(key) {
   thoughtBubble.classList.toggle('thought-angry', Boolean(scene.thought?.angry));
   thoughtMoney.hidden = !scene.thought?.money;
   thoughtText.textContent = scene.thought?.text ?? '';
-  universitySign.hidden = scene.prop !== 'university';
   fingerMovement.hidden = scene.prop !== 'finger';
   if (scene.quiz) {
     phoneQuiz = { index: 0, correct: 0, answered: false };

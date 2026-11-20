@@ -6,7 +6,7 @@ const schoolTrip = [
   ['school-bus', 'Посадка в автобус', 'Автобус подъезжает. Втискиваюсь в дверной проём боком.', 'Серёжа пытается зайти в переполненный автобус.'],
   ['school-grannies', 'Зажат со всех сторон', 'Бабушки сомкнули ряды. Мой рюкзак уже у окна. Я до окна пока не добрался.', 'В автобусе бабушки с сумками зажали Серёжу со всех сторон.'],
   ['school-after-bus', 'На твёрдой земле', 'Меня выносит из автобуса. Стою на четвереньках и какое-то время просто дышу.', 'Серёжа стоит на коленях, опустив лицо к снегу. За его спиной автобус уезжает.'],
-  ['school-guap', 'ГУАП', 'Поднимаю голову. Надо мной нависает ГУАП. После такого пути страшно даже представить, что будет на первой паре.', 'Серёжа поднимает голову. Над ним возвышается огромный тёмный фасад ГУАП.'],
+  ['school-guap', 'ГУАП', 'Поднимаю голову. Надо мной нависает ГУАП. После такого пути страшно даже представить, что будет на первой паре.', 'Серёжа поднимает голову. Над ним возвышается тёмный фасад, а над входом в камне высечено «ГУАП».'],
 ];
 
 const departure = [30.05, 59.73];
@@ -42,7 +42,7 @@ const doorShift = [
     line: 'Прораб говорит, надо только поставить ручки на двери. Уже представляю, как пересчитываю деньги.',
     thought: { text: 'Вот это я заработаю!', money: true },
   },
-  { id: 'shift-intertitle', title: '3 hours later', intertitle: true, audio: 'assets/shift/three-hours-later.mp3' },
+  { id: 'shift-intertitle', title: '3 hours later', intertitle: true, poster: 'assets/shift/three-hours-later.webp', audio: 'assets/shift/three-hours-later-spongebob.mp3' },
   {
     id: 'shift-anger', title: 'Три часа спустя',
     alt: 'Измученный Серёжа хмурится у дверей. Над ним облачко мыслей.',
@@ -185,7 +185,7 @@ const scenes = {
 
 for (const [index, [art, title, line, alt]] of schoolTrip.entries()) {
   scenes[art] = { art, title, line, alt, next: schoolTrip[index + 1]?.[0] };
-  if (art === 'school-guap') scenes[art].prop = 'university';
+  if (art === 'school-guap') scenes[art].art = 'school-guap-stone';
 }
 for (const [index, stop] of workTrip.entries()) {
   scenes[stop.art] = { ...stop, alt: stop.title, routeIndex: index, next: workTrip[index + 1]?.art ?? doorShift[0].id };
