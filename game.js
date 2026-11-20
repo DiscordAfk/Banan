@@ -6,6 +6,8 @@ const ending = document.querySelector('#ending');
 const endingTitle = document.querySelector('#ending-title');
 const endingNote = document.querySelector('#ending-note');
 const sceneArt = document.querySelector('#scene-art');
+const stormLight = document.querySelector('#storm-light');
+const stormAudio = document.querySelector('#storm-audio');
 const scenePicture = document.querySelector('#story-picture');
 const routeCaption = document.querySelector('#route-caption');
 const routeStep = document.querySelector('#route-step');
@@ -289,6 +291,7 @@ function showScreen(screen) {
   if (screen !== 'story') {
     stopRouteAnimation();
     if (!intertitle.hidden) intertitleAudio.pause();
+    if (!stormAudio.paused) stormAudio.pause();
   }
   catalog.hidden = screen !== 'catalog';
   novel.hidden = screen === 'catalog';
@@ -436,6 +439,13 @@ function renderScene(key, { phone, remember = true } = {}) {
   continueButton.textContent = scene.continueLabel ?? 'Дальше';
   if (scene.quiz) renderPhoneRound();
   showScreen('story');
+  if (!stormAudio.paused) stormAudio.pause();
+  stormLight.hidden = !scene.lightning;
+  stormLight.classList.toggle('is-vanish', scene.lightning === 'vanish');
+  if (scene.lightning) {
+    stormAudio.currentTime = 0;
+    stormAudio.play().catch(() => {});
+  }
   if (onRoute) {
     routeStep.textContent = `${scene.routeIndex + 1} / ${workTrip.length}`;
     routeMap.setAttribute('aria-label', `Путь Серёжи из Пигелево. Сейчас: ${scene.title}.`);

@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=diana-arc">
-  <script src="story.js?v=diana-arc" defer></script>
+  <link rel="stylesheet" href="style.css?v=kirill-guap">
+  <script src="story.js?v=kirill-guap" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=diana-arc" defer></script>
+  <script src="game.js?v=kirill-guap" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -105,6 +105,13 @@
                         <strong>На пары</strong>
                       </button>
                     </div>
+                    <ul class="story-branches">
+                      <li>
+                        <div class="story-tree-node">
+                          <button class="story-point" type="button" data-story-start="kirill-shadow"><strong>Внутри ГУАП</strong></button>
+                        </div>
+                      </li>
+                    </ul>
                   </li>
                   <li>
                     <div class="story-tree-node">
@@ -182,6 +189,9 @@
         <div class="story-picture" id="story-picture">
           <canvas id="route-map" width="960" height="540" role="img" hidden></canvas>
           <img id="scene-art" alt="">
+          <div id="storm-light" class="storm-light" aria-hidden="true" hidden>
+            <span class="storm-sound">БА-БАХ!</span>
+          </div>
           <div id="finger-movement" class="finger-movement" aria-hidden="true" hidden></div>
           <div id="thought-bubble" class="thought-bubble" hidden>
             <div id="thought-money" class="thought-money" aria-hidden="true" hidden><i>₽</i><i>₽</i><i>₽</i></div>
@@ -253,6 +263,7 @@
           <audio id="intertitle-audio" preload="none"></audio>
           <p id="intertitle-status" class="intertitle-status" role="status"></p>
         </section>
+        <audio id="storm-audio" src="assets/route/kirill-thunder.mp3" preload="none"></audio>
         <div class="dialogue" id="dialogue">
           <p class="genre" id="speaker">Серёжа</p>
           <h1 id="scene-title" tabindex="-1"></h1>
