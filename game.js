@@ -452,6 +452,20 @@ function renderCharacters() {
     .map((id) => characterCard(id)));
 }
 
+function resetCharacters() {
+  if (!window.confirm('Сбросить знакомства? Карточки снова появятся при прохождении.')) return;
+
+  const status = document.querySelector('#character-reset-status');
+  try {
+    for (const id of Object.keys(characters)) localStorage.removeItem(characterStoragePrefix + id);
+    status.textContent = 'Знакомства сброшены.';
+  } catch {
+    status.textContent = 'Знакомства сброшены в этой вкладке. Хранилище браузера недоступно.';
+  }
+  discoveredCharacters.clear();
+  renderCharacters();
+}
+
 function showNextCharacterProfile() {
   if (story.hidden || characterProfile.open) return;
   let entry;
@@ -725,9 +739,12 @@ novel.addEventListener('click', (event) => {
   }
 });
 document.querySelector('#close-ending-preview').addEventListener('click', () => endingPreview.close());
+document.querySelector('#reset-characters').addEventListener('click', resetCharacters);
 document.querySelector('#close-character-profile').addEventListener('click', () => characterProfile.close());
 characterProfile.addEventListener('close', () => {
-  if (activeProfile === 'diana') profileQueue.unshift({ id: 'seryozha', reveal: true });
+  if (activeProfile === 'diana' && discoveredCharacters.has('diana')) {
+    profileQueue.unshift({ id: 'seryozha', reveal: true });
+  }
   activeProfile = undefined;
   showNextCharacterProfile();
 });
@@ -737,7 +754,10 @@ endingPreview.addEventListener('click', (event) => {
 window.addEventListener('hashchange', () => syncRoute(true));
 window.addEventListener('storage', (event) => {
   if (event.key?.startsWith(characterStoragePrefix)) {
-    readCharacters();
+    const id = event.key.slice(characterStoragePrefix.length);
+    if (!Object.hasOwn(characters, id)) return;
+    if (event.newValue === '1') discoveredCharacters.add(id);
+    else discoveredCharacters.delete(id);
     if (!charactersPanel.hidden) renderCharacters();
   }
   if (window.location.hash === '#achievements' && (event.key === endingsStorageKey || achievements.some(({ id }) => event.key === achievementStoragePrefix + id))) {

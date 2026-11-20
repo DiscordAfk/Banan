@@ -730,6 +730,9 @@ h1, h2, h3, p { margin: 0; }
 .ozon-chat-screen p { margin: 0; padding: .3em .4em; border-radius: .34em; }
 
 .character-list { display: grid; gap: 1rem; }
+.character-tools { margin-top: 1.25rem; }
+.character-tools p { margin: .65rem 0 0; }
+.character-tools p:empty { margin: 0; }
 .character-card {
   display: grid;
   grid-template-columns: min(30%, 11rem) minmax(0, 1fr);
