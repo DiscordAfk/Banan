@@ -18,6 +18,10 @@ const gamesPanel = document.querySelector('#games-panel');
 const achievementsPanel = document.querySelector('#achievements-panel');
 const gamesTab = document.querySelector('#games-tab');
 const achievementsTab = document.querySelector('#achievements-tab');
+const storyMapPanel = document.querySelector('#story-map-panel');
+const storyMapTab = document.querySelector('#story-map-tab');
+const resumeButton = document.querySelector('#resume-decision');
+const resumeDetail = document.querySelector('#resume-detail');
 const achievementList = document.querySelector('#achievement-list');
 const achievementProgress = document.querySelector('#achievement-progress');
 const endingAward = document.querySelector('#ending-award');
@@ -42,9 +46,53 @@ const intertitleAudio = document.querySelector('#intertitle-audio');
 const intertitleStatus = document.querySelector('#intertitle-status');
 
 const endingsStorageKey = 'minigames.seryozha.endings';
+const decisionStorageKey = 'minigames.seryozha.last-decision';
 const unlockedEndings = new Set();
 const hiddenEndingTitle = '????????????';
 let phoneQuiz;
+let lastDecision;
+let pendingStoryStart;
+
+function rememberDecision(scene, phone) {
+  lastDecision = phone ? { scene, phone: { index: phone.index, correct: phone.correct } } : { scene };
+  try {
+    localStorage.setItem(decisionStorageKey, JSON.stringify(lastDecision));
+  } catch {
+    // The last decision still works within the current visit.
+  }
+}
+
+function renderLastDecision() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(decisionStorageKey) ?? 'null');
+    if (saved && Object.hasOwn(scenes, saved.scene)) {
+      const { scene, phone } = saved;
+      if (scenes[scene].options) {
+        lastDecision = { scene };
+      } else if (scenes[scene].quiz && phone &&
+        Number.isInteger(phone.index) && phone.index >= 0 && phone.index < phoneRounds.length &&
+        Number.isInteger(phone.correct) && phone.correct >= 0 && phone.correct <= phone.index) {
+        lastDecision = { scene, phone };
+      }
+    }
+  } catch {
+    // A blocked or invalid save can be replaced by playing to a decision.
+  }
+
+  resumeButton.disabled = !lastDecision;
+  if (!lastDecision) {
+    resumeDetail.textContent = 'Появится после первой развилки.';
+  } else if (lastDecision.phone) {
+    resumeDetail.textContent = `Телефон · раунд ${lastDecision.phone.index + 1} из ${phoneRounds.length}`;
+  } else {
+    resumeDetail.textContent = scenes[lastDecision.scene].title;
+  }
+}
+
+function openStoryAt(start) {
+  pendingStoryStart = start;
+  window.location.hash = '#seryozha';
+}
 
 function readEndings() {
   try {
@@ -131,6 +179,7 @@ function updatePhoneScore() {
 }
 
 function renderPhoneRound() {
+  rememberDecision('phone-quiz', phoneQuiz);
   const round = phoneRounds[phoneQuiz.index];
   phoneRoundLabel.textContent = `Раунд ${phoneQuiz.index + 1} из ${phoneRounds.length}`;
   phoneRoundLabel.hidden = false;
@@ -227,9 +276,10 @@ function renderIntertitle(scene) {
   intertitleAudio.currentTime = 0;
 }
 
-function renderScene(key) {
+function renderScene(key, { phone, remember = true } = {}) {
   const scene = scenes[key];
   activeScene = scene;
+  if (remember && scene.options) rememberDecision(key);
   renderIntertitle(scene);
   thoughtBubble.hidden = !scene.thought;
   thoughtBubble.classList.toggle('thought-angry', Boolean(scene.thought?.angry));
@@ -237,7 +287,7 @@ function renderScene(key) {
   thoughtText.textContent = scene.thought?.text ?? '';
   fingerMovement.hidden = scene.prop !== 'finger';
   if (scene.quiz) {
-    phoneQuiz = { index: 0, correct: 0, answered: false };
+    phoneQuiz = { index: 0, correct: 0, ...phone, answered: false };
     for (const next of ['phone-game-over', 'phone-chat', 'phone-loop']) preloadScene(next);
   }
   const showScore = scene.quiz || scene.ending || scene.prop === 'chat';
@@ -295,20 +345,39 @@ function syncRoute(moveFocus = false) {
   const hash = window.location.hash;
   const inGame = hash === '#seryozha';
   const inAchievements = hash === '#achievements';
-  showScreen(inGame ? 'menu' : 'catalog');
-  gamesPanel.hidden = inAchievements;
+  const inStoryMap = hash === '#story-map';
+  const highlightedTab = inStoryMap ? storyMapTab : inAchievements ? achievementsTab : gamesTab;
+  for (const tab of [gamesTab, achievementsTab, storyMapTab]) tab.removeAttribute('aria-current');
+  highlightedTab.setAttribute('aria-current', 'page');
+  gamesPanel.hidden = inAchievements || inStoryMap;
   achievementsPanel.hidden = !inAchievements;
-  gamesTab.toggleAttribute('aria-current', !inAchievements);
-  achievementsTab.toggleAttribute('aria-current', inAchievements);
-  (inAchievements ? achievementsTab : gamesTab).setAttribute('aria-current', 'page');
+  storyMapPanel.hidden = !inStoryMap;
   if (inAchievements) renderAchievements();
-  document.title = inGame ? 'День Серёжи — Minigames' : inAchievements ? 'Достижения — Minigames' : 'Minigames';
+  if (inStoryMap) renderLastDecision();
+
+  const pageTitle = inStoryMap ? 'Карта сюжета' : inAchievements ? 'Достижения' : 'День Серёжи';
+  document.title = inGame || inAchievements || inStoryMap ? `${pageTitle} — Minigames` : 'Minigames';
+  const start = pendingStoryStart;
+  pendingStoryStart = undefined;
+  if (inGame && start) {
+    renderScene(start.scene, { phone: start.phone });
+    return;
+  }
+
+  showScreen(inGame ? 'menu' : 'catalog');
   if (moveFocus) {
-    const focusTarget = inGame ? '#menu-title' : inAchievements ? '#achievements-title' : '#games-tab';
+    const focusTarget = inGame ? '#menu-title' : inStoryMap ? '#story-map-title' : inAchievements ? '#achievements-title' : '#games-tab';
     document.querySelector(focusTarget).focus({ preventScroll: true });
     window.scrollTo(0, 0);
   }
 }
+
+for (const start of storyMapPanel.querySelectorAll('[data-story-start]')) {
+  start.addEventListener('click', () => openStoryAt({ scene: start.dataset.storyStart }));
+}
+resumeButton.addEventListener('click', () => {
+  if (lastDecision) openStoryAt(lastDecision);
+});
 
 document.querySelector('#play').addEventListener('click', () => renderScene('morning'));
 continueButton.addEventListener('click', () => {
@@ -317,7 +386,7 @@ continueButton.addEventListener('click', () => {
     return;
   }
   if (activeScene.next) {
-    renderScene(activeScene.next);
+    renderScene(activeScene.next, { remember: activeScene.ending !== 'time-loop' });
     return;
   }
 
@@ -353,5 +422,6 @@ novel.addEventListener('click', (event) => {
 window.addEventListener('hashchange', () => syncRoute(true));
 window.addEventListener('storage', (event) => {
   if (event.key === endingsStorageKey && window.location.hash === '#achievements') renderAchievements();
+  if (event.key === decisionStorageKey && window.location.hash === '#story-map') renderLastDecision();
 });
 syncRoute();

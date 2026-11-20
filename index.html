@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=story-map">
   <script src="story.js" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js" defer></script>
+  <script src="game.js?v=story-map" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -25,6 +25,7 @@
     <nav class="collection collection-tabs" aria-label="Разделы Minigames">
       <a id="games-tab" href="#" aria-current="page">Игры</a>
       <a id="achievements-tab" href="#achievements">Достижения</a>
+      <a id="story-map-tab" href="#story-map">Карта сюжета</a>
     </nav>
 
     <section class="collection" id="games-panel" aria-labelledby="collection-title">
@@ -61,12 +62,95 @@
       <div id="achievement-list" class="achievement-list"></div>
     </section>
 
+    <section class="collection" id="story-map-panel" aria-labelledby="story-map-title" hidden>
+      <div class="section-heading">
+        <h2 id="story-map-title" tabindex="-1">Карта сюжета</h2>
+        <span class="section-rule" aria-hidden="true"></span>
+      </div>
+      <div class="story-map-heading">
+        <div>
+          <h3>День Серёжи</h3>
+          <p>Выбери, с какой ветки или развилки продолжить.</p>
+        </div>
+        <div class="story-map-resume">
+          <button id="resume-decision" class="pixel-button" type="button" aria-describedby="resume-detail" disabled>Последняя развилка</button>
+          <p id="resume-detail"></p>
+        </div>
+      </div>
+      <div class="story-board">
+        <ul class="story-tree" aria-label="Ветки Дня Серёжи">
+          <li>
+            <div class="story-tree-node">
+              <button class="story-point story-point-fork" type="button" data-story-start="morning">
+                <span class="story-point-type">Начало игры</span>
+                <strong>Утро</strong>
+              </button>
+              <div class="story-morning-options" aria-label="Утренние ветки">
+                <button class="story-point story-point-small" type="button" data-story-start="coffee">Кофе</button>
+                <button class="story-point story-point-small" type="button" data-story-start="tea">Чай</button>
+              </div>
+            </div>
+            <ul class="story-branches">
+              <li>
+                <div class="story-tree-node">
+                  <button class="story-point story-point-fork" type="button" data-story-start="plans">
+                    <span class="story-point-type">Развилка</span><strong>Что делать дальше?</strong>
+                  </button>
+                </div>
+                <ul class="story-branches">
+                  <li>
+                    <div class="story-tree-node">
+                      <button class="story-point story-point-art" type="button" data-story-start="school-door">
+                        <img src="assets/route/school-snow.webp" alt="" loading="lazy">
+                        <strong>На пары</strong>
+                      </button>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="story-tree-node">
+                      <button class="story-point story-point-art" type="button" data-story-start="work-catamaran">
+                        <img src="assets/route/work-catamaran.webp" alt="" loading="lazy">
+                        <strong>На работу</strong>
+                      </button>
+                    </div>
+                    <ul class="story-branches">
+                      <li>
+                        <div class="story-tree-node">
+                          <button class="story-point" type="button" data-story-start="shift-money">
+                            <span class="story-point-type">После дороги</span><strong>В мастерской</strong>
+                          </button>
+                        </div>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <div class="story-tree-node">
+                      <button class="story-point story-point-art story-point-fork" type="button" data-story-start="home">
+                        <img src="assets/route/home-desk.webp" alt="" loading="lazy">
+                        <strong>Остаться дома</strong>
+                      </button>
+                    </div>
+                    <ul class="story-branches story-home-options">
+                      <li><div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-blender"><strong>Blender</strong></button></div></li>
+                      <li><div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-phone"><strong>?????????</strong></button></div></li>
+                      <li><div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-shopping"><strong>Ozon</strong></button></div></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </section>
+
     <footer class="footer"><span class="footer-mark" aria-hidden="true"><i></i><i></i><i></i></span> Minigames</footer>
   </main>
 
   <main id="novel" class="novel" hidden>
     <nav class="game-nav" aria-label="Управление игрой">
       <a class="nav-link" id="game-back" href="#">К играм</a>
+      <a class="nav-link game-map-link" href="#story-map">Карта сюжета</a>
       <span id="game-label">День Серёжи</span>
     </nav>
 
@@ -133,7 +217,10 @@
 
       <section id="ending" class="ending" hidden>
         <h1 id="ending-title" tabindex="-1" lang="en">Soon ...</h1>
-        <a class="nav-link" href="#seryozha">В меню игры</a>
+        <div class="ending-links">
+          <a class="nav-link" href="#seryozha">В меню игры</a>
+          <a class="nav-link" href="#story-map">Карта сюжета</a>
+        </div>
       </section>
     </div>
   </main>
