@@ -7,7 +7,7 @@ const endingTitle = document.querySelector('#ending-title');
 const endingNote = document.querySelector('#ending-note');
 const sceneArt = document.querySelector('#scene-art');
 const stormLight = document.querySelector('#storm-light');
-const stormAudio = document.querySelector('#storm-audio');
+const sceneAudio = document.querySelector('#scene-audio');
 const doorNameplate = document.querySelector('#door-nameplate');
 const scenePicture = document.querySelector('#story-picture');
 const routeCaption = document.querySelector('#route-caption');
@@ -312,7 +312,7 @@ function showScreen(screen) {
   if (screen !== 'story') {
     stopRouteAnimation();
     if (!intertitle.hidden) intertitleAudio.pause();
-    if (!stormAudio.paused) stormAudio.pause();
+    if (!sceneAudio.paused) sceneAudio.pause();
   }
   catalog.hidden = screen !== 'catalog';
   novel.hidden = screen === 'catalog';
@@ -481,12 +481,14 @@ function renderScene(key, { phone, remember = true } = {}) {
   continueButton.textContent = scene.continueLabel ?? 'Дальше';
   if (scene.quiz) renderPhoneRound();
   showScreen('story');
-  if (!stormAudio.paused) stormAudio.pause();
+  if (!sceneAudio.paused) sceneAudio.pause();
   stormLight.hidden = !scene.lightning;
   stormLight.classList.toggle('is-vanish', scene.lightning === 'vanish');
-  if (scene.lightning) {
-    stormAudio.currentTime = 0;
-    stormAudio.play().catch(() => {});
+  const sound = scene.sound ?? (scene.lightning ? 'assets/route/kirill-thunder.mp3' : null);
+  if (sound) {
+    if (sceneAudio.getAttribute('src') !== sound) sceneAudio.src = sound;
+    sceneAudio.currentTime = 0;
+    sceneAudio.play().catch(() => {});
   }
   if (onRoute) {
     routeStep.textContent = `${scene.routeIndex + 1} / ${workTrip.length}`;
