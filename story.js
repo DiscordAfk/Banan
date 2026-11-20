@@ -11,7 +11,17 @@ const schoolTrip = [
 
 const backInTime = { id: 'back-in-time', title: 'Назад в прошлое', art: 'history-clock' };
 const ozonDeltarune = { id: 'ozon-deltarune', title: 'На#!$ Deltarune!!!', art: 'ozon-deltarune', crossed: true, showOnScene: true };
-const achievements = [backInTime, ozonDeltarune];
+const ozonCrossroads = { id: 'ozon-crossroads', title: 'Ад или Рай', art: 'ozon-crossroads-award', fullArt: true, showOnScene: true };
+const ozonDoubt = { id: 'ozon-doubt', title: 'Правильный выбор или нет...?', art: 'ozon-demon-grin', fullArt: true, showOnScene: true };
+const achievements = [backInTime, ozonDeltarune, ozonCrossroads, ozonDoubt];
+
+const characters = {
+  seryozha: { name: 'Серёжа', art: 'profile-seryozha', description: 'Главный герой, студент ГУАП. Любит компьютерные игры, среди которых War Thunder, Hearts of Iron IV (HOI4), Hollow Knight, Hollow Knight: Silksong, Rain World и Factorio. Интересуется 3D-моделированием в Blender. Пока сам не понимает, ищет ли девушку. Подрабатывает установкой дверей.' },
+  diana: { name: 'Диана', art: 'profile-diana', description: 'Одногруппница Серёжи в ГУАП. Они обсуждают задачи по физике и идеи для игры. Серёже нравится Диана, а что она чувствует к нему, пока неизвестно.' },
+  kirill: { name: 'Кирилл', art: 'profile-kirill', description: 'Школьный друг Серёжи. Они вместе играли в карты на уроке истории. При встрече в ГУАП Кирилл первым делом подшучивает над Серёжей.' },
+  dima: { name: 'Дима', art: 'profile-dima', description: 'Школьный друг Серёжи. Увлекается программированием. Вместе с Серёжей берётся за сайты, а в школе играл с ним в карты на истории.' },
+  nikita: { name: 'Никита', art: 'profile-nikita', description: 'Школьный друг Серёжи. В одиннадцатом классе они сидели за одной партой и играли в карты на уроке истории.' },
+};
 
 const kirillAtUniversity = [
   {
@@ -21,6 +31,7 @@ const kirillAtUniversity = [
   },
   {
     id: 'kirill-reveal', title: 'Кирилл',
+    meet: ['kirill'],
     alt: 'Молния за высоким окном освещает лицо Кирилла. На нём серо-зелёное худи с чёрным ремнём через плечо.',
     line: 'За окном бьёт молния, и в её свете наконец вижу лицо. Это мой друг Кирилл.',
     lightning: 'reveal',
@@ -82,9 +93,11 @@ const kirillAtUniversity = [
     id: 'guap-classmates', title: 'Одногруппники',
     alt: 'Серёжа машет двум одногруппникам в коридоре ГУАП.',
     line: 'Иду дальше. Из соседней аудитории выходят наши. Машу им рукой. А у окна стоит Диана с тетрадью.',
+    unknownLine: 'Иду дальше. Из соседней аудитории выходят наши. Машу им рукой. А у окна стоит девушка с тетрадью.',
   },
   {
     id: 'guap-diana', title: 'У окна',
+    meet: ['diana'],
     alt: 'Диана раскрывает тетрадь по физике, а Серёжа смотрит на неё с улыбкой.',
     speaker: 'Диана',
     line: 'О, привет! Слушай, у тебя последняя задача по физике сошлась?',
@@ -148,11 +161,13 @@ const kirillAtUniversity = [
   },
   {
     id: 'history-cards', title: 'Карты на парте', art: 'history-tabletop',
+    meet: ['nikita'],
     alt: 'Серёжа приоткрывает глаза, а Никита выкладывает карту на их общую парту рядом с учебником.',
     line: 'У меня прямо перед носом карты. Никита пододвигает одну ко мне и улыбается.',
   },
   {
     id: 'history-your-turn', title: 'Твой ход', art: 'history-friends-wake',
+    meet: ['dima', 'kirill'],
     alt: 'Никита трогает Серёжу за плечо. Дима и Кирилл оборачиваются со своей парты и показывают на карты.',
     speaker: 'Дима и Кирилл',
     line: 'Давай, твой ход, скорее!',
@@ -338,6 +353,7 @@ const dianaDay = [
   },
   {
     id: 'diana-in-rain', title: 'Диана уже ждёт',
+    meet: ['diana'],
     alt: 'Серёжа замечает Диану под зонтом. На фоне серой улицы её фигура словно светится тёплым светом.',
     line: 'И тут вижу Диану. Она стоит под зонтом, и мне на секунду кажется, будто свет идёт от неё.',
     prop: 'rain-reveal',
@@ -381,9 +397,9 @@ const endings = [
 ];
 
 const phoneRounds = [
-  { label: 'Написать Диане', alternative: 'Sweetie Fox', message: 'Привет, Диана! Как ты?' },
-  { label: 'Позвать Диану делать игру летом', alternative: 'Diana Rider', message: 'Хочешь летом вместе сделать игру?' },
-  { label: 'Позвать Диану гулять', alternative: 'Luxury Girl', message: 'Может, сходим погулять?' },
+  { label: 'Написать Диане', unknownLabel: 'Написать Неизвестной', alternative: 'Sweetie Fox', message: 'Привет, Диана! Как ты?', unknownMessage: 'Привет, Неизвестная! Как ты?' },
+  { label: 'Позвать Диану делать игру летом', unknownLabel: 'Позвать Неизвестную делать игру летом', alternative: 'Diana Rider', message: 'Хочешь летом вместе сделать игру?' },
+  { label: 'Позвать Диану гулять', unknownLabel: 'Позвать Неизвестную гулять', alternative: 'Luxury Girl', message: 'Может, сходим погулять?' },
 ];
 
 const ozonEpisode = [
@@ -460,7 +476,9 @@ const ozonEpisode = [
     line: 'Лучше бы на что-то полезное деньги потратил, девушку нашёл или мне отдал.',
   },
   {
-    id: 'ozon-decide', title: 'Решил',
+    id: 'ozon-decide', title: 'Кого послушать?',
+    achievement: ozonCrossroads.id,
+    options: [['Послушать ангела', 'ozon-flick'], ['Послушать демона', 'ozon-demon-flick']],
     alt: 'Серёжа поднимает взгляд и смотрит прямо перед собой. Димеург и Кириллазар ждут его решения.',
   },
   {
@@ -495,6 +513,40 @@ const ozonEpisode = [
   },
 ];
 
+const ozonDemonEpisode = [
+  {
+    id: 'ozon-demon-flick', title: 'Щёлк!', sound: 'assets/route/ozon-flick.mp3',
+    alt: 'Серёжа щелбаном сбрасывает Димеурга с плеча. Кириллазар улыбается на другом плече.',
+  },
+  {
+    id: 'ozon-demon-jump', title: 'По совету Кириллазара',
+    alt: 'Крохотный демон радостно подпрыгивает, пока Серёжа открывает телефон.',
+    line: 'Ладно, покер подождёт. Кириллазар уже прыгает от радости, а я достаю телефон.',
+  },
+  {
+    id: 'ozon-demon-montage', title: 'Четыре дела за вечер', prop: 'ozon-montage',
+    alt: 'Кадр из четырёх частей. Серёжа покупает с телефона абонемент в зал и DELTARUNE, выбрасывает чипсы и печенье, заказывает полезную еду и отправляет приглашение в ресторан.',
+    line: 'Беру абонемент в зал и DELTARUNE. Чипсы и печенье летят в мусорку, заказываю правильное питание. Заодно зову её в самый дорогой ресторан Питера.',
+  },
+  {
+    id: 'ozon-demon-under', title: 'Из-под комода', speaker: 'Димеург',
+    alt: 'Вид с пола. Из-под комода Димеург тянет руку к Серёже и Кириллазару, которые от радости подпрыгивают на кровати.',
+    line: 'Серёжа, не слушай его, он…',
+  },
+  {
+    id: 'ozon-demon-faint', title: 'Голос стихает',
+    alt: 'Димеург обмякает под комодом, не договорив. На кровати всё ещё прыгают Серёжа и Кириллазар.',
+  },
+  {
+    id: 'ozon-demon-smile', title: 'Доволен',
+    alt: 'Крупный план рта Кириллазара. Он тепло улыбается, довольный тем, что Серёжа его послушал.',
+  },
+  {
+    id: 'ozon-demon-grin', title: 'Ухмылка', achievement: ozonDoubt.id,
+    alt: 'Крупный план рта Кириллазара. Добрая улыбка сменяется зловещей ухмылкой.',
+  },
+];
+
 const scenes = {
   morning: {
     title: 'Утро', art: 'wake',
@@ -512,6 +564,7 @@ const scenes = {
     title: 'Чай на балконе', art: 'tea',
     alt: 'Серёжа в халате стоит на балконе с чашкой чая и смотрит на восход над крышами Петербурга.',
     line: 'Накидываю халат и выхожу на балкон с чаем. Над крышами встаёт солнце. Вот бы Диана тоже это увидела.',
+    unknownLine: 'Накидываю халат и выхожу на балкон с чаем. Над крышами встаёт солнце. Вот бы она тоже это увидела.',
     next: 'plans',
   },
   plans: {
@@ -552,13 +605,15 @@ const scenes = {
   },
   'phone-chat': {
     title: 'Переписка с Дианой', art: 'phone-chat', prop: 'chat',
+    unknownTitle: 'Переписка с Неизвестной',
     alt: 'Серёжа улыбается, глядя в телефон.',
     line: 'Смотрю на экран. Диана прислала сердечко.',
+    unknownLine: 'Смотрю на экран. Неизвестная прислала сердечко.',
     next: 'phone-chat-tomorrow',
   },
   'phone-chat-tomorrow': {
     title: 'Договорились на завтра', art: 'phone-chat', prop: 'chat',
-    alt: 'Серёжа смотрит на новое сообщение Дианы.',
+    alt: 'Серёжа смотрит на новое сообщение в переписке.',
     line: 'Следом приходит ответ на моё приглашение.',
     dianaReply: 'Хорошо, давай завтра погуляем',
     next: 'diana-next-day',
@@ -588,12 +643,12 @@ for (const [index, stop] of workTrip.entries()) {
   scenes[stop.art] = { ...stop, alt: stop.title, routeIndex: index, next: workTrip[index + 1]?.art ?? doorShift[0].id };
 }
 
-for (const chapter of [doorShift, dianaDay, kirillAtUniversity, ozonEpisode]) {
+for (const chapter of [doorShift, dianaDay, kirillAtUniversity, ozonEpisode, ozonDemonEpisode]) {
   for (const [index, { id, ...scene }] of chapter.entries()) {
     scenes[id] = {
       ...scene,
       art: scene.intertitle || scene.callStage !== undefined ? undefined : scene.art ?? id,
-      next: chapter[index + 1]?.id,
+      next: scene.options ? undefined : chapter[index + 1]?.id,
     };
   }
 }

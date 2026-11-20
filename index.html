@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=ozon-achievement">
-  <script src="story.js?v=ozon-achievement" defer></script>
+  <link rel="stylesheet" href="style.css?v=ozon-characters">
+  <script src="story.js?v=ozon-characters" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=ozon-achievement" defer></script>
+  <script src="game.js?v=ozon-characters" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -25,6 +25,7 @@
     <nav class="collection collection-tabs" aria-label="Разделы Minigames">
       <a id="games-tab" href="#" aria-current="page">Игры</a>
       <a id="achievements-tab" href="#achievements">Достижения</a>
+      <a id="characters-tab" href="#characters">Персонажи</a>
       <a id="story-map-tab" href="#story-map">Карта сюжета</a>
     </nav>
 
@@ -36,7 +37,7 @@
       <div class="game-list">
         <article class="game-card">
           <div class="cover">
-            <img src="assets/cover.webp" alt="Серёжа и Диана гуляют по Петербургу, а на другой половине Серёжа сидит за компьютером в тёмной комнате">
+            <img src="assets/cover.webp" alt="Серёжа гуляет с девушкой по Петербургу, а на другой половине сидит за компьютером в тёмной комнате">
             <span class="monitor-title" aria-hidden="true">WAR<br>THUNDER</span>
           </div>
           <div class="card-content">
@@ -60,6 +61,14 @@
         <p id="achievement-progress"></p>
       </div>
       <div id="achievement-list" class="achievement-list"></div>
+    </section>
+
+    <section class="collection" id="characters-panel" aria-labelledby="characters-title" hidden>
+      <div class="section-heading">
+        <h2 id="characters-title" tabindex="-1">Персонажи</h2>
+        <span class="section-rule" aria-hidden="true"></span>
+      </div>
+      <div id="character-list" class="character-list"></div>
     </section>
 
     <section class="collection" id="story-map-panel" aria-labelledby="story-map-title" hidden>
@@ -148,7 +157,12 @@
                         </div>
                         <ul class="story-branches story-endings" data-story-endings="home-phone" aria-label="Концовки этой ветки"></ul>
                       </li>
-                      <li><div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-shopping"><strong>Ozon</strong></button></div></li>
+                      <li>
+                        <div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-shopping"><strong>Ozon</strong></button></div>
+                        <ul class="story-branches">
+                          <li><div class="story-tree-node"><button class="story-point story-point-fork" type="button" data-story-start="ozon-decide"><strong>Ангел или демон</strong></button></div></li>
+                        </ul>
+                      </li>
                     </ul>
                   </li>
                 </ul>
@@ -172,7 +186,7 @@
     <div class="stage">
       <section id="game-menu" class="game-menu">
         <div class="cover">
-          <img src="assets/cover.webp" alt="Два возможных вечера Серёжи — прогулка с Дианой по Петербургу и игра за компьютером в одиночестве">
+          <img src="assets/cover.webp" alt="Два возможных вечера Серёжи — прогулка с девушкой по Петербургу и игра за компьютером в одиночестве">
           <span class="monitor-title" aria-hidden="true">WAR<br>THUNDER</span>
         </div>
         <div class="menu-content">
@@ -211,10 +225,17 @@
           <p id="game-over-title" class="game-over-title" aria-hidden="true" hidden>Скончался</p>
           <aside id="ending-award" class="ending-award" aria-label="Открыта концовка" hidden></aside>
           <aside id="achievement-award" class="achievement-award" aria-label="Достижение открыто" role="status" hidden></aside>
-          <section id="diana-chat" class="diana-chat" aria-label="Переписка с Дианой" hidden>
-            <h2>Диана</h2>
+          <section id="diana-chat" class="diana-chat" aria-labelledby="diana-chat-name" hidden>
+            <h2 id="diana-chat-name"></h2>
             <ol id="chat-messages"></ol>
           </section>
+          <div id="ozon-chat" class="ozon-chat" hidden>
+            <section class="ozon-chat-screen" aria-labelledby="ozon-chat-name">
+              <h2 id="ozon-chat-name"></h2>
+              <p class="chat-outgoing">Не хочешь сходить в самый дорогой ресторан в Питере?</p>
+              <p class="chat-incoming">Давай</p>
+            </section>
+          </div>
           <div id="shopping-labels" class="shopping-labels" aria-hidden="true" hidden>
             <span>Вкусности</span><span>Игральные карты</span><span>Warhammer</span><span>Steam</span>
           </div>
@@ -297,6 +318,10 @@
       </section>
     </div>
   </main>
+  <dialog id="character-profile" class="character-profile" aria-labelledby="profile-name">
+    <div id="character-profile-body"></div>
+    <button id="close-character-profile" class="choice" type="button" autofocus>Понятно</button>
+  </dialog>
   <dialog id="ending-preview" class="ending-preview" aria-labelledby="ending-preview-title">
     <header class="ending-preview-header">
       <h2 id="ending-preview-title"></h2>

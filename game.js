@@ -30,6 +30,11 @@ const gamesPanel = document.querySelector('#games-panel');
 const achievementsPanel = document.querySelector('#achievements-panel');
 const gamesTab = document.querySelector('#games-tab');
 const achievementsTab = document.querySelector('#achievements-tab');
+const charactersPanel = document.querySelector('#characters-panel');
+const charactersTab = document.querySelector('#characters-tab');
+const characterList = document.querySelector('#character-list');
+const characterProfile = document.querySelector('#character-profile');
+const characterProfileBody = document.querySelector('#character-profile-body');
 const storyMapPanel = document.querySelector('#story-map-panel');
 const storyMapTab = document.querySelector('#story-map-tab');
 const resumeButton = document.querySelector('#resume-decision');
@@ -44,6 +49,9 @@ const achievementAward = document.querySelector('#achievement-award');
 const endingAward = document.querySelector('#ending-award');
 const gameOverTitle = document.querySelector('#game-over-title');
 const dianaChat = document.querySelector('#diana-chat');
+const dianaChatName = document.querySelector('#diana-chat-name');
+const ozonChat = document.querySelector('#ozon-chat');
+const ozonChatName = document.querySelector('#ozon-chat-name');
 const chatMessages = document.querySelector('#chat-messages');
 const phoneScoreboard = document.querySelector('#phone-scoreboard');
 const phoneRoundLabel = document.querySelector('#phone-round-label');
@@ -65,6 +73,11 @@ const intertitleStatus = document.querySelector('#intertitle-status');
 const endingsStorageKey = 'minigames.seryozha.endings';
 const achievementStoragePrefix = 'minigames.seryozha.';
 const decisionStorageKey = 'minigames.seryozha.last-decision';
+const characterStoragePrefix = 'minigames.seryozha.character.';
+const discoveredCharacters = new Set();
+const profileQueue = [];
+let activeProfile;
+let morningProfileTimer;
 const unlockedEndings = new Set();
 const unlockedAchievements = new Set();
 const hiddenRewardTitle = '????????????';
@@ -155,7 +168,8 @@ function rewardCard(result, unlocked, headingTag, preview = false) {
   card.className = 'result-card';
   const thumbnail = document.createElement('div');
   const isEnding = result.number !== undefined;
-  thumbnail.className = isEnding || result.crossed ? 'result-art' : 'result-art result-icon';
+  thumbnail.className = isEnding || result.crossed || result.fullArt ? 'result-art' : 'result-art result-icon';
+  if (result.fullArt) thumbnail.classList.add('result-contain');
   if (unlocked) {
     if (result.crossed) thumbnail.classList.add('result-crossed');
     const img = document.createElement('img');
@@ -235,6 +249,8 @@ function renderStoryEndings() {
 }
 
 function renderDianaChat(reply) {
+  const name = dianaContactName();
+  dianaChatName.textContent = name;
   const makeMessage = (text, fromDiana = false) => {
     const message = document.createElement('li');
     message.className = fromDiana ? 'chat-incoming' : 'chat-outgoing';
@@ -242,8 +258,10 @@ function renderDianaChat(reply) {
     return message;
   };
   const heart = makeMessage('❤️', true);
-  heart.setAttribute('aria-label', 'Диана отправила красное сердце');
-  chatMessages.replaceChildren(...phoneRounds.map(({ message }) => makeMessage(message)), heart);
+  heart.setAttribute('aria-label', `${name} отправила красное сердце`);
+  chatMessages.replaceChildren(...phoneRounds.map(({ message, unknownMessage }) => makeMessage(
+    discoveredCharacters.has('diana') ? message : unknownMessage ?? message,
+  )), heart);
   if (reply) {
     const message = makeMessage('', true);
     const quote = document.createElement('blockquote');
@@ -281,7 +299,7 @@ function renderPhoneRound() {
   answerFeedback.hidden = true;
   answerFeedback.textContent = '';
   continueButton.hidden = true;
-  addChoice(round.label, (button) => answerPhoneRound(button, true));
+  addChoice(discoveredCharacters.has('diana') ? round.label : round.unknownLabel, (button) => answerPhoneRound(button, true));
   addChoice(round.alternative, (button) => answerPhoneRound(button, false));
 }
 
@@ -323,6 +341,11 @@ function advancePhoneRound() {
 
 function showScreen(screen) {
   if (screen !== 'story') {
+    clearTimeout(morningProfileTimer);
+    morningProfileTimer = undefined;
+    profileQueue.length = 0;
+    activeProfile = undefined;
+    if (characterProfile.open) characterProfile.close();
     stopRouteAnimation();
     if (!intertitle.hidden) intertitleAudio.pause();
     if (!sceneAudio.paused) sceneAudio.pause();
@@ -370,6 +393,95 @@ function artPath(art) {
   return `assets/${folder}${art}.webp`;
 }
 
+function readCharacters() {
+  try {
+    for (const id of Object.keys(characters)) {
+      if (localStorage.getItem(characterStoragePrefix + id) === '1') discoveredCharacters.add(id);
+    }
+  } catch {
+    // Keep discoveries for the current session if storage is unavailable.
+  }
+}
+
+function dianaContactName() {
+  return discoveredCharacters.has('diana') ? characters.diana.name : 'Неизвестная';
+}
+
+function characterCard(id, { popup = false, reveal = false } = {}) {
+  const { name, art, description } = characters[id];
+  const card = document.createElement(popup ? 'div' : 'article');
+  card.className = 'character-card';
+  const portrait = document.createElement('img');
+  portrait.src = artPath(art);
+  portrait.alt = '';
+  portrait.width = 320;
+  portrait.height = 320;
+  const info = document.createElement('div');
+  const title = document.createElement(popup ? 'h2' : 'h3');
+  if (popup) title.id = 'profile-name';
+  title.textContent = name;
+  const bio = document.createElement('p');
+  bio.textContent = description;
+  info.append(title, bio);
+  if (id === 'seryozha') {
+    const favorite = document.createElement('p');
+    favorite.className = 'character-favorite';
+    favorite.textContent = 'Фаворит среди девушек на данный момент — ';
+    if (reveal) {
+      const revealName = document.createElement('span');
+      revealName.className = 'favorite-reveal';
+      const questions = document.createElement('span');
+      questions.textContent = '?????';
+      questions.setAttribute('aria-hidden', 'true');
+      const answer = document.createElement('span');
+      answer.textContent = characters.diana.name;
+      revealName.append(questions, answer);
+      favorite.append(revealName, '.');
+    } else {
+      favorite.append(discoveredCharacters.has('diana') ? characters.diana.name : '?????', '.');
+    }
+    info.append(favorite);
+  }
+  card.append(portrait, info);
+  return card;
+}
+
+function renderCharacters() {
+  characterList.replaceChildren(...Object.keys(characters)
+    .filter((id) => id === 'seryozha' || discoveredCharacters.has(id))
+    .map((id) => characterCard(id)));
+}
+
+function showNextCharacterProfile() {
+  if (story.hidden || characterProfile.open) return;
+  let entry;
+  do {
+    entry = profileQueue.shift();
+  } while (entry && !entry.reveal && discoveredCharacters.has(entry.id));
+  if (!entry) return;
+  activeProfile = entry.id;
+  characterProfileBody.replaceChildren(characterCard(entry.id, { popup: true, reveal: entry.reveal }));
+  characterProfile.showModal();
+  discoveredCharacters.add(entry.id);
+  try {
+    localStorage.setItem(characterStoragePrefix + entry.id, '1');
+  } catch {
+    // In-memory progress still prevents duplicate pop-ups.
+  }
+}
+
+function showCharacterEncounters(key, meet = []) {
+  if (key === 'morning' && !discoveredCharacters.has('seryozha') && morningProfileTimer === undefined) {
+    morningProfileTimer = setTimeout(() => {
+      morningProfileTimer = undefined;
+      profileQueue.push({ id: 'seryozha' });
+      showNextCharacterProfile();
+    }, 2000);
+  }
+  profileQueue.push(...meet.map((id) => ({ id })));
+  showNextCharacterProfile();
+}
+
 function preloadScene(key) {
   const { art, poster } = scenes[key];
   const path = poster ?? (art && artPath(art));
@@ -410,7 +522,7 @@ function renderSceneTitle(scene) {
   const showPrice = scene.prop === 'ozon-price';
   sceneTitle.classList.toggle('ozon-price', showPrice);
   if (!showPrice) {
-    sceneTitle.textContent = scene.title;
+    sceneTitle.textContent = !discoveredCharacters.has('diana') && scene.unknownTitle ? scene.unknownTitle : scene.title;
     return;
   }
 
@@ -452,6 +564,8 @@ function renderScene(key, { phone, remember = true } = {}) {
   gameOverTitle.hidden = scene.ending !== 'game-over';
   endingAward.hidden = !scene.ending;
   dianaChat.hidden = scene.prop !== 'chat';
+  ozonChat.hidden = scene.prop !== 'ozon-montage';
+  if (!ozonChat.hidden) ozonChatName.textContent = dianaContactName();
   scenePicture.classList.toggle('has-ending-award', Boolean(scene.ending));
   scenePicture.classList.toggle('has-chat', scene.prop === 'chat');
   if (scene.ending) {
@@ -482,7 +596,7 @@ function renderScene(key, { phone, remember = true } = {}) {
   renderSceneTitle(scene);
   sceneSpeaker.textContent = scene.speaker ?? 'Серёжа';
   sceneLine.hidden = !scene.line || scene.callStage > 0;
-  sceneLine.textContent = scene.line ?? '';
+  sceneLine.textContent = (!discoveredCharacters.has('diana') ? scene.unknownLine : undefined) ?? scene.line ?? '';
   choices.replaceChildren();
   for (const [label, next] of scene.options ?? []) {
     addChoice(label, () => goToScene(next));
@@ -512,20 +626,25 @@ function renderScene(key, { phone, remember = true } = {}) {
   }
   (scene.intertitle ? intertitleNext : sceneTitle).focus({ preventScroll: true });
   window.scrollTo(0, 0);
+  showCharacterEncounters(key, scene.meet);
 }
 
 function syncRoute(moveFocus = false) {
   const hash = window.location.hash;
   const inGame = hash === '#seryozha';
   const inAchievements = hash === '#achievements';
+  const inCharacters = hash === '#characters';
   const inStoryMap = hash === '#story-map';
-  const highlightedTab = inStoryMap ? storyMapTab : inAchievements ? achievementsTab : gamesTab;
-  for (const tab of [gamesTab, achievementsTab, storyMapTab]) tab.removeAttribute('aria-current');
+  const highlightedTab = inStoryMap ? storyMapTab : inAchievements ? achievementsTab : inCharacters ? charactersTab : gamesTab;
+  for (const tab of [gamesTab, achievementsTab, charactersTab, storyMapTab]) tab.removeAttribute('aria-current');
   highlightedTab.setAttribute('aria-current', 'page');
-  gamesPanel.hidden = inAchievements || inStoryMap;
+  gamesPanel.hidden = inAchievements || inCharacters || inStoryMap;
   achievementsPanel.hidden = !inAchievements;
+  charactersPanel.hidden = !inCharacters;
   storyMapPanel.hidden = !inStoryMap;
+  readCharacters();
   if (inAchievements) renderAchievements();
+  if (inCharacters) renderCharacters();
   if (inStoryMap) {
     renderLastDecision();
     renderStoryEndings();
@@ -533,8 +652,8 @@ function syncRoute(moveFocus = false) {
     endingPreview.close();
   }
 
-  const pageTitle = inStoryMap ? 'Карта сюжета' : inAchievements ? 'Достижения' : 'День Серёжи';
-  document.title = inGame || inAchievements || inStoryMap ? `${pageTitle} — Minigames` : 'Minigames';
+  const pageTitle = inGame ? 'День Серёжи' : highlightedTab === gamesTab ? '' : highlightedTab.textContent;
+  document.title = pageTitle ? `${pageTitle} — Minigames` : 'Minigames';
   const start = pendingStoryStart;
   pendingStoryStart = undefined;
   if (inGame && start) {
@@ -544,7 +663,7 @@ function syncRoute(moveFocus = false) {
 
   showScreen(inGame ? 'menu' : 'catalog');
   if (moveFocus) {
-    const focusTarget = inGame ? '#menu-title' : inStoryMap ? '#story-map-title' : inAchievements ? '#achievements-title' : '#games-tab';
+    const focusTarget = inGame ? '#menu-title' : inStoryMap ? '#story-map-title' : inAchievements ? '#achievements-title' : inCharacters ? '#characters-title' : '#games-tab';
     document.querySelector(focusTarget).focus({ preventScroll: true });
     window.scrollTo(0, 0);
   }
@@ -606,11 +725,21 @@ novel.addEventListener('click', (event) => {
   }
 });
 document.querySelector('#close-ending-preview').addEventListener('click', () => endingPreview.close());
+document.querySelector('#close-character-profile').addEventListener('click', () => characterProfile.close());
+characterProfile.addEventListener('close', () => {
+  if (activeProfile === 'diana') profileQueue.unshift({ id: 'seryozha', reveal: true });
+  activeProfile = undefined;
+  showNextCharacterProfile();
+});
 endingPreview.addEventListener('click', (event) => {
   if (event.target === endingPreview) endingPreview.close();
 });
 window.addEventListener('hashchange', () => syncRoute(true));
 window.addEventListener('storage', (event) => {
+  if (event.key?.startsWith(characterStoragePrefix)) {
+    readCharacters();
+    if (!charactersPanel.hidden) renderCharacters();
+  }
   if (window.location.hash === '#achievements' && (event.key === endingsStorageKey || achievements.some(({ id }) => event.key === achievementStoragePrefix + id))) {
     renderAchievements();
   }
