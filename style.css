@@ -534,6 +534,18 @@ h1, h2, h3, p { margin: 0; }
   background: #211732;
 }
 .result-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.result-crossed::before, .result-crossed::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 108%;
+  height: clamp(4px, .85vw, 9px);
+  background: #ff383f;
+  box-shadow: 0 0 0 1px #701821;
+  transform: translate(-50%, -50%) rotate(29.4deg);
+}
+.result-crossed::after { transform: translate(-50%, -50%) rotate(-29.4deg); }
 .result-icon {
   display: grid;
   place-items: center;
@@ -585,6 +597,10 @@ h1, h2, h3, p { margin: 0; }
   transform: translate(-50%, -50%);
   border-radius: 50%;
 }
+.silhouette-ozon-deltarune::before {
+  inset: 14% 29% 14%;
+  clip-path: polygon(12% 91%, 0 69%, 8% 47%, 24% 33%, 25% 51%, 42% 26%, 43% 0, 66% 20%, 77% 47%, 84% 32%, 96% 49%, 100% 72%, 85% 92%, 67% 100%, 34% 100%);
+}
 
 .phone-scoreboard {
   display: flex;
@@ -632,6 +648,22 @@ h1, h2, h3, p { margin: 0; }
   animation: award-in .28s ease-out both;
 }
 .ending-award .result-info { padding: .75rem; }
+.achievement-award {
+  position: absolute;
+  inset: auto auto .75rem .75rem;
+  width: min(22rem, calc(100% - 1.5rem));
+  box-shadow: 0 8px 26px #07040e99;
+  animation: award-in .28s ease-out both;
+}
+.achievement-award .result-card {
+  display: grid;
+  grid-template-columns: min(27%, 6rem) minmax(0, 1fr);
+  align-items: center;
+}
+.achievement-award .result-info { padding: .48rem .65rem; gap: .24rem; }
+.achievement-award .result-info .genre { font-size: clamp(.6rem, 1.45vw, .75rem); }
+.achievement-award .result-info h2 { font-size: clamp(.68rem, 1.8vw, .88rem); }
+.achievement-award .result-crossed img { aspect-ratio: auto; object-fit: cover; }
 @keyframes award-in {
   from { opacity: 0; transform: translateX(16px); }
   to { opacity: 1; transform: translateX(0); }
@@ -678,7 +710,7 @@ h1, h2, h3, p { margin: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ending-award { animation: none; }
+  .ending-award, .achievement-award { animation: none; }
 }
 
 .thought-bubble {

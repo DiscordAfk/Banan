@@ -10,6 +10,8 @@ const schoolTrip = [
 ];
 
 const backInTime = { id: 'back-in-time', title: 'Назад в прошлое', art: 'history-clock' };
+const ozonDeltarune = { id: 'ozon-deltarune', title: 'На#!$ Deltarune!!!', art: 'ozon-deltarune', crossed: true, showOnScene: true };
+const achievements = [backInTime, ozonDeltarune];
 
 const kirillAtUniversity = [
   {
@@ -463,6 +465,7 @@ const ozonEpisode = [
   },
   {
     id: 'ozon-flick', title: 'Щёлк!',
+    sound: 'assets/route/ozon-flick.mp3',
     alt: 'Одним щелбаном Серёжа сбрасывает крохотного Кириллазара с плеча. Демон отлетает со звёздочками.',
   },
   {
@@ -471,6 +474,7 @@ const ozonEpisode = [
   },
   {
     id: 'ozon-buy', title: 'Купить',
+    sound: 'assets/route/ozon-applepay.mp3',
     alt: 'Палец Серёжи нажимает кнопку «Купить» под фотографией сияющего покерного набора.',
   },
   {
@@ -485,6 +489,7 @@ const ozonEpisode = [
   },
   {
     id: 'ozon-pin', title: 'Не договорил',
+    achievement: ozonDeltarune.id,
     sound: 'assets/route/ozon-impact-ring.mp3',
     alt: 'Зубочистка со вспышкой прихватывает красный воротник Кириллазара к комоду. Серёжа спокойно сидит на кровати с телефоном и опускает свободную руку.',
   },

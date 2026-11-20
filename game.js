@@ -40,6 +40,7 @@ const endingPreviewTitle = document.querySelector('#ending-preview-title');
 const endingPreviewArt = document.querySelector('#ending-preview-art');
 const achievementList = document.querySelector('#achievement-list');
 const achievementProgress = document.querySelector('#achievement-progress');
+const achievementAward = document.querySelector('#achievement-award');
 const endingAward = document.querySelector('#ending-award');
 const gameOverTitle = document.querySelector('#game-over-title');
 const dianaChat = document.querySelector('#diana-chat');
@@ -62,11 +63,11 @@ const intertitleAudio = document.querySelector('#intertitle-audio');
 const intertitleStatus = document.querySelector('#intertitle-status');
 
 const endingsStorageKey = 'minigames.seryozha.endings';
-const backInTimeStorageKey = 'minigames.seryozha.back-in-time';
+const achievementStoragePrefix = 'minigames.seryozha.';
 const decisionStorageKey = 'minigames.seryozha.last-decision';
 const unlockedEndings = new Set();
+const unlockedAchievements = new Set();
 const hiddenRewardTitle = '????????????';
-let backInTimeUnlocked = false;
 let phoneQuiz;
 let lastDecision;
 let pendingStoryStart;
@@ -134,10 +135,10 @@ function unlockEnding(id) {
   }
 }
 
-function unlockBackInTime() {
-  backInTimeUnlocked = true;
+function unlockAchievement(id) {
+  unlockedAchievements.add(id);
   try {
-    localStorage.setItem(backInTimeStorageKey, '1');
+    localStorage.setItem(achievementStoragePrefix + id, '1');
   } catch {
     // The achievement remains unlocked in the current visit.
   }
@@ -154,8 +155,9 @@ function rewardCard(result, unlocked, headingTag, preview = false) {
   card.className = 'result-card';
   const thumbnail = document.createElement('div');
   const isEnding = result.number !== undefined;
-  thumbnail.className = isEnding ? 'result-art' : 'result-art result-icon';
+  thumbnail.className = isEnding || result.crossed ? 'result-art' : 'result-art result-icon';
   if (unlocked) {
+    if (result.crossed) thumbnail.classList.add('result-crossed');
     const img = document.createElement('img');
     img.src = artPath(result.art);
     img.alt = '';
@@ -189,15 +191,26 @@ function rewardCard(result, unlocked, headingTag, preview = false) {
 function renderAchievements() {
   readEndings();
   try {
-    backInTimeUnlocked ||= localStorage.getItem(backInTimeStorageKey) === '1';
+    for (const { id } of achievements) {
+      if (localStorage.getItem(achievementStoragePrefix + id) === '1') unlockedAchievements.add(id);
+    }
   } catch {
     // In-memory progress is available when storage is blocked.
   }
-  achievementProgress.textContent = `Открыто ${unlockedEndings.size + Number(backInTimeUnlocked)} из ${endings.length + 1}`;
+  achievementProgress.textContent = `Открыто ${unlockedEndings.size + unlockedAchievements.size} из ${endings.length + achievements.length}`;
   achievementList.replaceChildren(
     ...endings.map((result) => rewardCard(result, unlockedEndings.has(result.id), 'h4')),
-    rewardCard(backInTime, backInTimeUnlocked, 'h4'),
+    ...achievements.map((result) => rewardCard(result, unlockedAchievements.has(result.id), 'h4')),
   );
+}
+
+function renderAchievementAward(id) {
+  const achievement = achievements.find((result) => result.id === id);
+  achievementAward.hidden = !achievement?.showOnScene;
+  if (!achievement) return;
+
+  unlockAchievement(achievement.id);
+  if (achievement.showOnScene) achievementAward.replaceChildren(rewardCard(achievement, true, 'h2'));
 }
 
 function showEndingPreview(result) {
@@ -446,7 +459,7 @@ function renderScene(key, { phone, remember = true } = {}) {
     const result = endings.find(({ id }) => id === scene.ending);
     endingAward.replaceChildren(rewardCard(result, true, 'h2'));
   }
-  if (scene.achievement === backInTime.id) unlockBackInTime();
+  renderAchievementAward(scene.achievement);
   if (scene.prop === 'chat') renderDianaChat(scene.dianaReply);
   scenePicture.classList.toggle('is-dull-view', scene.prop === 'dull-view');
   scenePicture.classList.toggle('is-rain-reveal', scene.prop === 'rain-reveal');
@@ -598,7 +611,9 @@ endingPreview.addEventListener('click', (event) => {
 });
 window.addEventListener('hashchange', () => syncRoute(true));
 window.addEventListener('storage', (event) => {
-  if ((event.key === endingsStorageKey || event.key === backInTimeStorageKey) && window.location.hash === '#achievements') renderAchievements();
+  if (window.location.hash === '#achievements' && (event.key === endingsStorageKey || achievements.some(({ id }) => event.key === achievementStoragePrefix + id))) {
+    renderAchievements();
+  }
   if (event.key === endingsStorageKey && window.location.hash === '#story-map' && !endingPreview.open) renderStoryEndings();
   if (event.key === decisionStorageKey && window.location.hash === '#story-map') renderLastDecision();
 });
