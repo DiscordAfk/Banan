@@ -4,6 +4,7 @@ const menu = document.querySelector('#game-menu');
 const story = document.querySelector('#story');
 const ending = document.querySelector('#ending');
 const endingTitle = document.querySelector('#ending-title');
+const endingNote = document.querySelector('#ending-note');
 const sceneArt = document.querySelector('#scene-art');
 const scenePicture = document.querySelector('#story-picture');
 const routeCaption = document.querySelector('#route-caption');
@@ -506,6 +507,8 @@ continueButton.addEventListener('click', () => {
   updateSceneBack();
   endingTitle.textContent = activeScene.endCard ?? 'Soon ...';
   endingTitle.lang = activeScene.endCardLang ?? 'en';
+  endingNote.textContent = activeScene.endCardNote ?? '';
+  endingNote.hidden = !activeScene.endCardNote;
   showScreen('ending');
   endingTitle.focus();
 });

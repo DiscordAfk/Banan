@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=diana-walk">
-  <script src="story.js?v=diana-walk" defer></script>
+  <link rel="stylesheet" href="style.css?v=diana-arc">
+  <script src="story.js?v=diana-arc" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=diana-walk" defer></script>
+  <script src="game.js?v=diana-arc" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -267,7 +267,10 @@
       </section>
 
       <section id="ending" class="ending" hidden>
-        <h1 id="ending-title" tabindex="-1" lang="en">Soon ...</h1>
+        <div class="ending-message">
+          <h1 id="ending-title" tabindex="-1" lang="en" aria-describedby="ending-note">Soon ...</h1>
+          <p id="ending-note" class="ending-note" hidden></p>
+        </div>
         <div class="ending-links">
           <button class="choice" type="button" data-scene-back>Назад</button>
           <a class="nav-link" href="#seryozha">В меню игры</a>

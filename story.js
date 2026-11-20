@@ -203,6 +203,7 @@ const dianaDay = [
     line: 'Скорее бы завтра.',
     ending: 'first-step',
     endCard: 'Начало положено...',
+    endCardNote: 'Арка успешного Серёжи:\nОткрыта',
     endCardLang: 'ru',
   },
 ];
