@@ -61,9 +61,11 @@ const intertitleAudio = document.querySelector('#intertitle-audio');
 const intertitleStatus = document.querySelector('#intertitle-status');
 
 const endingsStorageKey = 'minigames.seryozha.endings';
+const backInTimeStorageKey = 'minigames.seryozha.back-in-time';
 const decisionStorageKey = 'minigames.seryozha.last-decision';
 const unlockedEndings = new Set();
-const hiddenEndingTitle = '????????????';
+const hiddenRewardTitle = '????????????';
+let backInTimeUnlocked = false;
 let phoneQuiz;
 let lastDecision;
 let pendingStoryStart;
@@ -131,16 +133,27 @@ function unlockEnding(id) {
   }
 }
 
-function endingLabel(result) {
+function unlockBackInTime() {
+  backInTimeUnlocked = true;
+  try {
+    localStorage.setItem(backInTimeStorageKey, '1');
+  } catch {
+    // The achievement remains unlocked in the current visit.
+  }
+}
+
+function rewardLabel(result) {
+  if (result.number === undefined) return 'Достижение';
   const type = result.intermediate ? 'Промежуточная концовка' : 'Концовка';
   return `${type} #${result.number}`;
 }
 
-function endingCard(result, unlocked, headingTag, preview = false) {
+function rewardCard(result, unlocked, headingTag, preview = false) {
   const card = document.createElement('article');
   card.className = 'result-card';
   const thumbnail = document.createElement('div');
-  thumbnail.className = 'result-art';
+  const isEnding = result.number !== undefined;
+  thumbnail.className = isEnding ? 'result-art' : 'result-art result-icon';
   if (unlocked) {
     const img = document.createElement('img');
     img.src = artPath(result.art);
@@ -148,23 +161,23 @@ function endingCard(result, unlocked, headingTag, preview = false) {
     thumbnail.append(img);
   } else {
     thumbnail.classList.add('result-locked', `silhouette-${result.id}`);
-    thumbnail.setAttribute('aria-label', 'Концовка ещё не открыта');
+    thumbnail.setAttribute('aria-label', isEnding ? 'Концовка ещё не открыта' : 'Достижение ещё не открыто');
     thumbnail.setAttribute('role', 'img');
   }
   const info = document.createElement('div');
   info.className = 'result-info';
-  const number = document.createElement('p');
-  number.className = 'genre';
-  number.textContent = endingLabel(result);
+  const label = document.createElement('p');
+  label.className = 'genre';
+  label.textContent = rewardLabel(result);
   const title = document.createElement(headingTag);
-  title.textContent = unlocked ? result.title : hiddenEndingTitle;
-  info.append(number, title);
+  title.textContent = unlocked ? result.title : hiddenRewardTitle;
+  info.append(label, title);
   card.append(thumbnail, info);
   if (unlocked && preview) {
     const trigger = document.createElement('button');
     trigger.className = 'result-preview-trigger';
     trigger.type = 'button';
-    trigger.setAttribute('aria-label', `Увеличить изображение: ${endingLabel(result).toLowerCase()} «${result.title}»`);
+    trigger.setAttribute('aria-label', `Увеличить изображение: ${rewardLabel(result).toLowerCase()} «${result.title}»`);
     trigger.setAttribute('aria-haspopup', 'dialog');
     trigger.addEventListener('click', () => showEndingPreview(result));
     card.append(trigger);
@@ -174,14 +187,20 @@ function endingCard(result, unlocked, headingTag, preview = false) {
 
 function renderAchievements() {
   readEndings();
-  achievementProgress.textContent = `Открыто ${unlockedEndings.size} из ${endings.length}`;
-  achievementList.replaceChildren(...endings.map(
-    (result) => endingCard(result, unlockedEndings.has(result.id), 'h4'),
-  ));
+  try {
+    backInTimeUnlocked ||= localStorage.getItem(backInTimeStorageKey) === '1';
+  } catch {
+    // In-memory progress is available when storage is blocked.
+  }
+  achievementProgress.textContent = `Открыто ${unlockedEndings.size + Number(backInTimeUnlocked)} из ${endings.length + 1}`;
+  achievementList.replaceChildren(
+    ...endings.map((result) => rewardCard(result, unlockedEndings.has(result.id), 'h4')),
+    rewardCard(backInTime, backInTimeUnlocked, 'h4'),
+  );
 }
 
 function showEndingPreview(result) {
-  endingPreviewTitle.textContent = `${endingLabel(result)} «${result.title}»`;
+  endingPreviewTitle.textContent = `${rewardLabel(result)} «${result.title}»`;
   endingPreviewArt.src = artPath(result.art);
   endingPreviewArt.alt = scenes[result.art].alt;
   endingPreview.showModal();
@@ -193,7 +212,7 @@ function renderStoryEndings() {
     const leaves = endings.filter((result) => result.branch === branch.dataset.storyEndings);
     branch.replaceChildren(...leaves.map((result) => {
       const leaf = document.createElement('li');
-      const card = endingCard(result, unlockedEndings.has(result.id), 'h4', true);
+      const card = rewardCard(result, unlockedEndings.has(result.id), 'h4', true);
       card.classList.add('story-tree-node');
       leaf.append(card);
       return leaf;
@@ -409,13 +428,15 @@ function renderScene(key, { phone, remember = true } = {}) {
   if (scene.ending) {
     unlockEnding(scene.ending);
     const result = endings.find(({ id }) => id === scene.ending);
-    endingAward.replaceChildren(endingCard(result, true, 'h2'));
+    endingAward.replaceChildren(rewardCard(result, true, 'h2'));
   }
+  if (scene.achievement === backInTime.id) unlockBackInTime();
   if (scene.prop === 'chat') renderDianaChat(scene.dianaReply);
   scenePicture.classList.toggle('is-dull-view', scene.prop === 'dull-view');
   scenePicture.classList.toggle('is-rain-reveal', scene.prop === 'rain-reveal');
   scenePicture.classList.toggle('is-fainting', scene.prop === 'fainting');
   scenePicture.classList.toggle('is-opening-eyes', scene.prop === 'opening-eyes');
+  scenePicture.classList.toggle('is-pulling-back', scene.prop === 'pullback');
   doorNameplate.hidden = scene.prop !== 'door-nameplate';
   const onRoute = scene.routeIndex !== undefined;
   scenePicture.classList.toggle('is-route', onRoute);
@@ -558,7 +579,7 @@ endingPreview.addEventListener('click', (event) => {
 });
 window.addEventListener('hashchange', () => syncRoute(true));
 window.addEventListener('storage', (event) => {
-  if (event.key === endingsStorageKey && window.location.hash === '#achievements') renderAchievements();
+  if ((event.key === endingsStorageKey || event.key === backInTimeStorageKey) && window.location.hash === '#achievements') renderAchievements();
   if (event.key === endingsStorageKey && window.location.hash === '#story-map' && !endingPreview.open) renderStoryEndings();
   if (event.key === decisionStorageKey && window.location.hash === '#story-map') renderLastDecision();
 });

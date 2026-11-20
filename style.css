@@ -323,6 +323,10 @@ h1, h2, h3, p { margin: 0; }
   .story-picture.is-fainting, .story-picture.is-opening-eyes { background: #08060e; }
   .is-fainting #scene-art { animation: faint-to-black 1.9s ease-in both; }
   .is-opening-eyes #scene-art { animation: open-eyes 1.7s ease-out both; }
+  .is-pulling-back #scene-art {
+    transform-origin: 75% 78%;
+    animation: classroom-pullback 1s ease-out both;
+  }
 }
 @keyframes faint-to-black {
   0%, 22% { filter: blur(0) brightness(1); opacity: 1; }
@@ -333,6 +337,10 @@ h1, h2, h3, p { margin: 0; }
   0%, 10% { clip-path: ellipse(74% 0% at 50% 52%); filter: blur(7px) brightness(.65); }
   42% { clip-path: ellipse(75% 20% at 50% 51%); filter: blur(3px) brightness(.9); }
   100% { clip-path: ellipse(78% 78% at 50% 50%); filter: blur(0) brightness(1); }
+}
+@keyframes classroom-pullback {
+  from { transform: scale(1.2); }
+  to { transform: scale(1); }
 }
 
 .storm-light {
@@ -512,6 +520,12 @@ h1, h2, h3, p { margin: 0; }
   background: #211732;
 }
 .result-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.result-icon {
+  display: grid;
+  place-items: center;
+  background: #171128;
+}
+.result-icon img { width: auto; height: 64%; max-width: 75%; object-fit: contain; }
 .result-info { display: grid; gap: .5rem; padding: 1rem; }
 .result-info .genre { margin: 0; overflow-wrap: anywhere; }
 .result-info h2,
@@ -547,6 +561,15 @@ h1, h2, h3, p { margin: 0; }
   left: 64%;
   border-radius: 7%;
   transform: rotate(19deg);
+}
+.silhouette-back-in-time::before {
+  width: 28%;
+  max-width: 4.2rem;
+  aspect-ratio: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
 }
 
 .phone-scoreboard {
