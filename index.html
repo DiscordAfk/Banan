@@ -91,6 +91,12 @@
         <div class="story-picture" id="story-picture">
           <canvas id="route-map" width="960" height="540" role="img" hidden></canvas>
           <img id="scene-art" alt="">
+          <div id="finger-movement" class="finger-movement" aria-hidden="true" hidden></div>
+          <span id="university-sign" class="university-sign" aria-hidden="true" hidden>ГУАП</span>
+          <div id="thought-bubble" class="thought-bubble" hidden>
+            <div id="thought-money" class="thought-money" aria-hidden="true" hidden><i>₽</i><i>₽</i><i>₽</i></div>
+            <p id="thought-text"></p>
+          </div>
           <div id="route-caption" class="route-caption" hidden>
             <span>Маршрут на работу</span>
             <strong id="route-step"></strong>
@@ -106,7 +112,17 @@
             <span>Вкусности</span><span>Игральные карты</span><span>Warhammer</span><span>Steam</span>
           </div>
         </div>
-        <div class="dialogue">
+        <section id="intertitle" class="intertitle" aria-label="Перебивка" hidden>
+          <button id="intertitle-next" class="intertitle-next" type="button" aria-label="Продолжить после перебивки" aria-describedby="intertitle-text">
+            <span id="intertitle-text" lang="en"></span>
+          </button>
+          <button id="intertitle-sound" class="intertitle-sound" type="button" aria-label="Включить озвучку">
+            <span class="speaker-icon" aria-hidden="true"></span>
+          </button>
+          <audio id="intertitle-audio" preload="none"></audio>
+          <p id="intertitle-status" class="intertitle-status" role="status"></p>
+        </section>
+        <div class="dialogue" id="dialogue">
           <p class="genre" id="speaker">Серёжа</p>
           <h1 id="scene-title" tabindex="-1"></h1>
           <p id="scene-line"></p>

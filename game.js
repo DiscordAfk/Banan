@@ -29,6 +29,19 @@ const phoneRoundLabel = document.querySelector('#phone-round-label');
 const phoneScore = document.querySelector('#phone-score');
 const answerFeedback = document.querySelector('#answer-feedback');
 
+const dialogue = document.querySelector('#dialogue');
+const thoughtBubble = document.querySelector('#thought-bubble');
+const thoughtText = document.querySelector('#thought-text');
+const thoughtMoney = document.querySelector('#thought-money');
+const universitySign = document.querySelector('#university-sign');
+const fingerMovement = document.querySelector('#finger-movement');
+const intertitle = document.querySelector('#intertitle');
+const intertitleText = document.querySelector('#intertitle-text');
+const intertitleNext = document.querySelector('#intertitle-next');
+const intertitleSound = document.querySelector('#intertitle-sound');
+const intertitleAudio = document.querySelector('#intertitle-audio');
+const intertitleStatus = document.querySelector('#intertitle-status');
+
 const endingsStorageKey = 'minigames.seryozha.endings';
 const unlockedEndings = new Set();
 const hiddenEndingTitle = '????????????';
@@ -167,7 +180,10 @@ function advancePhoneRound() {
 }
 
 function showScreen(screen) {
-  if (screen !== 'story') stopRouteAnimation();
+  if (screen !== 'story') {
+    stopRouteAnimation();
+    if (!intertitle.hidden) intertitleAudio.pause();
+  }
   catalog.hidden = screen !== 'catalog';
   novel.hidden = screen === 'catalog';
   menu.hidden = screen !== 'menu';
@@ -182,20 +198,47 @@ const preloadedArt = new Set();
 let activeScene;
 
 function artPath(art) {
-  const folder = ['wake', 'coffee', 'tea'].includes(art) ? '' : art.startsWith('phone-') ? 'endings/' : 'route/';
+  let folder = 'route/';
+  if (['wake', 'coffee', 'tea'].includes(art)) folder = '';
+  if (art.startsWith('phone-')) folder = 'endings/';
+  if (art.startsWith('shift-')) folder = 'shift/';
   return `assets/${folder}${art}.webp`;
 }
 
 function preloadScene(key) {
-  const path = artPath(scenes[key].art);
+  const art = scenes[key].art;
+  if (!art) return;
+  const path = artPath(art);
   if (preloadedArt.has(path)) return;
   preloadedArt.add(path);
   new Image().src = path;
 }
 
+function renderIntertitle(scene) {
+  const visible = Boolean(scene.intertitle);
+  if (!intertitle.hidden) intertitleAudio.pause();
+  intertitle.hidden = !visible;
+  scenePicture.hidden = visible;
+  dialogue.hidden = visible;
+  if (!visible) return;
+
+  intertitleText.textContent = scene.title;
+  intertitleStatus.textContent = '';
+  intertitleSound.setAttribute('aria-pressed', 'false');
+  if (intertitleAudio.getAttribute('src') !== scene.audio) intertitleAudio.src = scene.audio;
+  intertitleAudio.currentTime = 0;
+}
+
 function renderScene(key) {
   const scene = scenes[key];
   activeScene = scene;
+  renderIntertitle(scene);
+  thoughtBubble.hidden = !scene.thought;
+  thoughtBubble.classList.toggle('thought-angry', Boolean(scene.thought?.angry));
+  thoughtMoney.hidden = !scene.thought?.money;
+  thoughtText.textContent = scene.thought?.text ?? '';
+  universitySign.hidden = scene.prop !== 'university';
+  fingerMovement.hidden = scene.prop !== 'finger';
   if (scene.quiz) {
     phoneQuiz = { index: 0, correct: 0, answered: false };
     for (const next of ['phone-game-over', 'phone-chat', 'phone-loop']) preloadScene(next);
@@ -223,8 +266,10 @@ function renderScene(key) {
   shoppingLabels.hidden = scene.prop !== 'shopping';
   phoneProjection.hidden = scene.prop !== 'phone';
 
-  sceneArt.src = artPath(scene.art);
-  sceneArt.alt = scene.alt;
+  if (scene.art) {
+    sceneArt.src = artPath(scene.art);
+    sceneArt.alt = scene.alt;
+  }
   sceneTitle.textContent = scene.title;
   sceneLine.textContent = scene.line;
   choices.replaceChildren();
@@ -245,7 +290,7 @@ function renderScene(key) {
   } else {
     stopRouteAnimation();
   }
-  sceneTitle.focus({ preventScroll: true });
+  (scene.intertitle ? intertitleNext : sceneTitle).focus({ preventScroll: true });
   window.scrollTo(0, 0);
 }
 
@@ -282,6 +327,26 @@ continueButton.addEventListener('click', () => {
   showScreen('ending');
   document.querySelector('#ending-title').focus();
 });
+intertitleNext.addEventListener('click', () => renderScene(activeScene.next));
+intertitleSound.addEventListener('click', () => {
+  if (!intertitleAudio.paused) {
+    intertitleAudio.pause();
+    return;
+  }
+
+  intertitleStatus.textContent = '';
+  intertitleAudio.currentTime = 0;
+  intertitleAudio.play().catch((error) => {
+    if (!intertitle.hidden && !story.hidden && error.name !== 'AbortError') {
+      intertitleStatus.textContent = 'Озвучку не удалось воспроизвести.';
+    }
+  });
+});
+for (const event of ['play', 'pause', 'ended']) {
+  intertitleAudio.addEventListener(event, () => {
+    intertitleSound.setAttribute('aria-pressed', String(!intertitleAudio.paused && !intertitleAudio.ended));
+  });
+}
 novel.addEventListener('click', (event) => {
   if (event.target.closest('a[href="#seryozha"]') && window.location.hash === '#seryozha') {
     event.preventDefault();
