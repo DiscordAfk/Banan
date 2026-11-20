@@ -145,10 +145,73 @@ const doorShift = [
   },
 ];
 
+const dianaDay = [
+  {
+    id: 'diana-next-day', title: 'The Next Day...', intertitle: true,
+    poster: 'assets/diana/next-day.webp', audio: 'assets/diana/next-day-spongebob.mp3',
+  },
+  {
+    id: 'diana-physics', title: 'Последние минуты физики',
+    alt: 'Измученный Серёжа подпирает щёку ладонью за партой. На столе тетрадь с формулами, за окнами дождь.',
+    line: 'Досиживаю физику. Сил уже ни на что нет, даже дописывать последнюю строчку в тетради.',
+  },
+  {
+    id: 'diana-stairs', title: 'На первый этаж',
+    alt: 'Серёжа тяжело спускается по широкой каменной лестнице ГУАП.',
+    line: 'Пара закончилась. Спускаюсь по лестнице, держась за перила.',
+  },
+  {
+    id: 'diana-turnstile', title: 'За турникетом',
+    alt: 'Серёжа проходит через турникет в вестибюле ГУАП и идёт к выходу.',
+    line: 'Прохожу турникет. За дверью уже слышно, как по ступеням стучит дождь.',
+  },
+  {
+    id: 'diana-door', title: 'На улицу',
+    alt: 'Серёжа толкает массивную деревянную дверь ГУАП. За ней серый Петербург под дождём.',
+    line: 'Налегаю на тяжёлую дверь. Снаружи серые дома, серое небо и лужи под ногами.',
+    prop: 'dull-view',
+  },
+  {
+    id: 'diana-in-rain', title: 'Диана уже ждёт',
+    alt: 'Серёжа замечает Диану под зонтом. На фоне серой улицы её фигура словно светится тёплым светом.',
+    line: 'И тут вижу Диану. Она стоит под зонтом, и мне на секунду кажется, будто свет идёт от неё.',
+    prop: 'rain-reveal',
+  },
+  {
+    id: 'diana-meet', title: 'Привет',
+    alt: 'Серёжа подходит к Диане, и она наклоняет зонт, чтобы укрыть его от дождя.',
+    line: 'Подхожу поздороваться. Диана наклоняет зонт в мою сторону: «Ну что, пойдём?»',
+  },
+  {
+    id: 'diana-walk', title: 'По дороге к метро',
+    alt: 'Серёжа и Диана идут вдоль мокрой петербургской улицы под одним зонтом и оживлённо разговаривают.',
+    line: 'По дороге обсуждаем нашу игру. Диана предлагает дать игроку разные концовки. Я уже прикидываю, как сделать первую развилку.',
+  },
+  {
+    id: 'diana-goodbye', title: 'У метро',
+    alt: 'Серёжа и Диана прощаются в подземном переходе метро. Диана улыбается и машет ему вслед.',
+    line: 'В переходе метро прощаемся. Диана машет рукой: «Пиши, если придумаешь, с чего начать».',
+  },
+  {
+    id: 'diana-parting', title: 'В разные стороны',
+    alt: 'Серёжа идёт к камере с лёгкой улыбкой. В глубине перехода Диана уходит в противоположную сторону, спиной к камере.',
+    line: 'Поворачиваю к своей лестнице. Диана идёт к другому выходу, а я всё ещё улыбаюсь.',
+  },
+  {
+    id: 'diana-smiles', title: 'До завтра',
+    alt: 'Экран разделён пополам. На крупных планах Диана и Серёжа искренне улыбаются, предвкушая завтра.',
+    line: 'Скорее бы завтра.',
+    ending: 'first-step',
+    endCard: 'Начало положено...',
+    endCardLang: 'ru',
+  },
+];
+
 const endings = [
   { id: 'game-over', number: 1, title: 'Скончался', art: 'phone-game-over', branch: 'home-phone' },
   { id: 'time-loop', number: 2, title: 'Конец или нет?!...', art: 'phone-loop', branch: 'home-phone' },
   { id: 'present', number: 3, title: 'Достигнуто настоящее', art: 'shift-present', branch: 'shift-rise' },
+  { id: 'first-step', number: 4, title: 'Начало положено...', art: 'diana-smiles', branch: 'home-phone', intermediate: true },
 ];
 
 const phoneRounds = [
@@ -215,7 +278,15 @@ const scenes = {
   'phone-chat': {
     title: 'Переписка с Дианой', art: 'phone-chat', prop: 'chat',
     alt: 'Серёжа улыбается, глядя в телефон.',
-    line: 'Смотрю на экран. Диана ответила.',
+    line: 'Смотрю на экран. Диана прислала сердечко.',
+    next: 'phone-chat-tomorrow',
+  },
+  'phone-chat-tomorrow': {
+    title: 'Договорились на завтра', art: 'phone-chat', prop: 'chat',
+    alt: 'Серёжа смотрит на новое сообщение Дианы.',
+    line: 'Следом приходит ответ на моё приглашение.',
+    dianaReply: 'Хорошо, давай завтра погуляем',
+    next: 'diana-next-day',
   },
   'phone-loop': {
     title: 'Конец или нет?!...', art: 'phone-loop',
@@ -241,10 +312,12 @@ for (const [index, stop] of workTrip.entries()) {
   scenes[stop.art] = { ...stop, alt: stop.title, routeIndex: index, next: workTrip[index + 1]?.art ?? doorShift[0].id };
 }
 
-for (const [index, { id, ...scene }] of doorShift.entries()) {
-  scenes[id] = {
-    ...scene,
-    art: scene.intertitle || scene.callStage !== undefined ? undefined : scene.art ?? id,
-    next: doorShift[index + 1]?.id,
-  };
+for (const chapter of [doorShift, dianaDay]) {
+  for (const [index, { id, ...scene }] of chapter.entries()) {
+    scenes[id] = {
+      ...scene,
+      art: scene.intertitle || scene.callStage !== undefined ? undefined : scene.art ?? id,
+      next: chapter[index + 1]?.id,
+    };
+  }
 }

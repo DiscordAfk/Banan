@@ -127,6 +127,11 @@ function unlockEnding(id) {
   }
 }
 
+function endingLabel(result) {
+  const type = result.intermediate ? 'Промежуточная концовка' : 'Концовка';
+  return `${type} #${result.number}`;
+}
+
 function endingCard(result, unlocked, headingTag, preview = false) {
   const card = document.createElement('article');
   card.className = 'result-card';
@@ -146,7 +151,7 @@ function endingCard(result, unlocked, headingTag, preview = false) {
   info.className = 'result-info';
   const number = document.createElement('p');
   number.className = 'genre';
-  number.textContent = `Концовка #${result.number}`;
+  number.textContent = endingLabel(result);
   const title = document.createElement(headingTag);
   title.textContent = unlocked ? result.title : hiddenEndingTitle;
   info.append(number, title);
@@ -155,7 +160,7 @@ function endingCard(result, unlocked, headingTag, preview = false) {
     const trigger = document.createElement('button');
     trigger.className = 'result-preview-trigger';
     trigger.type = 'button';
-    trigger.setAttribute('aria-label', `Увеличить изображение: концовка #${result.number} «${result.title}»`);
+    trigger.setAttribute('aria-label', `Увеличить изображение: ${endingLabel(result).toLowerCase()} «${result.title}»`);
     trigger.setAttribute('aria-haspopup', 'dialog');
     trigger.addEventListener('click', () => showEndingPreview(result));
     card.append(trigger);
@@ -172,7 +177,7 @@ function renderAchievements() {
 }
 
 function showEndingPreview(result) {
-  endingPreviewTitle.textContent = `Концовка #${result.number} «${result.title}»`;
+  endingPreviewTitle.textContent = `${endingLabel(result)} «${result.title}»`;
   endingPreviewArt.src = artPath(result.art);
   endingPreviewArt.alt = scenes[result.art].alt;
   endingPreview.showModal();
@@ -192,18 +197,25 @@ function renderStoryEndings() {
   }
 }
 
-function renderDianaChat() {
+function renderDianaChat(reply) {
   const makeMessage = (text, fromDiana = false) => {
     const message = document.createElement('li');
     message.className = fromDiana ? 'chat-incoming' : 'chat-outgoing';
     message.textContent = text;
-    if (fromDiana) message.setAttribute('aria-label', 'Диана отправила красное сердце');
     return message;
   };
-  chatMessages.replaceChildren(
-    ...phoneRounds.map(({ message }) => makeMessage(message)),
-    makeMessage('❤️', true),
-  );
+  const heart = makeMessage('❤️', true);
+  heart.setAttribute('aria-label', 'Диана отправила красное сердце');
+  chatMessages.replaceChildren(...phoneRounds.map(({ message }) => makeMessage(message)), heart);
+  if (reply) {
+    const message = makeMessage('', true);
+    const quote = document.createElement('blockquote');
+    quote.textContent = phoneRounds.at(-1).message;
+    const answer = document.createElement('p');
+    answer.textContent = reply;
+    message.replaceChildren(quote, answer);
+    chatMessages.append(message);
+  }
 }
 
 function addChoice(label, onClick) {
@@ -316,6 +328,7 @@ function artPath(art) {
   if (['wake', 'coffee', 'tea'].includes(art)) folder = '';
   if (art.startsWith('phone-')) folder = 'endings/';
   if (art.startsWith('shift-')) folder = 'shift/';
+  if (art.startsWith('diana-')) folder = 'diana/';
   return `assets/${folder}${art}.webp`;
 }
 
@@ -393,7 +406,9 @@ function renderScene(key, { phone, remember = true } = {}) {
     const result = endings.find(({ id }) => id === scene.ending);
     endingAward.replaceChildren(endingCard(result, true, 'h2'));
   }
-  if (scene.prop === 'chat') renderDianaChat();
+  if (scene.prop === 'chat') renderDianaChat(scene.dianaReply);
+  scenePicture.classList.toggle('is-dull-view', scene.prop === 'dull-view');
+  scenePicture.classList.toggle('is-rain-reveal', scene.prop === 'rain-reveal');
   const onRoute = scene.routeIndex !== undefined;
   scenePicture.classList.toggle('is-route', onRoute);
   routeMap.hidden = !onRoute;
@@ -490,6 +505,7 @@ continueButton.addEventListener('click', () => {
   sceneHistory.push(activePosition);
   updateSceneBack();
   endingTitle.textContent = activeScene.endCard ?? 'Soon ...';
+  endingTitle.lang = activeScene.endCardLang ?? 'en';
   showScreen('ending');
   endingTitle.focus();
 });
