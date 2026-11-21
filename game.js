@@ -23,6 +23,8 @@ const workCall = document.querySelector('#work-call');
 const workCallMessages = workCall.querySelectorAll('[data-call-message]');
 const workCallDesigner = document.querySelector('#work-call-designer');
 const workCallProgrammer = document.querySelector('#work-call-programmer');
+const workCallStreamLabel = document.querySelector('#work-call-stream-label');
+const workCallLiveBadges = workCall.querySelectorAll('.work-call-live');
 const choices = document.querySelector('#choices');
 const continueButton = document.querySelector('#continue');
 const sceneBackButtons = document.querySelectorAll('[data-scene-back]');
@@ -76,6 +78,8 @@ const blenderLaunch = document.querySelector('#blender-launch');
 const blenderWorkspace = document.querySelector('#blender-workspace');
 const blenderChat = document.querySelector('#blender-chat');
 const blenderDraft = document.querySelector('#blender-draft');
+const blenderDimaScreen = document.querySelector('#blender-dima-screen');
+const blenderModelProgress = document.querySelector('#blender-model-progress');
 
 const endingsStorageKey = 'minigames.seryozha.endings';
 const achievementStoragePrefix = 'minigames.seryozha.';
@@ -587,16 +591,19 @@ function renderIntertitle(scene) {
   intertitleAudio.currentTime = 0;
 }
 
-function renderWorkCall(stage) {
+function renderWorkCall({ callStage: stage, callGroup: group }) {
   workCall.hidden = stage === undefined;
   if (workCall.hidden) return;
 
   for (const message of workCallMessages) {
     const cue = scenes[message.dataset.callMessage];
-    message.hidden = cue.callStage > stage;
+    message.hidden = cue.callGroup !== group || cue.callStage > stage;
     message.querySelector('span').textContent = cue.line;
   }
-  workCallProgrammer.classList.toggle('work-person-speaking', stage === 1);
+  const bothLive = group === 'blender' && stage >= 2;
+  workCallStreamLabel.textContent = bothLive ? 'Две демонстрации Blender' : 'Демонстрация экрана';
+  for (const badge of workCallLiveBadges) badge.hidden = !bothLive;
+  workCallProgrammer.classList.toggle('work-person-speaking', stage === 1 || stage === 3);
   workCallDesigner.classList.toggle('work-person-speaking', stage === 2);
 }
 
@@ -623,13 +630,22 @@ function renderScene(key, { phone, remember = true } = {}) {
   updateSceneBack();
   if (remember && scene.options) rememberDecision(key);
   renderIntertitle(scene);
-  renderWorkCall(scene.callStage);
+  renderWorkCall(scene);
   const blenderStage = scene.blenderStage;
   blenderLaunch.hidden = blenderStage !== 'launch';
   blenderWorkspace.hidden = blenderStage !== 'workspace';
   blenderChat.hidden = blenderStage !== 'chat' && blenderStage !== 'draft';
   blenderDraft.hidden = blenderStage !== 'draft';
+  blenderDimaScreen.hidden = blenderStage !== 'shorts' && blenderStage !== 'cube';
+  blenderDimaScreen.dataset.focus = blenderStage ?? '';
+  blenderModelProgress.hidden = scene.modelProgress === undefined;
+  if (!blenderModelProgress.hidden) {
+    const progress = blenderModelProgress.querySelector('progress');
+    progress.value = scene.modelProgress;
+    blenderModelProgress.querySelector('span').textContent = `${scene.modelProgress}%`;
+  }
   scenePicture.classList.toggle('has-blender-screen', Boolean(blenderStage));
+  scenePicture.classList.toggle('is-blender-twitch', scene.prop === 'blender-eye-twitch');
   scenePicture.hidden = Boolean(scene.intertitle) || !workCall.hidden;
   thoughtBubble.hidden = !scene.thought;
   thoughtBubble.classList.toggle('thought-angry', Boolean(scene.thought?.angry));

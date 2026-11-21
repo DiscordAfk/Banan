@@ -1412,6 +1412,7 @@ h1, h2, h3, p { margin: 0; }
   color: #fcf6ff;
   font-size: clamp(.75rem, 2vw, .95rem);
 }
+.work-call-live { color: var(--person-glow); font-size: .73rem; }
 .work-call-tiles .work-person-speaking {
   border-color: var(--person-glow);
   box-shadow: inset 0 0 0 1px var(--person-glow);
@@ -1431,6 +1432,80 @@ h1, h2, h3, p { margin: 0; }
 .work-call-lines li:first-child { border-inline-start-color: var(--call-mint); }
 .work-call-lines strong { color: #d3bafa; font-size: .75rem; }
 .work-call-lines li:first-child strong { color: var(--call-mint); }
+
+.blender-model-progress {
+  position: absolute;
+  right: clamp(.55rem, 3vw, 1.5rem);
+  bottom: clamp(.55rem, 3vw, 1.5rem);
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .55rem .75rem;
+  border: 1px solid #b58cf4;
+  background: #211433;
+  color: #f1ddff;
+  font: .72rem/1 var(--pixel);
+}
+.blender-model-progress progress { width: clamp(3rem, 16vw, 9rem); height: .6rem; accent-color: #c793ff; }
+.blender-dima-screen .blender-toolbar > span { color: #a9ecc9; }
+.blender-windows { display: grid; grid-template-columns: 1fr 1fr; min-width: 0; }
+.blender-window { min-width: 0; background: #19121f; transition: filter .2s ease; }
+.blender-window h3 {
+  margin: 0;
+  padding: .55rem .6rem;
+  border-bottom: 1px solid #695483;
+  background: #2d2240;
+  color: #f3e7ff;
+  font: clamp(.55rem, 1.8vw, .85rem)/1.4 var(--pixel);
+  overflow-wrap: anywhere;
+}
+.blender-window-shorts { border-left: 2px solid #8566a5; }
+.blender-windows .blender-viewport { min-height: clamp(14rem, 43vw, 26rem); }
+.blender-windows .blender-cube { width: clamp(3rem, 13vw, 7rem); }
+.blender-dima-screen[data-focus='shorts'] .blender-window-cube,
+.blender-dima-screen[data-focus='cube'] .blender-window-shorts { filter: brightness(.6); }
+.blender-shorts-viewport {
+  position: relative;
+  width: min(100%, 15rem);
+  height: clamp(14rem, 43vw, 26rem);
+  margin-inline: auto;
+  overflow: hidden;
+}
+.blender-shorts-reel { height: 200%; }
+.blender-short {
+  display: grid;
+  align-items: end;
+  height: 50%;
+  padding: .65rem;
+  background-size: cover;
+  background-position: center;
+  color: white;
+}
+.blender-short span { width: fit-content; padding: .35rem; background: #170e26dc; font-size: clamp(.65rem, 1.7vw, .9rem); }
+.blender-short-forest { background-image: url('assets/route/blender-library.webp'); background-position: 72% center; }
+.blender-short-rooftops { background-image: url('assets/tea.webp'); }
+.blender-dima-screen[data-focus='shorts'] .blender-shorts-reel { animation: blender-scroll-shorts 1.35s .35s ease-in-out both; }
+.blender-dima-screen[data-focus='cube'] .blender-shorts-reel { transform: translateY(-50%); }
+.blender-shorts-next { position: absolute; inset: .45rem .45rem auto auto; padding: .15rem .3rem; background: #1c112bdd; }
+@keyframes blender-scroll-shorts {
+  0%, 65% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+.is-blender-twitch::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  pointer-events: none;
+  clip-path: ellipse(17% 15% at 72% 48%);
+  background: url('assets/route/blender-disbelief.webp') 0 0 / 100% 100% no-repeat;
+  animation: blender-twitch .13s steps(2, end) .22s 3;
+}
+@keyframes blender-twitch { 50% { background-position: 2px -2px; } }
+@media (prefers-reduced-motion: reduce) {
+  .blender-window { transition: none; }
+  .blender-dima-screen[data-focus='shorts'] .blender-shorts-reel { animation: none; }
+  .is-blender-twitch::after { display: none; }
+}
 
 .work-call-members {
   min-width: 0;

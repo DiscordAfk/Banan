@@ -609,6 +609,64 @@ const scenes = {
     alt: 'Палец Серёжи завис над клавишей Enter на клавиатуре с фиолетовой подсветкой.',
     line: 'Палец уже над Enter. В ту же секунду раздаётся звонок.',
     sound: 'assets/route/blender-call.mp3', loopSound: true,
+    next: 'blender-channel',
+  },
+  'blender-channel': {
+    title: 'В голосовом канале', callStage: 0, callGroup: 'blender',
+    line: 'Принимаю звонок. В канале уже Дима.', next: 'blender-dima-ready',
+  },
+  'blender-dima-ready': {
+    title: 'Дима заряжен', callStage: 1, callGroup: 'blender', speaker: 'Дима',
+    line: 'Я сегодня прям заряжен моделировать. Никуда не уйду, пока не сделаю хотя бы несколько диорам!',
+    next: 'blender-share-both',
+  },
+  'blender-share-both': {
+    title: 'Две демонстрации', callStage: 2, callGroup: 'blender',
+    line: 'Давай оба расшарим Blender. Будем смотреть, у кого что получается.',
+    next: 'blender-reference',
+  },
+  'blender-reference': {
+    title: 'Референс на двоих', art: 'blender-tower-reference',
+    alt: 'Общий референс: каменная башня на островке, синяя крыша, тёплые окна и деревянный мостик.',
+    line: 'Выбираем одну и ту же диораму. Башня, синяя крыша, камни, мостик. По ней оба и моделируем.',
+    next: 'blender-warm-up',
+  },
+  'blender-warm-up': {
+    title: 'Разминка', art: 'blender-warm-up', speaker: 'Серёжа и Дима',
+    alt: 'Разделённый кадр: Серёжа и Дима в своих комнатах одновременно разминают кисти перед клавиатурами.',
+    line: 'Ну что ж, за работу!', next: 'blender-blockout',
+  },
+  'blender-blockout': {
+    title: 'Первые формы', art: 'blender-blockout',
+    alt: 'Серёжа сосредоточенно моделирует в Blender. На экране серый набросок башни с первыми деталями.',
+    line: 'Собираю остров и башню из простых форм. Подгоняю пропорции, потом берусь за крышу.', next: 'blender-progress',
+  },
+  'blender-progress': {
+    title: 'Чуть больше половины', art: 'blender-progress', modelProgress: 60,
+    alt: 'За окном потемнело. На мониторе Серёжи уже есть детализированная башня с частично готовой синей крышей.',
+    line: 'За работой не замечаю, как темнеет. Сделал процентов шестьдесят. Интересно, как там Дима?',
+    continueLabel: 'Смотреть экран Димы', next: 'blender-dima-shorts',
+  },
+  'blender-dima-shorts': {
+    title: 'Правое окно', art: 'home-blender', blenderStage: 'shorts',
+    alt: 'Серёжа смотрит на демонстрацию экрана Димы.',
+    line: 'Открываю его демонстрацию. Справа Дима листает YouTube Shorts.', next: 'blender-dima-cube',
+  },
+  'blender-dima-cube': {
+    title: 'Левое окно', art: 'home-blender', blenderStage: 'cube',
+    alt: 'Серёжа переводит взгляд на левую часть демонстрации Димы.',
+    line: 'Перевожу взгляд налево, в Blender. Там стартовый куб. Всё тот же самый стартовый куб.',
+    next: 'blender-disbelief',
+  },
+  'blender-disbelief': {
+    title: 'Погоди-ка', art: 'blender-disbelief', prop: 'blender-eye-twitch',
+    alt: 'Крупный план: Серёжа ошарашенно смотрит в экран, у него подёргивается глаз.',
+    line: 'Эммм… А-а-а… Погоди-ка, Дима, ты что, ничего не сделал за всё это время? Серьёзно?',
+    next: 'blender-dima-reply',
+  },
+  'blender-dima-reply': {
+    title: 'Дима отвечает', callStage: 3, callGroup: 'blender', speaker: 'Дима',
+    line: 'Почему же?',
   },
   'home-phone': {
     title: '?????????', art: 'home-phone', prop: 'phone',

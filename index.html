@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=blender-call">
-  <script src="story.js?v=blender-call" defer></script>
+  <link rel="stylesheet" href="style.css?v=blender-diorama">
+  <script src="story.js?v=blender-diorama" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=blender-call" defer></script>
+  <script src="game.js?v=blender-diorama" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -212,6 +212,9 @@
         <div class="story-picture" id="story-picture">
           <canvas id="route-map" width="960" height="540" role="img" hidden></canvas>
           <img id="scene-art" alt="">
+          <div id="blender-model-progress" class="blender-model-progress" hidden>
+            <progress value="60" max="100" aria-label="Готовность модели Серёжи"></progress><span>60%</span>
+          </div>
           <section id="blender-launch" class="blender-screen blender-launch" aria-label="Библиотека Steam" hidden>
             <div class="blender-launch-content">
               <p class="blender-eyebrow">Библиотека Steam</p>
@@ -244,6 +247,29 @@
               <li><time datetime="2026-11-21T11:14">Сегодня · 11:14</time><span>Blender?</span></li>
             </ol>
             <p class="blender-compose"><span id="blender-draft" hidden>пошли</span></p>
+          </section>
+          <section id="blender-dima-screen" class="blender-screen blender-dima-screen" aria-labelledby="blender-dima-screen-title" hidden>
+            <header class="blender-toolbar"><strong id="blender-dima-screen-title">Экран Димы</strong><span>В эфире</span></header>
+            <div class="blender-windows">
+              <section class="blender-window blender-window-cube" aria-label="В Blender один стартовый куб">
+                <h3>Blender</h3>
+                <div class="blender-viewport" aria-hidden="true">
+                  <div class="blender-grid"></div>
+                  <div class="blender-cube"></div>
+                  <span>Cube</span>
+                </div>
+              </section>
+              <section class="blender-window blender-window-shorts" aria-label="Дима листает YouTube Shorts">
+                <h3>YouTube Shorts</h3>
+                <div class="blender-shorts-viewport" aria-hidden="true">
+                  <div class="blender-shorts-reel">
+                    <div class="blender-short blender-short-forest"><span>Енот нашёл секретную тропу</span></div>
+                    <div class="blender-short blender-short-rooftops"><span>Рассвет над крышами</span></div>
+                  </div>
+                  <span class="blender-shorts-next">↓</span>
+                </div>
+              </section>
+            </div>
           </section>
           <div id="ozon-nametags" class="ozon-nametags" aria-hidden="true" hidden>
             <span class="ozon-nametag ozon-nametag-angel">Димеург</span>
@@ -291,20 +317,25 @@
               <ul class="work-call-tiles" aria-label="В эфире">
                 <li class="work-call-stream">
                   <span class="work-call-stream-icon" aria-hidden="true"><i></i><i></i><i></i></span>
-                  <span>Демонстрация экрана</span>
+                  <span id="work-call-stream-label">Демонстрация экрана</span>
                 </li>
                 <li id="work-call-designer" class="work-person work-person-designer">
                   <img src="assets/shift/avatar-designer.webp" alt="" width="68" height="68" loading="lazy">
                   <strong>Лучший дизайнер</strong>
+                  <span class="work-call-live" hidden>Blender · в эфире</span>
                 </li>
                 <li id="work-call-programmer" class="work-person work-person-programmer">
                   <img src="assets/shift/avatar-programmer.webp" alt="" width="68" height="68" loading="lazy">
                   <strong>Лучший программист</strong>
+                  <span class="work-call-live" hidden>Blender · в эфире</span>
                 </li>
               </ul>
               <ol class="work-call-lines" aria-label="Разговор">
                 <li data-call-message="shift-idea" hidden><strong>Лучший программист</strong><span></span></li>
                 <li data-call-message="shift-agree" hidden><strong>Лучший дизайнер</strong><span></span></li>
+                <li data-call-message="blender-dima-ready" hidden><strong>Лучший программист</strong><span></span></li>
+                <li data-call-message="blender-share-both" hidden><strong>Лучший дизайнер</strong><span></span></li>
+                <li data-call-message="blender-dima-reply" hidden><strong>Лучший программист</strong><span></span></li>
               </ol>
             </div>
             <aside class="work-call-members">
