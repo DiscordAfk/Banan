@@ -810,7 +810,9 @@ function renderScene(key, { phone, remember = true } = {}) {
   scenePicture.classList.toggle('has-blender-screen', Boolean(blenderStage || scene.dioramaView));
   scenePicture.classList.toggle('is-blender-twitch', scene.prop === 'blender-eye-twitch');
   historyClassroomPlates.hidden = scene.prop !== 'history-doors';
-  historyInformaticsPlate.hidden = scene.prop !== 'history-informatics-door';
+  const seesInformaticsPlaque = scene.prop === 'history-informatics-plaque';
+  historyInformaticsPlate.hidden = !seesInformaticsPlaque && scene.prop !== 'history-informatics-door';
+  historyInformaticsPlate.classList.toggle('is-closeup', seesInformaticsPlaque);
   historyLockscreen.hidden = scene.prop !== 'history-date';
   scenePicture.hidden = Boolean(scene.intertitle) || !workCall.hidden || !nightVoice.hidden;
   thoughtBubble.hidden = !scene.thought;

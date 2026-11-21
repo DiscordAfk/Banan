@@ -1857,6 +1857,12 @@ h1, h2, h3, p { margin: 0; }
 .history-plate-history { left: 89%; top: 22%; }
 .history-plate-math { left: 74%; top: 29%; }
 .history-plate-computing { left: 88%; top: 14%; }
+.history-plate-computing.is-closeup {
+  left: 76.6%;
+  top: 33%;
+  font-size: clamp(.38rem, 1.3vw, .86rem);
+  transform: translate(-50%, -50%) rotate(-3deg);
+}
 .history-lockscreen {
   position: absolute;
   z-index: 2;
