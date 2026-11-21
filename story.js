@@ -391,10 +391,10 @@ const dianaDay = [
 ];
 
 const endings = [
-  { id: 'game-over', number: 1, title: 'Скончался', art: 'phone-game-over', branch: 'home-phone' },
-  { id: 'time-loop', number: 2, title: 'Конец или нет?!...', art: 'phone-loop', branch: 'home-phone' },
-  { id: 'present', number: 3, title: 'Достигнуто настоящее', art: 'shift-present', branch: 'shift-rise' },
-  { id: 'first-step', number: 4, title: 'Начало положено...', art: 'diana-smiles', branch: 'home-phone', intermediate: true },
+  { id: 'game-over', number: 1, title: 'Скончался', art: 'phone-game-over', branch: 'home-phone', audio: 'assets/rewards/ending-1.mp3' },
+  { id: 'time-loop', number: 2, title: 'Конец или нет?!...', art: 'phone-loop', branch: 'home-phone', audio: 'assets/rewards/ending-2.mp3' },
+  { id: 'present', number: 3, title: 'Достигнуто настоящее', art: 'shift-present', branch: 'shift-rise', audio: 'assets/rewards/ending-3.mp3' },
+  { id: 'first-step', number: 4, title: 'Начало положено...', art: 'diana-smiles', branch: 'home-phone', audio: 'assets/rewards/ending-4.mp3', intermediate: true },
 ];
 
 const phoneRounds = [

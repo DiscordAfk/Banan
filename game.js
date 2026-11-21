@@ -8,6 +8,7 @@ const endingNote = document.querySelector('#ending-note');
 const sceneArt = document.querySelector('#scene-art');
 const stormLight = document.querySelector('#storm-light');
 const sceneAudio = document.querySelector('#scene-audio');
+const rewardAudio = document.querySelector('#reward-audio');
 const doorNameplate = document.querySelector('#door-nameplate');
 const scenePicture = document.querySelector('#story-picture');
 const routeCaption = document.querySelector('#route-caption');
@@ -151,12 +152,16 @@ function unlockEnding(id) {
 }
 
 function unlockAchievement(id) {
+  if (unlockedAchievements.has(id)) return false;
   unlockedAchievements.add(id);
   try {
-    localStorage.setItem(achievementStoragePrefix + id, '1');
+    const key = achievementStoragePrefix + id;
+    if (localStorage.getItem(key) === '1') return false;
+    localStorage.setItem(key, '1');
   } catch {
     // The achievement remains unlocked in the current visit.
   }
+  return true;
 }
 
 function rewardLabel(result) {
@@ -223,10 +228,10 @@ function renderAchievements() {
 function renderAchievementAward(id) {
   const achievement = achievements.find((result) => result.id === id);
   achievementAward.hidden = !achievement?.showOnScene;
-  if (!achievement) return;
+  if (!achievement) return false;
 
-  unlockAchievement(achievement.id);
   if (achievement.showOnScene) achievementAward.replaceChildren(rewardCard(achievement, true, 'h2'));
+  return unlockAchievement(achievement.id);
 }
 
 function showEndingPreview(result) {
@@ -344,6 +349,7 @@ function advancePhoneRound() {
 }
 
 function showScreen(screen) {
+  if (screen === 'catalog' || screen === 'menu') rewardAudio.pause();
   if (screen !== 'story') {
     clearTimeout(morningProfileTimer);
     morningProfileTimer = undefined;
@@ -594,6 +600,7 @@ function renderSceneTitle(scene) {
 }
 
 function renderScene(key, { phone, remember = true } = {}) {
+  rewardAudio.pause();
   const scene = scenes[key];
   activeScene = scene;
   activePosition = { key };
@@ -631,12 +638,12 @@ function renderScene(key, { phone, remember = true } = {}) {
   }
   scenePicture.classList.toggle('has-ending-award', Boolean(scene.ending));
   scenePicture.classList.toggle('has-chat', scene.prop === 'chat');
-  if (scene.ending) {
-    unlockEnding(scene.ending);
-    const result = endings.find(({ id }) => id === scene.ending);
-    endingAward.replaceChildren(rewardCard(result, true, 'h2'));
+  const endingResult = endings.find(({ id }) => id === scene.ending);
+  if (endingResult) {
+    unlockEnding(endingResult.id);
+    endingAward.replaceChildren(rewardCard(endingResult, true, 'h2'));
   }
-  renderAchievementAward(scene.achievement);
+  const earnedAchievement = renderAchievementAward(scene.achievement);
   if (scene.prop === 'chat') renderDianaChat(scene.dianaReply);
   scenePicture.classList.toggle('is-dull-view', scene.prop === 'dull-view');
   scenePicture.classList.toggle('is-rain-reveal', scene.prop === 'rain-reveal');
@@ -679,6 +686,13 @@ function renderScene(key, { phone, remember = true } = {}) {
     if (sceneAudio.getAttribute('src') !== sound) sceneAudio.src = sound;
     sceneAudio.currentTime = 0;
     sceneAudio.play().catch(() => {});
+  }
+  const rewardSound = endingResult?.audio ?? (earnedAchievement ? 'assets/rewards/achievement-fanfare.mp3' : null);
+  if (rewardSound) {
+    if (rewardAudio.getAttribute('src') !== rewardSound) rewardAudio.src = rewardSound;
+    rewardAudio.volume = sound ? 0.4 : 1;
+    rewardAudio.currentTime = 0;
+    rewardAudio.play().catch(() => {});
   }
   if (onRoute) {
     routeStep.textContent = `${scene.routeIndex + 1} / ${workTrip.length}`;
