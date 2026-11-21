@@ -13,7 +13,8 @@ const backInTime = { id: 'back-in-time', title: 'Назад в прошлое', 
 const ozonDeltarune = { id: 'ozon-deltarune', title: 'На#!$ Deltarune!!!', art: 'ozon-deltarune', crossed: true, showOnScene: true };
 const ozonCrossroads = { id: 'ozon-crossroads', title: 'Ад или Рай', art: 'ozon-crossroads-award', fullArt: true, showOnScene: true };
 const ozonDoubt = { id: 'ozon-doubt', title: 'Правильный выбор или нет...?', art: 'ozon-demon-grin-kirill', fullArt: true, showOnScene: true };
-const achievements = [backInTime, ozonDeltarune, ozonCrossroads, ozonDoubt];
+const newDay = { id: 'new-day', title: 'Новый день', art: 'blender-neva-sunrise', fullArt: true, showOnScene: true };
+const achievements = [backInTime, ozonDeltarune, ozonCrossroads, ozonDoubt, newDay];
 
 const characters = {
   seryozha: { name: 'Серёжа', art: 'profile-seryozha', keyword: 'Экспонат', description: 'Главный герой, студент ГУАП. Любит компьютерные игры, среди которых War Thunder, Hearts of Iron IV (HOI4), Hollow Knight, Hollow Knight: Silksong, Rain World и Factorio. Интересуется 3D-моделированием в Blender. Пока сам не понимает, ищет ли девушку. Подрабатывает установкой дверей.' },
@@ -21,6 +22,8 @@ const characters = {
   kirill: { name: 'Кирилл', art: 'profile-kirill', keyword: 'Душнила', description: 'Лысый школьный друг Серёжи. Вместе учились со 2-го по 11-й класс. Под конец 11-го класса играли в школе в карты и покер. Кирилл обожает Deltarune, у него есть девушка. С тех пор как началась учёба в ГУАП, он почти перестал играть с Серёжей и Димой в компьютерные игры.' },
   dima: { name: 'Дима', art: 'profile-dima', keyword: 'Лень', description: 'Школьный друг Серёжи с 1-го по 11-й класс. Ленивый, любит компьютерные игры и пересмотрел кучу аниме. Серёжа научил его прогуливать, и теперь Дима пропускает занятия даже чаще своего наставника. Однажды Серёжа одним ударом в живот отправил его в космос.' },
   nikita: { name: 'Никита', art: 'profile-nikita', keyword: 'Scrap', description: 'Школьный друг Серёжи с 10-го по 11-й класс. Увлекается физикой и всем, что с ней связано. Сам собрал радиоуправляемый самолёт. Его любимая игра — Scrap Mechanic. В компании он главный пропагандист Scrap Mechanic и Vintage Story. В школе они с Серёжей играли в карты и покер. Никита поступил в ЛЭТИ, и с начала учёбы о нём почти ничего не слышно.' },
+  maxim: { name: 'Максим', art: 'profile-maxim', keyword: 'Девушки', description: 'Школьный друг Серёжи со 2-го по 11-й класс. Виделись редко: оба часто пропускали школу, каждый по своим причинам. Максим вечно пропадает и никогда не отвечает на сообщения Серёжи. Сам позвал всех поиграть, а собраться не может уже целый год.' },
+  denis: { name: 'Денис', art: 'profile-denis', keyword: 'палка', description: 'Рост 1,90 м и 60 кг чистой мощи. Денис — друг двоюродного брата Димы по линии отчима. Однажды познакомился с Серёжей, и у них сразу совпали вкусы в играх. Денис заставляет Серёжу строить Глебу, а Серёжа в ответ заставляет строить Глебу Дениса. Игр у Дениса даже больше, чем у Серёжи.' },
 };
 
 const kirillAtUniversity = [
@@ -387,6 +390,7 @@ const dianaDay = [
     endCard: 'Начало положено...',
     endCardNote: 'Арка успешного Серёжи:\nОткрыта',
     endCardLang: 'ru',
+    afterEndCard: 'night-choice',
   },
 ];
 
@@ -761,6 +765,7 @@ const scenes = {
   'blender-facepalm': {
     title: 'Без слов', art: 'blender-facepalm',
     alt: 'Серёжа опускает голову, упирается локтями в стол и закрывает лицо обеими руками.',
+    next: 'blender-proud',
   },
   'home-phone': {
     title: '?????????', art: 'home-phone', prop: 'phone',
@@ -828,5 +833,84 @@ for (const chapter of [doorShift, dianaDay, kirillAtUniversity, ozonEpisode, ozo
       art: scene.intertitle || scene.callStage !== undefined ? undefined : scene.art ?? id,
       next: scene.options ? undefined : chapter[index + 1]?.id,
     };
+  }
+}
+
+const nightRoster = [
+  { id: 'seryozha', nick: 'Дианадроч', avatar: 'assets/shift/avatar-designer.webp' },
+  { id: 'denis', nick: 'Chiku', avatar: 'assets/route/night-avatar-denis.webp' },
+  { id: 'dima', nick: 'долдол', avatar: 'assets/shift/avatar-programmer.webp' },
+  { id: 'maxim', nick: 'Just', avatar: 'assets/route/night-avatar-maxim.webp' },
+  { id: 'nikita', nick: 'Bardur', avatar: 'assets/route/night-avatar-nikita.webp' },
+  { id: 'kirill', nick: 'Пидорас', avatar: 'assets/route/night-avatar-kirill.webp' },
+];
+
+const nightGames = [
+  ['MIMESIS', 'night-game-mimesis'], ['Counter-Strike', 'night-game-cs'],
+  ['Scrap Mechanic', 'night-game-scrap'], ['Deltarune', 'night-game-deltarune'],
+  ['R.E.P.O.', 'night-game-repo'], ['Hearts of Iron IV', 'night-game-hoi'], ['War Thunder', 'night-game-war'],
+];
+
+const blenderDawn = [
+  { id: 'blender-proud', art: 'blender-dima-plebeian', title: 'А вот диорама', speaker: 'Дима', line: 'Ну, с этим не пошло. Но вот над диорамой я постарался на славу!' },
+  { id: 'blender-lift-head', art: 'blender-lift-head', title: 'Приподнимаю голову', line: 'Слышу в голосе Димы такую гордость, что всё-таки выглядываю из-за ладоней.' },
+  { id: 'blender-copy-seen', art: 'home-blender', title: 'Знакомая башня', dioramaView: 'copy', line: 'У Димы те же шестьдесят процентов. Те же окна, та же крыша… Да оно всё один в один.' },
+  { id: 'blender-rotate-request', art: 'blender-project-doubt', title: 'Проверка камеры', line: 'Дим, а можешь покрутить камеру?' },
+  { id: 'blender-rotate-reply', art: 'blender-dima-calm', title: 'Конечно', speaker: 'Дима', line: 'Могу. А зачем?' },
+  { id: 'blender-copy-revealed', art: 'home-blender', title: 'Это скриншот', dioramaView: 'selected', line: 'Дима чуть двигает мышкой, и вокруг диорамы появляется рамка. Это скриншот с моей демонстрации.' },
+  { id: 'blender-flashback', title: '6 часов до этого', clockCard: '6 часов до этого' },
+  { id: 'blender-two-cubes', art: 'home-blender', title: 'Одинаковое начало', dioramaView: 'cubes', line: 'Шесть часов назад мы оба открыли Blender и начали с одинакового куба.' },
+  { id: 'blender-five-minutes', art: 'night-dima-desk', title: 'Через 5 минут', timeBadge: 'Через 5 минут', line: 'Серёжа продолжает моделировать. На мониторе Димы уже открыты YouTube Shorts.' },
+  { id: 'blender-many-shorts', art: 'night-dima-desk', title: 'Один ролик за другим', prop: 'shorts-timelapse', line: 'Свет за окном меняется. Дима листает один ролик за другим.' },
+  { id: 'blender-capture', art: 'home-blender', title: 'За 10 минут до проверки', dioramaView: 'capture', line: 'За десять минут до проверки Дима открывает демонстрацию Серёжи и сохраняет её скриншот.' },
+  { id: 'blender-platform-before', art: 'home-blender', title: 'Перед проверкой', dioramaView: 'platform', line: 'Перед проверкой Дима заглядывает в свой проект. За всё время он лишь растянул куб в платформу под башню.' },
+  { id: 'blender-platform-now', art: 'home-blender', title: 'Снова настоящее', dioramaView: 'platform', line: 'Вот как выглядит его настоящая диорама.' },
+  { id: 'blender-double-twitch', art: 'blender-double-twitch', title: 'Оба глаза', prop: 'double-twitch', line: 'У меня теперь дёргаются оба глаза.' },
+  { id: 'blender-room-window', art: 'blender-room-window', title: 'У окна', prop: 'camera-pullback' },
+  { id: 'blender-city-switch', art: 'blender-city-switch', title: 'Петербург с высоты', prop: 'character-switch', line: 'Камера взлетает над городом. В круге персонажей выбор переходит с Серёжи на Никиту.' },
+  { id: 'blender-dump-panorama', art: 'blender-dump-panorama', title: 'Во дворе в центре', prop: 'camera-approach', line: 'Камера опускается в петербургский двор, к баку среди выброшенных холодильников, техники и шкафов.' },
+  { id: 'blender-nikita-shelves', art: 'blender-nikita-shelves', title: 'Удачная находка', line: 'Из-за бака выходит Никита. Под каждой рукой по полочке. Он довольно проходит мимо камеры.' },
+  { id: 'blender-nikita-passing', art: 'blender-nikita-passing', title: 'Две полочки', line: 'Никита проходит вплотную к камере и улыбается своей находке.' },
+  { id: 'blender-neva-sunrise', art: 'blender-neva-sunrise', title: 'Первые лучи', achievement: newDay.id, prop: 'sunrise-rise', line: 'Камера поднимается. Солнце встаёт над водой, и первые лучи ложатся на Петербург.' },
+];
+
+const nightAfterEnding = [
+  { id: 'night-choice', art: 'night-two-rooms', title: 'Перед сном', phoneNote: 'two-chats', line: 'Мы с Дианой уже каждый у себя дома. Она думает: «Сам напишет, он же умный мальчик». Первой писать стесняется. А я очень хочу написать, но боюсь надоедать. И всё же перед сном вдруг не могу усидеть спокойно.', options: [['Написать Диане', 'night-message'], ['Лечь спать', 'night-stop']] },
+  { id: 'night-message', art: 'night-wait-eager', title: 'Привет, спишь?', phoneNote: 'sent', line: 'Решаюсь и отправляю сообщение.' },
+  { id: 'night-five-before', title: '5 минут до этого', clockCard: '5 минут до этого' },
+  { id: 'night-diana-put-down', art: 'night-diana-put-down', title: 'Пора спать', speaker: 'Диана', line: 'Наверное, сегодня уже не напишет. Кладу телефон на тумбочку.' },
+  { id: 'night-diana-alert', art: 'night-diana-alert', title: 'Экран загорелся', speaker: 'Диана', phoneNote: 'news', line: 'Замечаю свет и радостно хватаю телефон. Открываю уведомление. Просто новость об опасности БПЛА в Петербурге.' },
+  { id: 'night-diana-disappointed', art: 'night-diana-disappointed', title: 'Спокойной ночи', speaker: 'Диана', line: 'Кладу телефон обратно и, немного расстроившись, засыпаю.' },
+  { id: 'night-diana-overhead', art: 'night-diana-overhead', title: 'Сообщение пришло', line: 'Когда сообщение Серёжи приходит, Диана уже спит. Телефон на тумбочке вспыхивает ярким белым светом.' },
+  { id: 'night-diana-focus', art: 'night-diana-focus', title: 'Не прочитано', prop: 'focus-diana', phoneNote: 'received', line: 'Фокус с сообщения переходит на спящую Диану. Она всё ещё чуть хмурится во сне.' },
+  { id: 'night-wait-five', art: 'night-wait-eager', title: 'Пять минут', timeBadge: '5 минут', line: 'Смотрю в телефон и каждые несколько секунд жду ответа.' },
+  { id: 'night-wait-ten', art: 'night-wait-eager', title: 'Десять минут', timeBadge: '10 минут', prop: 'late-wait', line: 'Всё ещё жду, но уже не так нервничаю.' },
+  { id: 'night-wait-half', art: 'night-wait-tired', title: 'Полчаса', timeBadge: '30 минут', line: 'Надежды почти не осталось. Откладываю телефон.' },
+  { id: 'night-wait-hour', art: 'night-wait-tired', title: 'Час спустя', timeBadge: '1 час', line: 'Лежу на спине с руками за головой и смотрю в потолок. Под глазами уже мешки.' },
+  { id: 'night-one-notification', art: 'night-seryozha-focus', title: 'Одно уведомление', prop: 'focus-phone', phoneNote: 'one', line: 'Телефон загорается. Чуть поворачиваю голову. «Точно не она», — думаю и снова смотрю в потолок.' },
+  { id: 'night-letter-d', art: 'night-seryozha-focus', title: 'Д…', sound: 'assets/route/blender-call.mp3', phoneNote: 'letter', line: 'Вдруг звонок. Неужели Диана? Тянусь к телефону. После темноты вижу только первую букву: «Д». Резко отвечаю.' },
+  { id: 'night-denis-answers', art: 'night-seryozha-focus', title: 'Это Денис', speaker: 'Денис', phoneNote: 'denis', sound: 'assets/route/night-denis-line.mp3', line: 'Хуем по лбу не дало? Пошли Глебу строить, заебал.' },
+  { id: 'night-go-to-pc', art: 'home-blender', title: 'За компьютер', line: 'На секунду грустнею. Может, и правда мне сейчас не нужна Диана. Сажусь за компьютер, мы с Денисом решаем зайти в общий голосовой канал.' },
+  { id: 'night-voice-join', title: 'Четыре входа подряд', nightVoice: 'joining', sound: 'assets/route/night-join-sequence.mp3', line: 'Денис уже в канале. Я вяло начинаю: «Прив…» Слышу четыре входа один за другим и открываю окно.' },
+  { id: 'night-voice-seryozha', title: 'Слева направо', nightVoice: 'seryozha', line: 'Глаза останавливаются на моей плитке.' },
+  { id: 'night-voice-denis', title: 'Денис в канале', nightVoice: 'denis', meet: ['denis'], line: 'Перевожу взгляд на Дениса. Уже чуть отпускает.' },
+  { id: 'night-voice-dima', title: 'Предложение Димы', nightVoice: 'dima', meet: ['dima'], speaker: 'Дима', line: 'Ну чё, MIMESIS?' },
+  { id: 'night-voice-maxim', title: 'Предложение Максима', nightVoice: 'maxim', meet: ['maxim'], speaker: 'Максим', line: 'КСочку идём?' },
+  { id: 'night-voice-nikita', title: 'Предложение Никиты', nightVoice: 'nikita', meet: ['nikita'], speaker: 'Никита', line: 'Ооооо, сколько людей! Все в Scrap Mechanic!' },
+  { id: 'night-voice-kirill', title: 'Предложение Кирилла', nightVoice: 'kirill', meet: ['kirill'], speaker: 'Кирилл', line: 'Хе-хе, я тупой дегенелат. Давайте… *шмыгает носом* …Deltarune иглать.' },
+  { id: 'night-friends-smile', art: 'night-friends-smile', title: 'Все собрались', line: 'С каждым новым голосом улыбаюсь всё шире. Наконец смеюсь так, что закрываются глаза. Ребята тоже рады, что все собрались.' },
+  { id: 'night-games-montage', art: 'night-game-mimesis', alt: 'Игровой вечер начинается с MIMESIS.', title: 'До утра', prop: 'night-games', line: 'Сыграли во всё по очереди: MIMESIS, Counter-Strike, Scrap Mechanic, Deltarune, R.E.P.O., HOI4 и War Thunder.' },
+  { id: 'night-goodnight', title: 'Спокойной ночи', nightVoice: 'goodnight', speaker: 'Все', line: 'Сладких снов! Спокойной ночи, ребят!' },
+  { id: 'night-voice-leave', title: 'Все расходятся', nightVoice: 'leaving', sound: 'assets/route/night-leave-sequence.mp3', line: 'Пять звуков выхода подряд, и голоса по одному стихли.' },
+  { id: 'night-voice-alone', title: 'Последний в канале', nightVoice: 'alone', line: 'В канале остался только я.' },
+  { id: 'night-seryozha-sunrise', art: 'night-seryozha-sunrise', title: 'Как раньше', line: 'Улыбаюсь, вспоминая наши старые ночные посиделки. Поворачиваюсь к окну, и первые лучи солнца падают на лицо.' },
+  { id: 'night-seryozha-sleep', art: 'night-seryozha-sleep', title: 'До завтра', line: 'Ложусь в кровать с улыбкой и засыпаю.' },
+];
+
+scenes['night-stop'] = { title: 'Soon ...', onlyEndCard: true };
+
+for (const chapter of [blenderDawn, nightAfterEnding]) {
+  for (const [index, { id, ...scene }] of chapter.entries()) {
+    scenes[id] = { ...scene, next: scene.options ? undefined : chapter[index + 1]?.id };
   }
 }

@@ -82,6 +82,43 @@ const blenderDimaScreen = document.querySelector('#blender-dima-screen');
 const blenderModelProgress = document.querySelector('#blender-model-progress');
 const blenderFiles = document.querySelector('#blender-files');
 const blenderProjectLabels = document.querySelector('#blender-project-labels');
+const dioramaCheck = document.querySelector('#blender-diorama-check');
+const dioramaPhoto = document.querySelector('#diorama-photo');
+const dioramaSelection = document.querySelector('#diorama-selection');
+const dioramaCubes = document.querySelector('#diorama-cubes');
+const dioramaFirstCube = document.querySelector('#diorama-first-cube');
+const dioramaTitle = document.querySelector('#diorama-screen-title');
+const dioramaNote = document.querySelector('#diorama-screen-note');
+const nightClockCard = document.querySelector('#night-clock-card');
+const nightTimeBadge = document.querySelector('#night-time-badge');
+const nightPhoneNote = document.querySelector('#night-phone-note');
+const nightPhoneSource = document.querySelector('#night-phone-source');
+const nightPhoneText = document.querySelector('#night-phone-text');
+const nightPhoneSecond = document.querySelector('#night-phone-second');
+const nightVideoScroll = document.querySelector('#night-video-scroll');
+const nightCharacterSwitch = document.querySelector('#night-character-switch');
+const nightGameName = document.querySelector('#night-game-name');
+const nightVoice = document.querySelector('#night-voice');
+const nightVoiceGrid = document.querySelector('#night-voice-grid');
+const nightVoiceCount = document.querySelector('#night-voice-count');
+const nightReaction = document.querySelector('#night-reaction');
+const endingContinue = document.querySelector('#ending-continue');
+const storyNightStart = document.querySelector('#story-night-start');
+
+const sceneTimers = [];
+let voiceSequence;
+let voiceSequenceFrame;
+const nightJoinTimes = [180, 860, 1540, 2220];
+const nightLeaveTimes = [180, 880, 1580, 2280, 2980];
+const nightPhoneMessages = {
+  'two-chats': ['Telegram · Диана', 'Открыт чат'],
+  sent: ['Telegram · Диана', 'Привет, спишь?'],
+  news: ['Новости Петербурга', 'Объявлена опасность БПЛА'],
+  received: ['Telegram · Серёжа', 'Привет, спишь?'],
+  one: ['Экран блокировки', '1 уведомление'],
+  letter: ['Входящий звонок', 'Д…'],
+  denis: ['Вызов принят', 'Денис'],
+};
 
 const endingsStorageKey = 'minigames.seryozha.endings';
 const achievementStoragePrefix = 'minigames.seryozha.';
@@ -260,6 +297,7 @@ function showEndingPreview(result) {
 function renderStoryRewards() {
   readEndings();
   readAchievements();
+  storyNightStart.hidden = !unlockedEndings.has('first-step');
   for (const branch of [...storyEndingBranches, ...storyAchievementBranches]) {
     const achievementScenes = branch.dataset.storyAchievements?.split(' ');
     const leaves = achievementScenes
@@ -373,6 +411,7 @@ function advancePhoneRound() {
 function showScreen(screen) {
   if (screen === 'catalog' || screen === 'menu') rewardAudio.pause();
   if (screen !== 'story') {
+    clearSceneTimers();
     clearTimeout(morningProfileTimer);
     morningProfileTimer = undefined;
     profileQueue.length = 0;
@@ -408,7 +447,8 @@ function startStory(key, options) {
 
 function goToScene(key, options) {
   sceneHistory.push(activePosition);
-  renderScene(key, options);
+  if (scenes[key].onlyEndCard) showEndCard(scenes[key]);
+  else renderScene(key, options);
 }
 
 function goBackScene() {
@@ -572,7 +612,10 @@ function showCharacterEncounters(key, meet = []) {
 
 function preloadScene(key) {
   const { art, poster } = scenes[key];
-  const path = poster ?? (art && artPath(art));
+  preloadArt(poster ?? (art && artPath(art)));
+}
+
+function preloadArt(path) {
   if (!path || preloadedArt.has(path)) return;
   preloadedArt.add(path);
   new Image().src = path;
@@ -624,8 +667,118 @@ function renderSceneTitle(scene) {
   sceneTitle.replaceChildren(amount.slice(0, -1), digit, scene.title.slice(amount.length));
 }
 
+function clearSceneTimers() {
+  for (const timer of sceneTimers) clearTimeout(timer);
+  sceneTimers.length = 0;
+  cancelAnimationFrame(voiceSequenceFrame);
+  voiceSequence = undefined;
+  continueButton.disabled = false;
+}
+
+function runSceneSequence(times, step) {
+  continueButton.disabled = true;
+  for (const [index, delay] of times.entries()) sceneTimers.push(setTimeout(() => step(index), delay));
+  sceneTimers.push(setTimeout(() => { continueButton.disabled = false; }, times.at(-1) + 850));
+}
+
+function syncVoiceSequence(playback) {
+  const sequence = voiceSequence;
+  const lastCue = sequence.times.at(-1);
+  let index = 0;
+  let fallbackStart;
+  playback.catch(() => { fallbackStart = performance.now(); });
+  const update = (now) => {
+    if (voiceSequence !== sequence) return;
+    const elapsed = fallbackStart === undefined ? sceneAudio.currentTime * 1000 : now - fallbackStart;
+    while (index < sequence.times.length && elapsed >= sequence.times[index]) sequence.step(index++);
+    if (elapsed >= lastCue + 850 || (sceneAudio.ended && index === sequence.times.length)) {
+      continueButton.disabled = false;
+    } else {
+      voiceSequenceFrame = requestAnimationFrame(update);
+    }
+  };
+  voiceSequenceFrame = requestAnimationFrame(update);
+}
+
+function renderNightVoice(mode) {
+  nightVoice.hidden = !mode;
+  if (!mode) return;
+  const focus = nightRoster.findIndex(({ id }) => id === mode);
+  const tiles = nightRoster.map(({ nick, avatar }, index) => {
+    const tile = document.createElement('li');
+    tile.className = 'night-voice-tile';
+    tile.classList.toggle('is-focused', focus === index);
+    tile.classList.toggle('is-dimmed', focus !== -1 && focus !== index);
+    tile.hidden = mode === 'joining' ? index > 1 : mode === 'alone' && index > 0;
+    const portrait = document.createElement('img');
+    portrait.src = avatar;
+    portrait.alt = '';
+    const name = document.createElement('strong');
+    name.textContent = nick;
+    tile.append(portrait, name);
+    return tile;
+  });
+  nightVoiceGrid.replaceChildren(...tiles);
+  nightReaction.hidden = focus === -1 && mode !== 'joining';
+  if (!nightReaction.hidden) nightReaction.src = artPath(`night-reaction-${Math.max(focus, 0) + 1}`);
+  const updateCount = () => { nightVoiceCount.textContent = `В канале ${tiles.filter((tile) => !tile.hidden).length}`; };
+  updateCount();
+  const joining = mode === 'joining';
+  if (joining || mode === 'leaving') {
+    continueButton.disabled = true;
+    voiceSequence = {
+      times: joining ? nightJoinTimes : nightLeaveTimes,
+      step: (index) => {
+        tiles[joining ? index + 2 : tiles.length - 1 - index].hidden = !joining;
+        updateCount();
+      },
+    };
+  }
+}
+
+function renderNightProps(scene) {
+  const { clockCard, timeBadge, phoneNote, dioramaView, prop } = scene;
+  nightClockCard.hidden = !clockCard;
+  nightClockCard.textContent = clockCard ?? '';
+  sceneArt.hidden = Boolean(clockCard);
+  nightTimeBadge.hidden = !timeBadge;
+  nightTimeBadge.textContent = timeBadge ?? '';
+  nightPhoneNote.hidden = !phoneNote;
+  if (phoneNote) {
+    nightPhoneNote.dataset.note = phoneNote;
+    [nightPhoneSource.textContent, nightPhoneText.textContent] = nightPhoneMessages[phoneNote];
+    nightPhoneSecond.hidden = phoneNote !== 'two-chats';
+  }
+  dioramaCheck.hidden = !dioramaView;
+  if (dioramaView) {
+    dioramaCheck.dataset.view = dioramaView;
+    const cubesVisible = dioramaView === 'cubes' || dioramaView === 'platform';
+    dioramaTitle.textContent = dioramaView === 'cubes' ? 'Две демонстрации Blender' : 'Экран Димы';
+    dioramaNote.textContent = dioramaView === 'capture' ? 'За 10 минут до проверки' : 'Blender';
+    dioramaPhoto.hidden = cubesVisible;
+    dioramaCubes.hidden = !cubesVisible;
+    dioramaFirstCube.hidden = dioramaView === 'platform';
+    dioramaSelection.hidden = dioramaView !== 'selected' && dioramaView !== 'capture';
+  }
+  nightVideoScroll.hidden = prop !== 'shorts-timelapse';
+  nightCharacterSwitch.hidden = prop !== 'character-switch';
+  scenePicture.dataset.nightEffect = prop ?? '';
+  nightGameName.hidden = prop !== 'night-games';
+  if (!nightGameName.hidden) {
+    nightGameName.textContent = nightGames[0][0];
+    for (const [, art] of nightGames.slice(1)) preloadArt(artPath(art));
+    runSceneSequence(nightGames.slice(1).map((_, index) => 720 * (index + 1)), (index) => {
+      const [game, art] = nightGames[index + 1];
+      nightGameName.textContent = game;
+      sceneArt.src = artPath(art);
+      sceneArt.alt = `Игровой вечер — ${game}`;
+    });
+  }
+}
+
 function renderScene(key, { phone, remember = true } = {}) {
   rewardAudio.pause();
+  clearSceneTimers();
   const scene = scenes[key];
   activeScene = scene;
   activePosition = { key };
@@ -633,6 +786,8 @@ function renderScene(key, { phone, remember = true } = {}) {
   if (remember && scene.options) rememberDecision(key);
   renderIntertitle(scene);
   renderWorkCall(scene);
+  renderNightProps(scene);
+  renderNightVoice(scene.nightVoice);
   const blenderStage = scene.blenderStage;
   blenderLaunch.hidden = blenderStage !== 'launch';
   blenderWorkspace.hidden = blenderStage !== 'workspace';
@@ -649,9 +804,9 @@ function renderScene(key, { phone, remember = true } = {}) {
     progress.value = scene.modelProgress;
     blenderModelProgress.querySelector('span').textContent = `${scene.modelProgress}%`;
   }
-  scenePicture.classList.toggle('has-blender-screen', Boolean(blenderStage));
+  scenePicture.classList.toggle('has-blender-screen', Boolean(blenderStage || scene.dioramaView));
   scenePicture.classList.toggle('is-blender-twitch', scene.prop === 'blender-eye-twitch');
-  scenePicture.hidden = Boolean(scene.intertitle) || !workCall.hidden;
+  scenePicture.hidden = Boolean(scene.intertitle) || !workCall.hidden || !nightVoice.hidden;
   thoughtBubble.hidden = !scene.thought;
   thoughtBubble.classList.toggle('thought-angry', Boolean(scene.thought?.angry));
   thoughtMoney.hidden = !scene.thought?.money;
@@ -704,7 +859,7 @@ function renderScene(key, { phone, remember = true } = {}) {
 
   if (scene.art) {
     sceneArt.src = artPath(scene.art);
-    sceneArt.alt = scene.alt;
+    sceneArt.alt = scene.alt ?? '';
   }
   renderSceneTitle(scene);
   sceneSpeaker.textContent = scene.speaker ?? 'Серёжа';
@@ -729,7 +884,9 @@ function renderScene(key, { phone, remember = true } = {}) {
   if (sound) {
     if (sceneAudio.getAttribute('src') !== sound) sceneAudio.src = sound;
     sceneAudio.currentTime = 0;
-    sceneAudio.play().catch(() => {});
+    const playback = sceneAudio.play();
+    if (voiceSequence) syncVoiceSequence(playback);
+    else playback.catch(() => {});
   }
   const rewardSound = endingResult?.audio ?? (earnedAchievement ? 'assets/rewards/achievement-fanfare.mp3' : null);
   if (rewardSound) {
@@ -802,6 +959,20 @@ for (const button of sceneBackButtons) button.addEventListener('click', goBackSc
 document.querySelector('#play').addEventListener('click', () => startStory('morning'));
 document.querySelector('#launch-blender').addEventListener('click', () => goToScene(activeScene.next));
 document.querySelector('#blender-notification').addEventListener('click', () => goToScene(activeScene.next));
+function showEndCard(scene) {
+  updateSceneBack();
+  endingTitle.textContent = scene.endCard ?? 'Soon ...';
+  endingTitle.lang = scene.endCardLang ?? 'en';
+  endingNote.textContent = scene.endCardNote ?? '';
+  endingNote.hidden = !scene.endCardNote;
+  endingContinue.hidden = !scene.afterEndCard;
+  endingContinue.dataset.next = scene.afterEndCard ?? '';
+  if (scene.afterEndCard) preloadScene(scene.afterEndCard);
+  showScreen('ending');
+  endingTitle.focus();
+}
+
+endingContinue.addEventListener('click', () => renderScene(endingContinue.dataset.next));
 continueButton.addEventListener('click', () => {
   if (activeScene.quiz) {
     advancePhoneRound();
@@ -813,13 +984,7 @@ continueButton.addEventListener('click', () => {
   }
 
   sceneHistory.push(activePosition);
-  updateSceneBack();
-  endingTitle.textContent = activeScene.endCard ?? 'Soon ...';
-  endingTitle.lang = activeScene.endCardLang ?? 'en';
-  endingNote.textContent = activeScene.endCardNote ?? '';
-  endingNote.hidden = !activeScene.endCardNote;
-  showScreen('ending');
-  endingTitle.focus();
+  showEndCard(activeScene);
 });
 intertitleNext.addEventListener('click', () => goToScene(activeScene.next));
 intertitleSound.addEventListener('click', () => {

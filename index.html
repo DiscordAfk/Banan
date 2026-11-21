@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=blender-projects">
-  <script src="story.js?v=blender-projects" defer></script>
+  <link rel="stylesheet" href="style.css?v=night-and-dawn">
+  <script src="story.js?v=night-and-dawn" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=blender-projects" defer></script>
+  <script src="game.js?v=night-and-dawn" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -155,10 +155,14 @@
                       </button>
                     </div>
                     <ul class="story-branches story-home-options">
-                      <li><div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-blender"><strong>Blender</strong></button></div></li>
                       <li>
-                        <div class="story-tree-node">
+                        <div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-blender"><strong>Blender</strong></button></div>
+                        <ul class="story-branches story-endings" data-story-achievements="blender-neva-sunrise" aria-label="Достижение ветки Blender"></ul>
+                      </li>
+                      <li>
+                        <div class="story-tree-node story-chapter-points">
                           <button class="story-point" type="button" data-story-start="home-phone"><strong>?????????</strong></button>
+                          <button id="story-night-start" class="story-point story-point-fork" type="button" data-story-start="night-choice" hidden><strong>Перед сном</strong></button>
                         </div>
                         <ul class="story-branches story-endings" data-story-endings="home-phone" aria-label="Концовки этой ветки"></ul>
                       </li>
@@ -212,6 +216,33 @@
         <div class="story-picture" id="story-picture">
           <canvas id="route-map" width="960" height="540" role="img" hidden></canvas>
           <img id="scene-art" alt="">
+          <div id="night-clock-card" class="night-clock-card" hidden></div>
+          <div id="night-time-badge" class="night-time-badge" hidden></div>
+          <div id="night-phone-note" class="night-phone-note" hidden>
+            <div><small id="night-phone-source"></small><strong id="night-phone-text"></strong></div>
+            <div id="night-phone-second" hidden><small>Telegram · Серёжа</small><strong>Открыт чат</strong></div>
+          </div>
+          <section id="blender-diorama-check" class="blender-screen blender-diorama-check" aria-label="Демонстрация диорамы" hidden>
+            <header class="blender-toolbar"><strong id="diorama-screen-title">Экран Димы</strong><span id="diorama-screen-note"></span></header>
+            <div id="diorama-photo" class="diorama-photo" hidden>
+              <img src="assets/route/diorama-stream-capture.webp" alt="Диорама Серёжи с частично готовой синей крышей">
+              <span id="diorama-selection" class="diorama-selection" hidden aria-label="Рамка изображения">
+                <i></i><i></i><i></i><i></i><b>Снимок экрана.png</b>
+              </span>
+            </div>
+            <div id="diorama-cubes" class="diorama-cubes" hidden>
+              <div id="diorama-first-cube" class="blender-viewport"><div class="blender-grid"></div><div class="blender-cube"></div><span>Серёжа</span></div>
+              <div class="blender-viewport"><div class="blender-grid"></div><div class="blender-cube"></div><span>Дима</span></div>
+            </div>
+          </section>
+          <div id="night-video-scroll" class="night-video-scroll" hidden><span>YouTube Shorts</span><span>Ролики пролистываются</span></div>
+          <div id="night-character-switch" class="night-character-switch" aria-label="Смена персонажа с Серёжи на Никиту" hidden>
+            <div class="night-switch-ring" aria-hidden="true"></div>
+            <img src="assets/route/profile-seryozha.webp" alt="Серёжа" width="50" height="50">
+            <img src="assets/route/profile-nikita.webp" alt="Никита" width="50" height="50">
+            <strong>Никита</strong>
+          </div>
+          <p id="night-game-name" class="night-game-name" aria-live="polite" hidden></p>
           <div id="blender-project-labels" class="blender-project-labels" aria-hidden="true" hidden>
             <span>Референс</span><span>Модель Димы</span>
           </div>
@@ -374,6 +405,15 @@
             </aside>
           </div>
         </section>
+        <section id="night-voice" class="work-call night-voice" aria-labelledby="night-voice-title" hidden>
+          <header class="work-call-header">
+            <span class="work-call-signal" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <div><span>Голосовой канал</span><h2 id="night-voice-title">Только тундра, никакого сна</h2></div>
+          </header>
+          <ul id="night-voice-grid" class="night-voice-grid" aria-label="Участники звонка"></ul>
+          <img id="night-reaction" class="night-reaction" alt="Реакция Серёжи" width="256" height="256" hidden>
+          <p id="night-voice-count" class="night-voice-count" aria-live="polite"></p>
+        </section>
         <section id="intertitle" class="intertitle" aria-label="Перебивка" hidden>
           <button id="intertitle-next" class="intertitle-next" type="button" aria-label="Продолжить после перебивки">
             <img id="intertitle-art" lang="en" alt="3 Hours Later..." width="1280" height="720">
@@ -406,6 +446,7 @@
           <p id="ending-note" class="ending-note" hidden></p>
         </div>
         <div class="ending-links">
+          <button id="ending-continue" class="pixel-button" type="button" hidden>Дальше</button>
           <button class="choice" type="button" data-scene-back>Назад</button>
           <a class="nav-link" href="#seryozha">В меню игры</a>
           <a class="nav-link" href="#story-map">Карта сюжета</a>
