@@ -888,7 +888,7 @@ const nightAfterEnding = [
   { id: 'night-wait-half', art: 'night-wait-tired', title: 'Полчаса', timeBadge: '30 минут', line: 'Надежды почти не осталось. Откладываю телефон.' },
   { id: 'night-wait-hour', art: 'night-wait-tired', title: 'Час спустя', timeBadge: '1 час', line: 'Лежу на спине с руками за головой и смотрю в потолок. Под глазами уже мешки.' },
   { id: 'night-one-notification', art: 'night-seryozha-focus', title: 'Одно уведомление', prop: 'focus-phone', phoneNote: 'one', line: 'Телефон загорается. Чуть поворачиваю голову. «Точно не она», — думаю и снова смотрю в потолок.' },
-  { id: 'night-letter-d', art: 'night-seryozha-focus', title: 'Д…', sound: 'assets/route/blender-call.mp3', phoneNote: 'letter', line: 'Вдруг звонок. Неужели Диана? Тянусь к телефону. После темноты вижу только первую букву: «Д». Резко отвечаю.' },
+  { id: 'night-letter-d', art: 'night-seryozha-focus', title: 'Д…', sound: 'assets/route/night-denis-ringtone.mp3', phoneNote: 'letter', line: 'Вдруг звонок. Неужели Диана? Тянусь к телефону. После темноты вижу только первую букву: «Д». Резко отвечаю.' },
   { id: 'night-denis-answers', art: 'night-seryozha-focus', title: 'Это Денис', speaker: 'Денис', phoneNote: 'denis', sound: 'assets/route/night-denis-line.mp3', line: 'Хуем по лбу не дало? Пошли Глебу строить, заебал.' },
   { id: 'night-go-to-pc', art: 'home-blender', title: 'За компьютер', line: 'На секунду грустнею. Может, и правда мне сейчас не нужна Диана. Сажусь за компьютер, мы с Денисом решаем зайти в общий голосовой канал.' },
   { id: 'night-voice-join', title: 'Четыре входа подряд', nightVoice: 'joining', sound: 'assets/route/night-join-sequence.mp3', line: 'Денис уже в канале. Я вяло начинаю: «Прив…» Слышу четыре входа один за другим и открываю окно.' },
