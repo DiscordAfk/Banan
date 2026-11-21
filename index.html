@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=night-and-dawn">
-  <script src="story.js?v=denis-ringtone" defer></script>
+  <link rel="stylesheet" href="style.css?v=school-recess">
+  <script src="story.js?v=school-recess" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=night-and-dawn" defer></script>
+  <script src="game.js?v=school-recess" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -216,6 +216,16 @@
         <div class="story-picture" id="story-picture">
           <canvas id="route-map" width="960" height="540" role="img" hidden></canvas>
           <img id="scene-art" alt="">
+          <div id="history-classroom-plates" hidden>
+            <p class="history-plate history-plate-history"><strong>История</strong><span>Соколова Анна Игоревна</span></p>
+            <p class="history-plate history-plate-math"><strong>Математика</strong><span>Лебедев Павел Викторович</span></p>
+          </div>
+          <p id="history-informatics-plate" class="history-plate history-plate-computing" hidden>
+            <strong>Информатика</strong><span>Орлова Елена Андреевна</span>
+          </p>
+          <time id="history-lockscreen" class="history-lockscreen" datetime="2025-10-02" hidden>
+            <small>Четверг</small><strong>2 октября</strong><span>2025 года</span>
+          </time>
           <div id="night-clock-card" class="night-clock-card" hidden></div>
           <div id="night-time-badge" class="night-time-badge" hidden></div>
           <div id="night-phone-note" class="night-phone-note" hidden>

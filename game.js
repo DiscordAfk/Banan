@@ -102,6 +102,9 @@ const nightVoice = document.querySelector('#night-voice');
 const nightVoiceGrid = document.querySelector('#night-voice-grid');
 const nightVoiceCount = document.querySelector('#night-voice-count');
 const nightReaction = document.querySelector('#night-reaction');
+const historyClassroomPlates = document.querySelector('#history-classroom-plates');
+const historyInformaticsPlate = document.querySelector('#history-informatics-plate');
+const historyLockscreen = document.querySelector('#history-lockscreen');
 const endingContinue = document.querySelector('#ending-continue');
 const storyNightStart = document.querySelector('#story-night-start');
 
@@ -806,6 +809,9 @@ function renderScene(key, { phone, remember = true } = {}) {
   }
   scenePicture.classList.toggle('has-blender-screen', Boolean(blenderStage || scene.dioramaView));
   scenePicture.classList.toggle('is-blender-twitch', scene.prop === 'blender-eye-twitch');
+  historyClassroomPlates.hidden = scene.prop !== 'history-doors';
+  historyInformaticsPlate.hidden = scene.prop !== 'history-informatics-door';
+  historyLockscreen.hidden = scene.prop !== 'history-date';
   scenePicture.hidden = Boolean(scene.intertitle) || !workCall.hidden || !nightVoice.hidden;
   thoughtBubble.hidden = !scene.thought;
   thoughtBubble.classList.toggle('thought-angry', Boolean(scene.thought?.angry));
