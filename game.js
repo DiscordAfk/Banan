@@ -36,6 +36,7 @@ const charactersTab = document.querySelector('#characters-tab');
 const characterList = document.querySelector('#character-list');
 const characterProfile = document.querySelector('#character-profile');
 const characterProfileBody = document.querySelector('#character-profile-body');
+const characterRevealAudio = document.querySelector('#character-reveal-audio');
 const storyMapPanel = document.querySelector('#story-map-panel');
 const storyMapTab = document.querySelector('#story-map-tab');
 const resumeButton = document.querySelector('#resume-decision');
@@ -804,7 +805,13 @@ novel.addEventListener('click', (event) => {
 document.querySelector('#close-ending-preview').addEventListener('click', () => endingPreview.close());
 document.querySelector('#reset-characters').addEventListener('click', resetCharacters);
 document.querySelector('#close-character-profile').addEventListener('click', () => characterProfile.close());
+characterProfileBody.addEventListener('animationstart', (event) => {
+  if (event.animationName !== 'character-mask-out' || !characterProfile.open || !characterProfileBody.contains(event.target)) return;
+  characterRevealAudio.currentTime = 0;
+  characterRevealAudio.play().catch(() => {});
+});
 characterProfile.addEventListener('close', () => {
+  characterRevealAudio.pause();
   if (activeProfile === 'diana' && discoveredCharacters.has('diana')) {
     profileQueue.unshift({ id: 'seryozha', reveal: true });
   }

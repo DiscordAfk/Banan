@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=character-reveal">
+  <link rel="stylesheet" href="style.css?v=profile-sound">
   <script src="story.js?v=reward-audio" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=reward-audio" defer></script>
+  <script src="game.js?v=profile-sound" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -325,6 +325,7 @@
   </main>
   <dialog id="character-profile" class="character-profile" aria-labelledby="profile-name">
     <div id="character-profile-body"></div>
+    <audio id="character-reveal-audio" src="assets/rewards/character-reveal.mp3" preload="auto"></audio>
     <button id="close-character-profile" class="choice" type="button" autofocus>Понятно</button>
   </dialog>
   <dialog id="ending-preview" class="ending-preview" aria-labelledby="ending-preview-title">

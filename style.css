@@ -808,6 +808,7 @@ h1, h2, h3, p { margin: 0; }
 .character-unlock { display: grid; }
 .character-unlock > .character-card { grid-area: 1 / 1; }
 .character-unlock > .character-locked { animation: character-mask-out .5s ease-in .55s both; }
+.character-unlock > .character-locked > * { animation: favorite-appear .23s linear both; }
 .character-unlock > .character-card:not(.character-locked) { animation: favorite-appear .55s ease-out .75s both; }
 @keyframes character-mask-out { to { opacity: 0; filter: blur(5px); visibility: hidden; } }
 .favorite-reveal { display: inline-grid; }
