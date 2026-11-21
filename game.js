@@ -153,16 +153,15 @@ function unlockEnding(id) {
 }
 
 function unlockAchievement(id) {
-  if (unlockedAchievements.has(id)) return false;
+  if (unlockedAchievements.has(id)) return;
   unlockedAchievements.add(id);
   try {
     const key = achievementStoragePrefix + id;
-    if (localStorage.getItem(key) === '1') return false;
+    if (localStorage.getItem(key) === '1') return;
     localStorage.setItem(key, '1');
   } catch {
     // The achievement remains unlocked in the current visit.
   }
-  return true;
 }
 
 function rewardLabel(result) {
@@ -229,10 +228,11 @@ function renderAchievements() {
 function renderAchievementAward(id) {
   const achievement = achievements.find((result) => result.id === id);
   achievementAward.hidden = !achievement?.showOnScene;
-  if (!achievement) return false;
+  if (!achievement) return;
 
   if (achievement.showOnScene) achievementAward.replaceChildren(rewardCard(achievement, true, 'h2'));
-  return unlockAchievement(achievement.id);
+  unlockAchievement(achievement.id);
+  return achievement;
 }
 
 function showEndingPreview(result) {
@@ -644,7 +644,7 @@ function renderScene(key, { phone, remember = true } = {}) {
     unlockEnding(endingResult.id);
     endingAward.replaceChildren(rewardCard(endingResult, true, 'h2'));
   }
-  const earnedAchievement = renderAchievementAward(scene.achievement);
+  const achievement = renderAchievementAward(scene.achievement);
   if (scene.prop === 'chat') renderDianaChat(scene.dianaReply);
   scenePicture.classList.toggle('is-dull-view', scene.prop === 'dull-view');
   scenePicture.classList.toggle('is-rain-reveal', scene.prop === 'rain-reveal');
@@ -688,7 +688,7 @@ function renderScene(key, { phone, remember = true } = {}) {
     sceneAudio.currentTime = 0;
     sceneAudio.play().catch(() => {});
   }
-  const rewardSound = endingResult?.audio ?? (earnedAchievement ? 'assets/rewards/achievement-fanfare.mp3' : null);
+  const rewardSound = endingResult?.audio ?? (achievement ? 'assets/rewards/achievement-fanfare.mp3' : null);
   if (rewardSound) {
     if (rewardAudio.getAttribute('src') !== rewardSound) rewardAudio.src = rewardSound;
     rewardAudio.volume = sound ? 0.4 : 1;
