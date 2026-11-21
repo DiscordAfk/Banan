@@ -994,6 +994,7 @@ h1, h2, h3, p { margin: 0; }
   transform: none;
 }
 .story-board {
+  container-type: inline-size;
   --branch-line: #6c5797;
   --branch-gap: 1.1rem;
   padding: clamp(1rem, 3.9vw, 2.5rem);
@@ -1016,7 +1017,7 @@ h1, h2, h3, p { margin: 0; }
   gap: var(--branch-gap);
   min-width: 0;
 }
-.story-tree-node { width: clamp(118px, 14vw, 153px); min-width: 0; flex: none; }
+.story-tree-node { width: clamp(100px, calc((100cqw - 10 * var(--branch-gap)) / 6), 153px); min-width: 0; flex: none; }
 .story-branches {
   display: grid;
   gap: .85rem;
@@ -1113,6 +1114,15 @@ h1, h2, h3, p { margin: 0; }
 .story-endings .result-info { padding: .5rem .6rem; gap: .35rem; }
 .story-endings .result-info .genre { font-size: .64rem; }
 .story-endings .result-info h4 { font-size: .7rem; }
+.story-achievement-locked .genre { display: none; }
+.silhouette-ozon-crossroads::before {
+  inset: 14% 25%;
+  clip-path: polygon(3% 29%, 3% 5%, 28% 5%, 23% 16%, 50% 42%, 77% 16%, 72% 5%, 97% 5%, 97% 29%, 87% 24%, 58% 55%, 58% 100%, 42% 100%, 42% 55%, 13% 24%);
+}
+.silhouette-ozon-doubt::before {
+  inset: 24% 15%;
+  clip-path: polygon(0 46%, 16% 58%, 33% 62%, 53% 55%, 72% 39%, 91% 16%, 100% 0, 93% 37%, 77% 69%, 58% 91%, 38% 98%, 18% 86%, 6% 64%);
+}
 .result-preview-trigger {
   position: absolute;
   inset: 0;
@@ -1148,6 +1158,141 @@ h1, h2, h3, p { margin: 0; }
 .ending-preview img { display: block; width: 100%; max-height: 74svh; object-fit: contain; background: #100b17; }
 
 .story-chapter-points { display: grid; gap: .55rem; }
+
+.has-blender-screen > #scene-art {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(3px) brightness(.43);
+}
+.blender-screen {
+  position: relative;
+  display: grid;
+  isolation: isolate;
+  margin: clamp(.45rem, 2.3vw, 1.5rem);
+  border: 1px solid #9c76c4;
+  box-shadow: 0 4px #0c0815;
+  background: #21192e;
+}
+.blender-launch {
+  min-height: clamp(15rem, 48vw, 30rem);
+  align-items: end;
+  background: linear-gradient(90deg, #10091af0, #160e23a8 42%, #170a2310 78%),
+    url('assets/route/blender-library.webp') 68% center / cover;
+}
+.blender-launch-content { padding: clamp(1rem, 5vw, 3rem); }
+.blender-eyebrow { margin: 0 0 .85rem; color: #d6b8f0; font-size: .82rem; letter-spacing: .05em; }
+.blender-launch h2 { margin: 0 0 1.15rem; font: 400 clamp(1.25rem, 5vw, 3.2rem)/1.35 var(--pixel); }
+.blender-play { background: #acf291; color: #122216; border-color: #d9ffd1; }
+.blender-workspace { grid-template-rows: auto 1fr; }
+.blender-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .7rem;
+  padding: .65rem 1rem;
+  border-bottom: 1px solid #675072;
+  background: #2c213b;
+  font-size: clamp(.72rem, 2.8vw, .9rem);
+}
+.blender-toolbar strong { color: #ffc373; font-family: var(--pixel); }
+.blender-viewport {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: clamp(14rem, 55vw, 29rem);
+  overflow: hidden;
+  perspective: 500px;
+  background: radial-gradient(ellipse at center, #382c43, #1b1624 70%);
+}
+.blender-grid {
+  position: absolute;
+  inset: 24% -35% -85%;
+  transform: rotateX(61deg);
+  transform-origin: center top;
+  background: linear-gradient(90deg, transparent 49.9%, #b67be4 50%, transparent 50.2%),
+    linear-gradient(0deg, transparent 49.9%, #74ad95 50%, transparent 50.3%),
+    repeating-linear-gradient(0deg, transparent 0 25px, #a88fb64d 26px),
+    repeating-linear-gradient(90deg, transparent 0 25px, #a88fb64d 26px);
+}
+.blender-cube {
+  position: relative;
+  width: clamp(4.2rem, 19vw, 11rem);
+  aspect-ratio: 1;
+  clip-path: polygon(50% 0, 100% 23%, 100% 73%, 50% 100%, 0 73%, 0 23%);
+  background: #ffb176;
+}
+.blender-cube::before {
+  position: absolute;
+  inset: 2px;
+  content: '';
+  clip-path: inherit;
+  background: conic-gradient(from 60deg at 50% 48%, #ad8ea8 0 120deg, #776280 0 240deg, #dcc3dc 0);
+}
+.blender-viewport > span { position: absolute; top: .6rem; left: .75rem; color: #ddd0e8; font: .7rem var(--pixel); }
+.blender-notification {
+  position: absolute;
+  inset: auto .5rem .5rem auto;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  min-width: min(13rem, 85%);
+  padding: .55rem .8rem;
+  border: 1px solid #ae8ef0;
+  border-left: 4px solid #a48bfb;
+  color: #f6edff;
+  background: #231735;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  animation: blender-toast-in .25s ease-out 2s both;
+}
+.blender-notification:hover { background: #392451; }
+.blender-notification > span { display: grid; gap: .1rem; }
+.blender-notification small { color: #d7b9f0; }
+@keyframes blender-toast-in {
+  from { visibility: hidden; opacity: 0; transform: translateY(.6rem); }
+  to { visibility: visible; opacity: 1; transform: none; }
+}
+.story-picture .blender-avatar { width: 2.5rem; height: 2.5rem; aspect-ratio: 1; object-fit: cover; border: 1px solid #9275bc; }
+.blender-chat { padding: clamp(.65rem, 2.5vw, 1.3rem); gap: .75rem; }
+.blender-chat-header { display: flex; align-items: center; gap: .65rem; }
+.blender-chat-header h2 { margin: 0; font: .95rem/1.4 var(--pixel); }
+.blender-chat-header p { margin: .2rem 0 0; color: #d3b8f0; font-size: .8rem; }
+.blender-messages { display: grid; gap: .5rem; padding: 0; margin: 0; list-style: none; }
+.blender-messages li {
+  display: grid;
+  grid-template-columns: minmax(6.75rem, 24%) 1fr;
+  align-items: baseline;
+  gap: .45rem;
+  padding: .5rem .6rem;
+  border-left: 2px solid #78529d;
+  background: #2d2240;
+  font-size: clamp(.74rem, 2.7vw, 1rem);
+}
+.blender-messages time { color: #dbbaf8; font-size: .86em; font-variant-numeric: tabular-nums; }
+.blender-compose {
+  min-height: 2.35rem;
+  margin: 0;
+  padding: .45rem .6rem;
+  border: 1px solid #765a9a;
+  background: #140f21;
+}
+#blender-draft {
+  display: inline-block;
+  width: 5ch;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: middle;
+  font-family: monospace;
+  animation: blender-type .55s steps(5, end) both;
+}
+@keyframes blender-type { from { width: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .blender-notification { animation-timing-function: step-end; animation-duration: 1ms; }
+  #blender-draft { animation: none; }
+}
 
 .silhouette-present::before {
   inset: 18% 9% 11%;

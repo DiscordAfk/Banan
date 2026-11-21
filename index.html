@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=profile-sound">
-  <script src="story.js?v=reward-audio" defer></script>
+  <link rel="stylesheet" href="style.css?v=blender-call">
+  <script src="story.js?v=blender-call" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=first-achievement-sound" defer></script>
+  <script src="game.js?v=blender-call" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -124,6 +124,7 @@
                           <button class="story-point" type="button" data-story-start="kirill-shadow"><strong>Внутри ГУАП</strong></button>
                           <button class="story-point" type="button" data-story-start="guap-classmates"><strong>После грома</strong></button>
                         </div>
+                        <ul class="story-branches story-endings" data-story-achievements="history-school" aria-label="Достижения университетской ветки"></ul>
                       </li>
                     </ul>
                   </li>
@@ -164,7 +165,10 @@
                       <li>
                         <div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-shopping"><strong>Ozon</strong></button></div>
                         <ul class="story-branches">
-                          <li><div class="story-tree-node"><button class="story-point story-point-fork" type="button" data-story-start="ozon-decide"><strong>Ангел или демон</strong></button></div></li>
+                          <li>
+                            <div class="story-tree-node"><button class="story-point story-point-fork" type="button" data-story-start="ozon-decide"><strong>Ангел или демон</strong></button></div>
+                            <ul class="story-branches story-endings" data-story-achievements="ozon-decide ozon-pin ozon-demon-grin" aria-label="Достижения ветки Ozon"></ul>
+                          </li>
                         </ul>
                       </li>
                     </ul>
@@ -208,6 +212,39 @@
         <div class="story-picture" id="story-picture">
           <canvas id="route-map" width="960" height="540" role="img" hidden></canvas>
           <img id="scene-art" alt="">
+          <section id="blender-launch" class="blender-screen blender-launch" aria-label="Библиотека Steam" hidden>
+            <div class="blender-launch-content">
+              <p class="blender-eyebrow">Библиотека Steam</p>
+              <h2>Blender</h2>
+              <button id="launch-blender" class="pixel-button blender-play" type="button"><span aria-hidden="true">▶</span> Играть</button>
+            </div>
+          </section>
+          <section id="blender-workspace" class="blender-screen blender-workspace" aria-label="Рабочая область Blender с кубом" hidden>
+            <div class="blender-toolbar"><strong>Blender</strong><span>3D-сцена</span></div>
+            <div class="blender-viewport" aria-hidden="true">
+              <div class="blender-grid"></div>
+              <div class="blender-cube"></div>
+              <span>Cube</span>
+            </div>
+            <button id="blender-notification" class="blender-notification" type="button" aria-label="Открыть сообщение Димы в Steam">
+              <img class="blender-avatar" src="assets/shift/avatar-programmer.webp" alt="" width="48" height="48">
+              <span><small>Сообщение Steam</small><strong>Дима</strong><span>Blender?</span></span>
+            </button>
+          </section>
+          <section id="blender-chat" class="blender-screen blender-chat" aria-labelledby="blender-chat-title" hidden>
+            <header class="blender-chat-header">
+              <img class="blender-avatar" src="assets/shift/avatar-programmer.webp" alt="" width="48" height="48">
+              <div><h2 id="blender-chat-title">Дима</h2><p>Чат Steam</p></div>
+            </header>
+            <ol class="blender-messages" aria-label="Переписка с Димой">
+              <li><time datetime="2026-11-17T06:02">17 ноя. · 06:02</time><span>В Blender пойдём?</span></li>
+              <li><time datetime="2026-11-18T14:37">18 ноя. · 14:37</time><span>Го в Blender, я куб уже открыл.</span></li>
+              <li><time datetime="2026-11-19T23:48">19 ноя. · 23:48</time><span>Есть минутка на Blender?</span></li>
+              <li><time datetime="2026-11-20T09:16">20 ноя. · 09:16</time><span>Ну что, сегодня в Blender?</span></li>
+              <li><time datetime="2026-11-21T11:14">Сегодня · 11:14</time><span>Blender?</span></li>
+            </ol>
+            <p class="blender-compose"><span id="blender-draft" hidden>пошли</span></p>
+          </section>
           <div id="ozon-nametags" class="ozon-nametags" aria-hidden="true" hidden>
             <span class="ozon-nametag ozon-nametag-angel">Димеург</span>
             <span class="ozon-nametag ozon-nametag-devil">Кириллазар</span>

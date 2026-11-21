@@ -581,9 +581,34 @@ const scenes = {
     options: [['Моделировать в Blender', 'home-blender'], ['?????????', 'home-phone'], ['Листать Ozon', 'home-shopping']],
   },
   'home-blender': {
-    title: 'Моделирую в Blender', art: 'home-blender',
-    alt: 'Серёжа сидит за компьютером и моделирует дверь в Blender.',
-    line: 'Открываю Blender. Работа над дверью начинается с куба. И ещё одного куба.',
+    title: 'Запускаю Blender', art: 'home-blender', blenderStage: 'launch',
+    alt: 'Серёжа сидит за компьютером в комнате с фиолетовой подсветкой.',
+    line: 'Открываю библиотеку Steam и жму «Играть».',
+    next: 'blender-workspace',
+  },
+  'blender-workspace': {
+    title: 'Обычный куб', art: 'home-blender', blenderStage: 'workspace',
+    alt: 'Серёжа открывает Blender на своём компьютере.',
+    line: 'Blender открылся. Начну, как всегда, с куба.',
+    next: 'blender-chat',
+  },
+  'blender-chat': {
+    title: 'Переписка с Димой', art: 'home-blender', blenderStage: 'chat',
+    alt: 'Серёжа открыл переписку с Димой на компьютере.',
+    line: 'Листаю чат. Дима зовёт меня в Blender каждый день. В шесть утра тоже.',
+    next: 'blender-draft',
+  },
+  'blender-draft': {
+    title: 'Отвечаю Диме', art: 'home-blender', blenderStage: 'draft',
+    alt: 'Серёжа набирает ответ на последнее сообщение Димы.',
+    line: 'На последнее сообщение набираю «пошли».',
+    next: 'blender-call',
+  },
+  'blender-call': {
+    title: 'Входящий звонок', art: 'blender-enter',
+    alt: 'Палец Серёжи завис над клавишей Enter на клавиатуре с фиолетовой подсветкой.',
+    line: 'Палец уже над Enter. В ту же секунду раздаётся звонок.',
+    sound: 'assets/route/blender-call.mp3', loopSound: true,
   },
   'home-phone': {
     title: '?????????', art: 'home-phone', prop: 'phone',

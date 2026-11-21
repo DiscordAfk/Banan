@@ -42,6 +42,7 @@ const storyMapTab = document.querySelector('#story-map-tab');
 const resumeButton = document.querySelector('#resume-decision');
 const resumeDetail = document.querySelector('#resume-detail');
 const storyEndingBranches = storyMapPanel.querySelectorAll('[data-story-endings]');
+const storyAchievementBranches = storyMapPanel.querySelectorAll('[data-story-achievements]');
 const endingPreview = document.querySelector('#ending-preview');
 const endingPreviewTitle = document.querySelector('#ending-preview-title');
 const endingPreviewArt = document.querySelector('#ending-preview-art');
@@ -71,6 +72,10 @@ const intertitleNext = document.querySelector('#intertitle-next');
 const intertitleSound = document.querySelector('#intertitle-sound');
 const intertitleAudio = document.querySelector('#intertitle-audio');
 const intertitleStatus = document.querySelector('#intertitle-status');
+const blenderLaunch = document.querySelector('#blender-launch');
+const blenderWorkspace = document.querySelector('#blender-workspace');
+const blenderChat = document.querySelector('#blender-chat');
+const blenderDraft = document.querySelector('#blender-draft');
 
 const endingsStorageKey = 'minigames.seryozha.endings';
 const achievementStoragePrefix = 'minigames.seryozha.';
@@ -210,8 +215,7 @@ function rewardCard(result, unlocked, headingTag, preview = false) {
   return card;
 }
 
-function renderAchievements() {
-  readEndings();
+function readAchievements() {
   try {
     for (const { id } of achievements) {
       if (localStorage.getItem(achievementStoragePrefix + id) === '1') unlockedAchievements.add(id);
@@ -219,6 +223,11 @@ function renderAchievements() {
   } catch {
     // In-memory progress is available when storage is blocked.
   }
+}
+
+function renderAchievements() {
+  readEndings();
+  readAchievements();
   achievementProgress.textContent = `Открыто ${unlockedEndings.size + unlockedAchievements.size} из ${endings.length + achievements.length}`;
   achievementList.replaceChildren(
     ...endings.map((result) => rewardCard(result, unlockedEndings.has(result.id), 'h4')),
@@ -238,18 +247,24 @@ function renderAchievementAward(id) {
 function showEndingPreview(result) {
   endingPreviewTitle.textContent = `${rewardLabel(result)} «${result.title}»`;
   endingPreviewArt.src = artPath(result.art);
-  endingPreviewArt.alt = scenes[result.art].alt;
+  endingPreviewArt.alt = scenes[result.art]?.alt ?? result.title;
   endingPreview.showModal();
 }
 
-function renderStoryEndings() {
+function renderStoryRewards() {
   readEndings();
-  for (const branch of storyEndingBranches) {
-    const leaves = endings.filter((result) => result.branch === branch.dataset.storyEndings);
+  readAchievements();
+  for (const branch of [...storyEndingBranches, ...storyAchievementBranches]) {
+    const achievementScenes = branch.dataset.storyAchievements?.split(' ');
+    const leaves = achievementScenes
+      ? achievementScenes.map((key) => achievements.find(({ id }) => id === scenes[key].achievement))
+      : endings.filter((result) => result.branch === branch.dataset.storyEndings);
+    const unlocked = achievementScenes ? unlockedAchievements : unlockedEndings;
     branch.replaceChildren(...leaves.map((result) => {
       const leaf = document.createElement('li');
-      const card = rewardCard(result, unlockedEndings.has(result.id), 'h4', true);
+      const card = rewardCard(result, unlocked.has(result.id), 'h4', true);
       card.classList.add('story-tree-node');
+      if (achievementScenes && !unlocked.has(result.id)) card.classList.add('story-achievement-locked');
       leaf.append(card);
       return leaf;
     }));
@@ -609,6 +624,12 @@ function renderScene(key, { phone, remember = true } = {}) {
   if (remember && scene.options) rememberDecision(key);
   renderIntertitle(scene);
   renderWorkCall(scene.callStage);
+  const blenderStage = scene.blenderStage;
+  blenderLaunch.hidden = blenderStage !== 'launch';
+  blenderWorkspace.hidden = blenderStage !== 'workspace';
+  blenderChat.hidden = blenderStage !== 'chat' && blenderStage !== 'draft';
+  blenderDraft.hidden = blenderStage !== 'draft';
+  scenePicture.classList.toggle('has-blender-screen', Boolean(blenderStage));
   scenePicture.hidden = Boolean(scene.intertitle) || !workCall.hidden;
   thoughtBubble.hidden = !scene.thought;
   thoughtBubble.classList.toggle('thought-angry', Boolean(scene.thought?.angry));
@@ -675,11 +696,12 @@ function renderScene(key, { phone, remember = true } = {}) {
   }
   if (scene.next) preloadScene(scene.next);
   choices.hidden = !scene.options && !scene.quiz;
-  continueButton.hidden = Boolean(scene.options);
+  continueButton.hidden = Boolean(scene.options) || blenderStage === 'launch' || blenderStage === 'workspace';
   continueButton.textContent = scene.continueLabel ?? 'Дальше';
   if (scene.quiz) renderPhoneRound();
   showScreen('story');
   if (!sceneAudio.paused) sceneAudio.pause();
+  sceneAudio.loop = Boolean(scene.loopSound);
   stormLight.hidden = !scene.lightning;
   stormLight.classList.toggle('is-vanish', scene.lightning === 'vanish');
   const sound = scene.sound ?? (scene.lightning ? 'assets/route/kirill-thunder.mp3' : null);
@@ -725,7 +747,7 @@ function syncRoute(moveFocus = false) {
   if (inCharacters) renderCharacters();
   if (inStoryMap) {
     renderLastDecision();
-    renderStoryEndings();
+    renderStoryRewards();
   } else if (endingPreview.open) {
     endingPreview.close();
   }
@@ -757,6 +779,8 @@ resumeButton.addEventListener('click', () => {
 for (const button of sceneBackButtons) button.addEventListener('click', goBackScene);
 
 document.querySelector('#play').addEventListener('click', () => startStory('morning'));
+document.querySelector('#launch-blender').addEventListener('click', () => goToScene(activeScene.next));
+document.querySelector('#blender-notification').addEventListener('click', () => goToScene(activeScene.next));
 continueButton.addEventListener('click', () => {
   if (activeScene.quiz) {
     advancePhoneRound();
@@ -832,10 +856,11 @@ window.addEventListener('storage', (event) => {
     else discoveredCharacters.delete(id);
     if (!charactersPanel.hidden) renderCharacters();
   }
-  if (window.location.hash === '#achievements' && (event.key === endingsStorageKey || achievements.some(({ id }) => event.key === achievementStoragePrefix + id))) {
-    renderAchievements();
+  const rewardChanged = event.key === endingsStorageKey || achievements.some(({ id }) => event.key === achievementStoragePrefix + id);
+  if (rewardChanged) {
+    if (window.location.hash === '#achievements') renderAchievements();
+    if (window.location.hash === '#story-map' && !endingPreview.open) renderStoryRewards();
   }
-  if (event.key === endingsStorageKey && window.location.hash === '#story-map' && !endingPreview.open) renderStoryEndings();
   if (event.key === decisionStorageKey && window.location.hash === '#story-map') renderLastDecision();
 });
 syncRoute();
