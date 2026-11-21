@@ -198,22 +198,22 @@ const kirillAtUniversity = [
     line: 'Звенит звонок. Мы с Кириллом, Никитой и Димой выходим из кабинета и останавливаемся в коридоре.',
   },
   {
-    id: 'history-card-luck', title: 'Везёт же', art: 'history-hall-friends', speaker: 'Кирилл',
+    id: 'history-card-luck', title: 'Везёт же', art: 'history-hall-friends-heights', speaker: 'Кирилл',
     alt: 'Кирилл, Серёжа, Никита и Дима стоят кружком в школьном коридоре.',
     line: 'Никит, как тебе так везёт в картах? Каждый раз вытягиваешь ровно то, что нужно.',
   },
   {
-    id: 'history-nikita-replies', title: 'Карты сами идут', art: 'history-hall-friends', speaker: 'Никита',
+    id: 'history-nikita-replies', title: 'Карты сами идут', art: 'history-hall-friends-heights', speaker: 'Никита',
     alt: 'Никита с улыбкой пожимает плечами, пока остальные переглядываются.',
     line: 'Я же ничего не делаю. Сижу, жду, а хорошие карты сами идут.',
   },
   {
-    id: 'history-dima-loses', title: 'Шесть подряд', art: 'history-hall-friends', speaker: 'Дима',
+    id: 'history-dima-loses', title: 'Шесть подряд', art: 'history-hall-friends-heights', speaker: 'Дима',
     alt: 'Никита улыбается, а Дима разводит руками и пересчитывает проигрыши.',
     line: 'А я шесть раз подряд проиграл. Шесть! Я уже сбился со счёта, а Кирилл всё записал.',
   },
   {
-    id: 'history-six-friends', title: 'Плюс двое', prop: 'history-greeting', meet: ['vova', 'matvey'],
+    id: 'history-six-friends', title: 'Плюс двое', art: 'history-six-friends-heights', prop: 'history-greeting', meet: ['vova', 'matvey'],
     alt: 'Вова и Матвей подходят к четвёрке друзей и здороваются за руку.',
     line: 'К нам подходят Вова и Матвей из параллельного. По очереди жмём друг другу руки.',
   },
@@ -238,7 +238,7 @@ const kirillAtUniversity = [
     line: 'Второе октября 2025-го. Начало одиннадцатого класса. Стоп, как это вообще возможно?',
   },
   {
-    id: 'history-informatics', title: 'В кабинет информатики', prop: 'history-informatics-door',
+    id: 'history-informatics', title: 'В кабинет информатики', art: 'history-informatics-heights', prop: 'history-informatics-door',
     alt: 'Друзья подхватывают Серёжу и торопят в кабинет информатики через открытую деревянную дверь.',
     line: 'Не успеваю даже убрать телефон. Ребята подхватывают меня за рукава и тащат в кабинет информатики: «Ну ты идёшь?»',
   },
