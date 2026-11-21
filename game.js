@@ -80,6 +80,8 @@ const blenderChat = document.querySelector('#blender-chat');
 const blenderDraft = document.querySelector('#blender-draft');
 const blenderDimaScreen = document.querySelector('#blender-dima-screen');
 const blenderModelProgress = document.querySelector('#blender-model-progress');
+const blenderFiles = document.querySelector('#blender-files');
+const blenderProjectLabels = document.querySelector('#blender-project-labels');
 
 const endingsStorageKey = 'minigames.seryozha.endings';
 const achievementStoragePrefix = 'minigames.seryozha.';
@@ -638,6 +640,9 @@ function renderScene(key, { phone, remember = true } = {}) {
   blenderDraft.hidden = blenderStage !== 'draft';
   blenderDimaScreen.hidden = blenderStage !== 'shorts' && blenderStage !== 'cube';
   blenderDimaScreen.dataset.focus = blenderStage ?? '';
+  blenderFiles.hidden = blenderStage !== 'files' && blenderStage !== 'recent-files';
+  blenderFiles.classList.toggle('shows-recent-files', blenderStage === 'recent-files');
+  blenderProjectLabels.hidden = scene.prop !== 'blender-project';
   blenderModelProgress.hidden = scene.modelProgress === undefined;
   if (!blenderModelProgress.hidden) {
     const progress = blenderModelProgress.querySelector('progress');

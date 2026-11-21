@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=blender-diorama">
-  <script src="story.js?v=blender-diorama" defer></script>
+  <link rel="stylesheet" href="style.css?v=blender-projects">
+  <script src="story.js?v=blender-projects" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=blender-diorama" defer></script>
+  <script src="game.js?v=blender-projects" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -212,6 +212,9 @@
         <div class="story-picture" id="story-picture">
           <canvas id="route-map" width="960" height="540" role="img" hidden></canvas>
           <img id="scene-art" alt="">
+          <div id="blender-project-labels" class="blender-project-labels" aria-hidden="true" hidden>
+            <span>Референс</span><span>Модель Димы</span>
+          </div>
           <div id="blender-model-progress" class="blender-model-progress" hidden>
             <progress value="60" max="100" aria-label="Готовность модели Серёжи"></progress><span>60%</span>
           </div>
@@ -270,6 +273,25 @@
                 </div>
               </section>
             </div>
+          </section>
+          <section id="blender-files" class="blender-screen blender-files" aria-labelledby="blender-files-title" hidden>
+            <header class="blender-toolbar"><strong id="blender-files-title">Проекты Димы</strong><span>Blender</span></header>
+            <div class="blender-file-folders" aria-label="Папки">
+              <span>реф</span><span>Материалы</span><span>Image</span><span>Palete</span>
+            </div>
+            <table aria-label="Сохранённые проекты Blender">
+              <thead><tr><th scope="col">Имя файла</th><th scope="col">Изменён</th></tr></thead>
+              <tbody>
+                <tr class="blender-file-recent"><td>Масинка.blend</td><td>18 ноя. · 19:56</td></tr>
+                <tr class="blender-file-recent"><td>золото.blend</td><td>15 ноя. · 18:26</td></tr>
+                <tr class="blender-file-recent"><td>перо.blend</td><td>15 ноя. · 17:21</td></tr>
+                <tr><td>diorama.blend</td><td>15 ноя. · 17:21</td></tr>
+                <tr><td>Катана.blend</td><td>14 ноя. · 17:12</td></tr>
+                <tr><td>Диорама.blend</td><td>13 ноя. · 17:08</td></tr>
+                <tr><td>Радиация.blend</td><td>13 ноя. · 03:21</td></tr>
+                <tr><td>Компьютер.blend</td><td>9 ноя. · 02:42</td></tr>
+              </tbody>
+            </table>
           </section>
           <div id="ozon-nametags" class="ozon-nametags" aria-hidden="true" hidden>
             <span class="ozon-nametag ozon-nametag-angel">Димеург</span>

@@ -1448,6 +1448,37 @@ h1, h2, h3, p { margin: 0; }
 }
 .blender-model-progress progress { width: clamp(3rem, 16vw, 9rem); height: .6rem; accent-color: #c793ff; }
 .blender-dima-screen .blender-toolbar > span { color: #a9ecc9; }
+.blender-file-folders {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  padding: .65rem;
+  border-bottom: 1px solid #675072;
+  font-size: .8rem;
+}
+.blender-file-folders span { padding: .2rem .45rem; color: #f0d6aa; background: #382a40; }
+.blender-files table { width: 100%; border-collapse: collapse; text-align: left; font-size: clamp(.72rem, 2.4vw, .97rem); }
+.blender-files th, .blender-files td { padding: .47rem clamp(.5rem, 2vw, 1rem); }
+.blender-files th { color: #d6b8ed; background: #21182f; }
+.blender-files td:last-child { color: #c1b0d0; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.blender-files tbody tr:nth-child(odd) { background: #291f37; }
+.blender-files.shows-recent-files .blender-file-recent { background: #41295f; }
+.blender-files.shows-recent-files .blender-file-recent td:first-child { box-shadow: inset 3px 0 #bc9afa; }
+.blender-project-labels {
+  position: absolute;
+  inset: auto 0 clamp(.35rem, 1.75vw, .9rem);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+  pointer-events: none;
+}
+.blender-project-labels span {
+  padding: .4em .55em;
+  border: 1px solid #aa84d3;
+  background: #20122ded;
+  color: #fff3ff;
+  font: clamp(.5rem, 2vw, .75rem)/1.5 var(--pixel);
+}
 .blender-windows { display: grid; grid-template-columns: 1fr 1fr; min-width: 0; }
 .blender-window { min-width: 0; background: #19121f; transition: filter .2s ease; }
 .blender-window h3 {

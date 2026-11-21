@@ -504,7 +504,7 @@ const ozonEpisode = [
   {
     id: 'ozon-reach', title: 'Из-под комода', speaker: 'Кирилл',
     alt: 'Кириллазар пытается вылезти и тянет руку к Серёже и Димеургу, которые всё ещё прыгают на кровати.',
-    line: 'Лучше бы купил Detarun…',
+    line: 'Лучше бы купил Deltarune…',
   },
   {
     id: 'ozon-pin', title: 'Не договорил',
@@ -666,7 +666,101 @@ const scenes = {
   },
   'blender-dima-reply': {
     title: 'Дима отвечает', callStage: 3, callGroup: 'blender', speaker: 'Дима',
-    line: 'Почему же?',
+    line: 'Почему же?', next: 'blender-dima-files',
+  },
+  'blender-dima-files': {
+    title: 'Сохранённые проекты', art: 'home-blender', blenderStage: 'files', speaker: 'Дима',
+    alt: 'Дима открывает папку со своими сохранёнными проектами Blender.',
+    line: 'Смотри сюда.', next: 'blender-recent-files',
+  },
+  'blender-recent-files': {
+    title: 'Три файла после диорамы', art: 'home-blender', blenderStage: 'recent-files',
+    alt: 'В списке сохранений выделены три файла над diorama.blend.',
+    line: 'После диорамы в списке ещё три проекта. Самый свежий Дима сохранил 18 ноября.', next: 'blender-project-surprise',
+  },
+  'blender-project-surprise': {
+    title: 'Столько моделей?', art: 'blender-project-surprise',
+    alt: 'Серёжа приподнимает брови и удивлённо смотрит на список проектов.',
+    line: 'Дим, ты что, уже успел столько моделек сделать?', next: 'blender-project-confirm',
+  },
+  'blender-project-confirm': {
+    title: 'Разумеется', art: 'blender-dima-calm', speaker: 'Дима',
+    alt: 'Дима спокойно отвечает, едва заметно улыбаясь.',
+    line: 'Да, уже столько сделал. А что?', next: 'blender-project-doubt',
+  },
+  'blender-project-doubt': {
+    title: 'А можно посмотреть?', art: 'blender-project-doubt',
+    alt: 'У Серёжи поднимается одна бровь, на лице появляется сомнение.',
+    line: 'Погоди-ка. А открой какую-нибудь модельку, посмотреть.', next: 'blender-dima-deflect',
+  },
+  'blender-dima-deflect': {
+    title: 'Дело доверия', art: 'blender-dima-calm', speaker: 'Дима',
+    alt: 'Дима говорит будничным тоном, и по лицу почти ничего не заметно.',
+    line: 'Да ладно тебе. Ты мне не веришь, что ли? Я тебе хоть раз в жизни врал?', next: 'blender-project-accusation',
+  },
+  'blender-project-accusation': {
+    title: 'Короткий ответ', art: 'blender-project-doubt',
+    alt: 'Серёжа смотрит на экран с поднятой бровью.',
+    line: 'Да, ты мне постоянно пизд#!*.', next: 'blender-one-example',
+  },
+  'blender-one-example': {
+    title: 'Хоть один пример', art: 'blender-dima-calm', speaker: 'Дима',
+    alt: 'Дима невозмутимо ждёт примера.',
+    line: 'Хорошо. Назови мне хоть одну ситуацию, когда я тебя обманывал.', next: 'blender-finger-up',
+  },
+  'blender-finger-up': {
+    title: 'А вот и…', art: 'blender-finger-up',
+    alt: 'Серёжа вскидывает указательный палец и с восторгом открывает рот, готовый ответить.',
+    line: 'Вот, например…', next: 'blender-finger-fold',
+  },
+  'blender-finger-fold': {
+    title: 'Ни одного примера', art: 'blender-finger-fold',
+    alt: 'Улыбка исчезает, палец неловко сгибается. Серёжа так и не может ничего вспомнить.',
+    line: '…', next: 'blender-dima-plebeian',
+  },
+  'blender-dima-plebeian': {
+    title: 'Великодушие Димы', art: 'blender-dima-plebeian', speaker: 'Дима',
+    alt: 'Дима театрально задирает подбородок и с нарочито надменной улыбкой разводит рукой.',
+    line: 'Ладно, так уж и быть, покажу тебе, плебею.', next: 'blender-project-mixer',
+  },
+  'blender-project-mixer': {
+    title: 'Масинка.blend', art: 'blender-project-mixer', prop: 'blender-project',
+    alt: 'Слева цветной референс кухонного блендера, справа Дима сделал только серое основание с ручкой регулятора.',
+    line: 'А где всё остальное?', next: 'blender-mixer-excuse',
+  },
+  'blender-mixer-excuse': {
+    title: 'Доделаю потом', art: 'blender-project-mixer', prop: 'blender-project', speaker: 'Дима',
+    alt: 'Рядом с готовым референсом видна только маленькая часть модели кухонного блендера.',
+    line: 'Да я подумал, что этот проект потом доделаю. Я уже следующий начал.', next: 'blender-next-sushi',
+  },
+  'blender-next-sushi': {
+    title: 'Следующий файл', art: 'blender-project-doubt',
+    alt: 'Серёжа уже с сомнением ждёт, пока откроется второй проект.',
+    line: 'Ладно… давай следующий…', next: 'blender-project-sushi',
+  },
+  'blender-project-sushi': {
+    title: 'золото.blend', art: 'blender-project-sushi', prop: 'blender-project', speaker: 'Дима',
+    alt: 'Слева блюдо с суши и палочками, справа серая доска и один черновой ролл без текстур.',
+    line: 'Ну, этот как-то неинтересно было делать. Я решил другую модель начать.', next: 'blender-next-bar',
+  },
+  'blender-next-bar': {
+    title: 'И ещё один', art: 'blender-project-doubt',
+    alt: 'Серёжа с ещё большим недоверием смотрит на экран.',
+    line: 'Л-ладно… давай следующую, что ли…', next: 'blender-project-bar',
+  },
+  'blender-project-bar': {
+    title: 'перо.blend', art: 'blender-project-bar', prop: 'blender-project',
+    alt: 'Слева готовый референс бара со стойкой, полками и стульями. Справа голый блок стойки и едва начатая табуретка.',
+    line: 'Вот и последний файл перед диорамой.', next: 'blender-blank-stare',
+  },
+  'blender-blank-stare': {
+    title: 'Пустой взгляд', art: 'blender-blank-stare',
+    alt: 'Серёжа молча смотрит на монитор пустыми глазами.',
+    next: 'blender-facepalm',
+  },
+  'blender-facepalm': {
+    title: 'Без слов', art: 'blender-facepalm',
+    alt: 'Серёжа опускает голову, упирается локтями в стол и закрывает лицо обеими руками.',
   },
   'home-phone': {
     title: '?????????', art: 'home-phone', prop: 'phone',
