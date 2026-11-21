@@ -12,15 +12,15 @@ const schoolTrip = [
 const backInTime = { id: 'back-in-time', title: 'Назад в прошлое', art: 'history-clock' };
 const ozonDeltarune = { id: 'ozon-deltarune', title: 'На#!$ Deltarune!!!', art: 'ozon-deltarune', crossed: true, showOnScene: true };
 const ozonCrossroads = { id: 'ozon-crossroads', title: 'Ад или Рай', art: 'ozon-crossroads-award', fullArt: true, showOnScene: true };
-const ozonDoubt = { id: 'ozon-doubt', title: 'Правильный выбор или нет...?', art: 'ozon-demon-grin', fullArt: true, showOnScene: true };
+const ozonDoubt = { id: 'ozon-doubt', title: 'Правильный выбор или нет...?', art: 'ozon-demon-grin-kirill', fullArt: true, showOnScene: true };
 const achievements = [backInTime, ozonDeltarune, ozonCrossroads, ozonDoubt];
 
 const characters = {
-  seryozha: { name: 'Серёжа', art: 'profile-seryozha', description: 'Главный герой, студент ГУАП. Любит компьютерные игры, среди которых War Thunder, Hearts of Iron IV (HOI4), Hollow Knight, Hollow Knight: Silksong, Rain World и Factorio. Интересуется 3D-моделированием в Blender. Пока сам не понимает, ищет ли девушку. Подрабатывает установкой дверей.' },
-  diana: { name: 'Диана', art: 'profile-diana', description: 'Одногруппница Серёжи в ГУАП. Они обсуждают задачи по физике и идеи для игры. Серёже нравится Диана, а что она чувствует к нему, пока неизвестно.' },
-  kirill: { name: 'Кирилл', art: 'profile-kirill', description: 'Школьный друг Серёжи. Они вместе играли в карты на уроке истории. При встрече в ГУАП Кирилл первым делом подшучивает над Серёжей.' },
-  dima: { name: 'Дима', art: 'profile-dima', description: 'Школьный друг Серёжи. Увлекается программированием. Вместе с Серёжей берётся за сайты, а в школе играл с ним в карты на истории.' },
-  nikita: { name: 'Никита', art: 'profile-nikita', description: 'Школьный друг Серёжи. В одиннадцатом классе они сидели за одной партой и играли в карты на уроке истории.' },
+  seryozha: { name: 'Серёжа', art: 'profile-seryozha', keyword: 'Экспонат', description: 'Главный герой, студент ГУАП. Любит компьютерные игры, среди которых War Thunder, Hearts of Iron IV (HOI4), Hollow Knight, Hollow Knight: Silksong, Rain World и Factorio. Интересуется 3D-моделированием в Blender. Пока сам не понимает, ищет ли девушку. Подрабатывает установкой дверей.' },
+  diana: { name: 'Диана', art: 'profile-diana', keyword: 'Жо#а', description: 'Одногруппница Серёжи в ГУАП. Отлично сдала ЕГЭ и особенно хорошо разбирается в точных науках. Играла в Phasmophobia, любит браузерные игры. В разработке игр ей нравится придумывать сюжет и продумывать персонажей. Серёже нравится Диана, а что она чувствует к нему, пока непонятно.' },
+  kirill: { name: 'Кирилл', art: 'profile-kirill', keyword: 'Душнила', description: 'Лысый школьный друг Серёжи. Вместе учились со 2-го по 11-й класс. Под конец 11-го класса играли в школе в карты и покер. Кирилл обожает Deltarune, у него есть девушка. С тех пор как началась учёба в ГУАП, он почти перестал играть с Серёжей и Димой в компьютерные игры.' },
+  dima: { name: 'Дима', art: 'profile-dima', keyword: 'Лень', description: 'Школьный друг Серёжи с 1-го по 11-й класс. Ленивый, любит компьютерные игры и пересмотрел кучу аниме. Серёжа научил его прогуливать, и теперь Дима пропускает занятия даже чаще своего наставника. Однажды Серёжа одним ударом в живот отправил его в космос.' },
+  nikita: { name: 'Никита', art: 'profile-nikita', keyword: 'Scrap', description: 'Школьный друг Серёжи с 10-го по 11-й класс. Увлекается физикой и всем, что с ней связано. Сам собрал радиоуправляемый самолёт. Его любимая игра — Scrap Mechanic. В компании он главный пропагандист Scrap Mechanic и Vintage Story. В школе они с Серёжей играли в карты и покер. Никита поступил в ЛЭТИ, и с начала учёбы о нём почти ничего не слышно.' },
 };
 
 const kirillAtUniversity = [
@@ -539,12 +539,12 @@ const ozonDemonEpisode = [
     alt: 'Димеург обмякает под комодом, не договорив. На кровати всё ещё прыгают Серёжа и Кириллазар.',
   },
   {
-    id: 'ozon-demon-smile', title: 'Доволен',
-    alt: 'Крупный план рта Кириллазара. Он тепло улыбается, довольный тем, что Серёжа его послушал.',
+    id: 'ozon-demon-smile', title: 'Доволен', speaker: 'Демон (Кирилл)',
+    alt: 'Крупный план рта демона Кирилла. Он тепло улыбается, довольный тем, что Серёжа его послушал.',
   },
   {
-    id: 'ozon-demon-grin', title: 'Ухмылка', achievement: ozonDoubt.id,
-    alt: 'Крупный план рта Кириллазара. Добрая улыбка сменяется зловещей ухмылкой.',
+    id: 'ozon-demon-grin', title: 'Ухмылка', speaker: 'Демон (Кирилл)', art: ozonDoubt.art, achievement: ozonDoubt.id,
+    alt: 'Крупный план рта демона Кирилла. Его улыбка становится зловещей, а фон затягивают багровые тени.',
   },
 ];
 

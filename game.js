@@ -74,7 +74,9 @@ const endingsStorageKey = 'minigames.seryozha.endings';
 const achievementStoragePrefix = 'minigames.seryozha.';
 const decisionStorageKey = 'minigames.seryozha.last-decision';
 const characterStoragePrefix = 'minigames.seryozha.character.';
+const dianaAliasStorageKey = `${characterStoragePrefix}diana-alias`;
 const discoveredCharacters = new Set();
+let dianaAlias;
 const profileQueue = [];
 let activeProfile;
 let morningProfileTimer;
@@ -249,6 +251,7 @@ function renderStoryEndings() {
 }
 
 function renderDianaChat(reply) {
+  rememberDianaAlias('chat');
   const name = dianaContactName();
   dianaChatName.textContent = name;
   const makeMessage = (text, fromDiana = false) => {
@@ -287,6 +290,7 @@ function updatePhoneScore() {
 }
 
 function renderPhoneRound() {
+  rememberDianaAlias('choice');
   activePosition.phone = { index: phoneQuiz.index, correct: phoneQuiz.correct };
   rememberDecision('phone-quiz', phoneQuiz);
   updateSceneBack();
@@ -398,6 +402,7 @@ function readCharacters() {
     for (const id of Object.keys(characters)) {
       if (localStorage.getItem(characterStoragePrefix + id) === '1') discoveredCharacters.add(id);
     }
+    dianaAlias = localStorage.getItem(dianaAliasStorageKey) ?? dianaAlias;
   } catch {
     // Keep discoveries for the current session if storage is unavailable.
   }
@@ -407,8 +412,34 @@ function dianaContactName() {
   return discoveredCharacters.has('diana') ? characters.diana.name : 'Неизвестная';
 }
 
+function rememberDianaAlias(context) {
+  if (discoveredCharacters.has('diana') || dianaAlias === 'chat' || dianaAlias === context) return;
+  dianaAlias = context;
+  try {
+    localStorage.setItem(dianaAliasStorageKey, context);
+  } catch {
+    // The current session still remembers the alias.
+  }
+}
+
+function lockedCharacterCard(popup = false) {
+  const card = document.createElement(popup ? 'div' : 'article');
+  card.className = 'character-card character-locked';
+  card.setAttribute(popup ? 'aria-hidden' : 'aria-label', popup ? 'true' : 'Персонаж ещё не открыт');
+  const portrait = document.createElement('div');
+  portrait.className = 'character-silhouette';
+  const info = document.createElement('div');
+  const title = document.createElement(popup ? 'h2' : 'h3');
+  title.textContent = '?????';
+  const bio = document.createElement('p');
+  bio.textContent = '???????? ??????????? ???????? ???????????? ?????? ??????????';
+  info.append(title, bio);
+  card.append(portrait, info);
+  return card;
+}
+
 function characterCard(id, { popup = false, reveal = false } = {}) {
-  const { name, art, description } = characters[id];
+  const { name, art, description, keyword } = characters[id];
   const card = document.createElement(popup ? 'div' : 'article');
   card.className = 'character-card';
   const portrait = document.createElement('img');
@@ -442,14 +473,25 @@ function characterCard(id, { popup = false, reveal = false } = {}) {
     }
     info.append(favorite);
   }
+  if (popup && id === 'diana' && dianaAlias) {
+    const alias = document.createElement('p');
+    alias.className = 'character-alias';
+    alias.textContent = dianaAlias === 'chat' ? 'В переписке — «Неизвестная»' : 'В вариантах ответа — «Неизвестная»';
+    info.append(alias);
+  }
+  const trait = document.createElement('p');
+  trait.className = 'character-keyword';
+  const word = document.createElement('strong');
+  word.textContent = keyword;
+  trait.append('В одном слове ', word);
+  info.append(trait);
   card.append(portrait, info);
   return card;
 }
 
 function renderCharacters() {
   characterList.replaceChildren(...Object.keys(characters)
-    .filter((id) => id === 'seryozha' || discoveredCharacters.has(id))
-    .map((id) => characterCard(id)));
+    .map((id) => id === 'seryozha' || discoveredCharacters.has(id) ? characterCard(id) : lockedCharacterCard()));
 }
 
 function resetCharacters() {
@@ -458,11 +500,13 @@ function resetCharacters() {
   const status = document.querySelector('#character-reset-status');
   try {
     for (const id of Object.keys(characters)) localStorage.removeItem(characterStoragePrefix + id);
+    localStorage.removeItem(dianaAliasStorageKey);
     status.textContent = 'Знакомства сброшены.';
   } catch {
     status.textContent = 'Знакомства сброшены в этой вкладке. Хранилище браузера недоступно.';
   }
   discoveredCharacters.clear();
+  dianaAlias = undefined;
   renderCharacters();
 }
 
@@ -474,7 +518,9 @@ function showNextCharacterProfile() {
   } while (entry && !entry.reveal && discoveredCharacters.has(entry.id));
   if (!entry) return;
   activeProfile = entry.id;
-  characterProfileBody.replaceChildren(characterCard(entry.id, { popup: true, reveal: entry.reveal }));
+  const card = characterCard(entry.id, { popup: true, reveal: entry.reveal });
+  characterProfileBody.classList.toggle('character-unlock', !entry.reveal);
+  characterProfileBody.replaceChildren(...(entry.reveal ? [card] : [lockedCharacterCard(true), card]));
   characterProfile.showModal();
   discoveredCharacters.add(entry.id);
   try {
@@ -579,7 +625,10 @@ function renderScene(key, { phone, remember = true } = {}) {
   endingAward.hidden = !scene.ending;
   dianaChat.hidden = scene.prop !== 'chat';
   ozonChat.hidden = scene.prop !== 'ozon-montage';
-  if (!ozonChat.hidden) ozonChatName.textContent = dianaContactName();
+  if (!ozonChat.hidden) {
+    rememberDianaAlias('chat');
+    ozonChatName.textContent = dianaContactName();
+  }
   scenePicture.classList.toggle('has-ending-award', Boolean(scene.ending));
   scenePicture.classList.toggle('has-chat', scene.prop === 'chat');
   if (scene.ending) {
@@ -753,7 +802,9 @@ endingPreview.addEventListener('click', (event) => {
 });
 window.addEventListener('hashchange', () => syncRoute(true));
 window.addEventListener('storage', (event) => {
-  if (event.key?.startsWith(characterStoragePrefix)) {
+  if (event.key === dianaAliasStorageKey) {
+    dianaAlias = event.newValue;
+  } else if (event.key?.startsWith(characterStoragePrefix)) {
     const id = event.key.slice(characterStoragePrefix.length);
     if (!Object.hasOwn(characters, id)) return;
     if (event.newValue === '1') discoveredCharacters.add(id);
