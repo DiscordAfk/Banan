@@ -132,6 +132,10 @@ const nightPhoneNote = document.querySelector('#night-phone-note');
 const nightPhoneSource = document.querySelector('#night-phone-source');
 const nightPhoneText = document.querySelector('#night-phone-text');
 const nightPhoneSecond = document.querySelector('#night-phone-second');
+const sleepBubble = document.querySelector('#sleep-bubble');
+const nightDiscord = document.querySelector('#night-discord');
+const nightDiscordPlayers = document.querySelector('#night-discord-players');
+const nightDiscordShots = document.querySelector('#night-discord-shots');
 const nightVideoScroll = document.querySelector('#night-video-scroll');
 const nightCharacterSwitch = document.querySelector('#night-character-switch');
 const nightGameName = document.querySelector('#night-game-name');
@@ -159,7 +163,14 @@ const nightPhoneMessages = {
   one: ['Экран блокировки', '1 уведомление'],
   letter: ['Входящий звонок', 'Д…'],
   denis: ['Вызов принят', 'Денис'],
+  'sleep-call': ['Входящий звонок', 'Денис'],
+  'sleep-missed': ['Пропущенный звонок', 'Денис'],
+  'sleep-warning': ['Староста', 'Если сегодня опять пропустишь, то тебя отчислят'],
 };
+const lectureFrames = [
+  ['45 минут', 'night-sleep-lecture-study-middle', 'Серёжа пододвигает к Диане конспект с рисунком на полях.'],
+  ['80 минут', 'night-sleep-lecture-study-late', 'Серёжа и Диана улыбаются, сравнивая записи. Солнечный свет уже на другой стороне парты.'],
+];
 
 const gameStoragePrefix = 'minigames.seryozha.';
 const endingsStorageKey = `${gameStoragePrefix}endings`;
@@ -1102,7 +1113,10 @@ function renderNightProps(scene) {
   if (phoneNote) {
     nightPhoneNote.dataset.note = phoneNote;
     [nightPhoneSource.textContent, nightPhoneText.textContent] = nightPhoneMessages[phoneNote];
-    nightPhoneSecond.hidden = phoneNote !== 'two-chats';
+    const missed = phoneNote === 'sleep-missed';
+    nightPhoneSecond.hidden = !missed && phoneNote !== 'two-chats';
+    nightPhoneSecond.firstElementChild.textContent = missed ? 'Discord · Общая группа' : 'Telegram · Серёжа';
+    nightPhoneSecond.lastElementChild.textContent = missed ? 'Много новых сообщений' : 'Открыт чат';
   }
   dioramaCheck.hidden = !dioramaView;
   if (dioramaView) {
@@ -1118,6 +1132,35 @@ function renderNightProps(scene) {
   nightVideoScroll.hidden = prop !== 'shorts-timelapse';
   nightCharacterSwitch.hidden = prop !== 'character-switch';
   scenePicture.dataset.nightEffect = prop ?? '';
+  sleepBubble.hidden = prop !== 'deep-sleep';
+  nightDiscord.hidden = prop !== 'sleep-discord';
+  if (!nightDiscord.hidden && !nightDiscordShots.childElementCount) {
+    nightDiscordPlayers.textContent = nightRoster
+      .filter(({ id }) => id !== 'seryozha')
+      .map(({ id }) => characters[id].name)
+      .join(' · ');
+    for (const [name, art] of nightGames) {
+      const shot = document.createElement('li');
+      const image = document.createElement('img');
+      image.src = artPath(art);
+      image.alt = '';
+      image.width = 832;
+      image.height = 468;
+      const caption = document.createElement('span');
+      caption.textContent = name;
+      shot.append(image, caption);
+      nightDiscordShots.append(shot);
+    }
+  }
+  if (prop === 'lecture-timelapse') {
+    for (const [, art] of lectureFrames) preloadArt(artPath(art));
+    runSceneSequence([1050, 2100], (index) => {
+      const [time, art, alt] = lectureFrames[index];
+      nightTimeBadge.textContent = time;
+      sceneArt.src = artPath(art);
+      sceneArt.alt = alt;
+    });
+  }
   nightGameName.hidden = prop !== 'night-games';
   if (!nightGameName.hidden) {
     nightGameName.textContent = nightGames[0][0];

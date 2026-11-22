@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=kirill-club">
-  <script src="story.js?v=kirill-club" defer></script>
+  <link rel="stylesheet" href="style.css?v=kirill-club-sleep">
+  <script src="story.js?v=kirill-club-sleep" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=kirill-club" defer></script>
+  <script src="game.js?v=kirill-club-sleep" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -315,6 +315,7 @@
             <div><small id="night-phone-source"></small><strong id="night-phone-text"></strong></div>
             <div id="night-phone-second" hidden><small>Telegram · Серёжа</small><strong>Открыт чат</strong></div>
           </div>
+          <span id="sleep-bubble" class="sleep-bubble" aria-hidden="true" hidden></span>
           <section id="blender-diorama-check" class="blender-screen blender-diorama-check" aria-label="Демонстрация диорамы" hidden>
             <header class="blender-toolbar"><strong id="diorama-screen-title">Экран Димы</strong><span id="diorama-screen-note"></span></header>
             <div id="diorama-photo" class="diorama-photo" hidden>
@@ -521,6 +522,11 @@
         <audio id="scene-audio" preload="none"></audio>
         <audio id="reward-audio" preload="none"></audio>
         <section id="holdem-panel" class="holdem-panel" aria-label="Карты в покере" hidden></section>
+        <section id="night-discord" class="night-discord" aria-labelledby="night-discord-title" hidden>
+          <h2 id="night-discord-title">Discord · Общая группа</h2>
+          <p id="night-discord-players"></p>
+          <ul id="night-discord-shots" class="night-discord-shots"></ul>
+        </section>
         <div class="dialogue" id="dialogue">
           <p class="genre" id="speaker">Серёжа</p>
           <h1 id="scene-title" tabindex="-1"></h1>

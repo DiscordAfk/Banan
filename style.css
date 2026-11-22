@@ -1872,7 +1872,7 @@ h1, h2, h3, p { margin: 0; }
   font-size: clamp(.68rem, 2.4vw, .95rem);
 }
 .night-phone-note small { color: #c9dcff; }
-.night-phone-note[data-note='two-chats'] {
+.night-phone-note:is([data-note='two-chats'], [data-note='sleep-missed']) {
   inset: auto .55rem .6rem .55rem;
   grid-template-columns: 1fr 1fr;
   max-width: none;
@@ -1880,6 +1880,45 @@ h1, h2, h3, p { margin: 0; }
 .night-phone-note[data-note='two-chats'] div:first-child { justify-self: start; }
 .night-phone-note[data-note='two-chats'] div:last-child { justify-self: end; }
 .night-phone-note[data-note='received'] { inset: auto auto .6rem .55rem; }
+.sleep-bubble {
+  position: absolute;
+  z-index: 2;
+  top: 17%;
+  left: 74%;
+  width: 7%;
+  aspect-ratio: 1;
+  border: 1px solid #e1efffaa;
+  border-radius: 48% 52% 52% 48%;
+  background: radial-gradient(circle at 63% 28%, #edf7ffea 5%, #d7efffb5 11%, #acd9f969 42%, #afd9ee3d 70%);
+  box-shadow: inset 0 0 .55rem #d2eaff52;
+  transform-origin: left center;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sleep-bubble { animation: sleep-bubble-breathe 2.6s ease-in-out infinite alternate; }
+}
+@keyframes sleep-bubble-breathe {
+  from { transform: scale(.25); }
+  to { transform: scale(1); }
+}
+.night-discord {
+  padding: clamp(.75rem, 3vw, 1.25rem);
+  border-block: 1px solid #554678;
+  background: #201a31;
+}
+.night-discord h2 { margin: 0; color: #eee5ff; font-size: 1rem; }
+.night-discord p { margin: .35rem 0 .75rem; color: #cbc0df; font-size: .85rem; }
+.night-discord-shots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+  gap: .55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.night-discord-shots li { overflow: hidden; border: 1px solid #574976; background: #151123; }
+.night-discord-shots img { display: block; width: 100%; height: auto; }
+.night-discord-shots span { display: block; padding: .35rem .45rem; color: #eee5ff; font-size: .78rem; }
 [data-night-effect='focus-diana']::before, [data-night-effect='focus-phone']::before {
   position: absolute;
   inset: 0 0 0 52%;
