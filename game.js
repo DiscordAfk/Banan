@@ -372,16 +372,14 @@ function renderDlcMenu(dlc, section) {
   if (section !== 'story-map') return;
   dlcRoadmap.replaceChildren(...dlc.roadmap.map(({ number, scene }) => {
     const item = document.createElement('li');
+    item.value = number;
     const button = document.createElement('button');
     button.className = 'story-point';
     button.type = 'button';
     button.disabled = !scene;
-    const label = document.createElement('span');
-    label.className = 'story-point-type';
-    label.textContent = `Сцена ${number}`;
     const title = document.createElement('strong');
     title.textContent = scene ? scenes[scene].title : 'В разработке';
-    button.append(label, title);
+    button.append(title);
     button.addEventListener('click', () => playDlc(dlc, scene));
     item.append(button);
     return item;
