@@ -558,6 +558,7 @@ h1, h2, h3, p { margin: 0; }
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 1rem;
 }
+#dlc-achievement-groups > section { margin-top: 2rem; }
 .result-card {
   overflow: hidden;
   border: 1px solid #5e477e;
@@ -584,12 +585,16 @@ h1, h2, h3, p { margin: 0; }
   transform: translate(-50%, -50%) rotate(29.4deg);
 }
 .result-crossed::after { transform: translate(-50%, -50%) rotate(-29.4deg); }
-.result-icon {
-  display: grid;
-  place-items: center;
-  background: #171128;
+.result-icon { background: #171128; }
+.result-icon img {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: auto;
+  height: 64%;
+  max-width: 75%;
+  object-fit: contain;
 }
-.result-icon img { width: auto; height: 64%; max-width: 75%; object-fit: contain; }
 .result-info { display: grid; gap: .5rem; padding: 1rem; }
 .result-info .genre { margin: 0; overflow-wrap: anywhere; }
 .result-info h2,

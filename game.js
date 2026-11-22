@@ -108,6 +108,8 @@ const progressResetConfirmation = document.querySelector('#progress-reset-confir
 const cancelProgressReset = document.querySelector('#cancel-progress-reset');
 const achievementList = document.querySelector('#achievement-list');
 const achievementProgress = document.querySelector('#achievement-progress');
+const dlcAchievementGroups = document.querySelector('#dlc-achievement-groups');
+const dlcAchievementGroupTemplate = document.querySelector('#dlc-achievement-group-template');
 const achievementAward = document.querySelector('#achievement-award');
 const endingAward = document.querySelector('#ending-award');
 const gameOverTitle = document.querySelector('#game-over-title');
@@ -708,6 +710,14 @@ function readAchievements(results = achievements) {
 function renderAchievements() {
   readEndings();
   renderAchievementCards(achievements, achievementList, achievementProgress, endings);
+  dlcAchievementGroups.replaceChildren();
+  for (const { title, achievements: results } of downloadableStories) {
+    if (!results?.length) continue;
+    const group = dlcAchievementGroupTemplate.content.firstElementChild.cloneNode(true);
+    group.querySelector('h3').textContent = title;
+    renderAchievementCards(results, group.querySelector('.achievement-list'), group.querySelector('p'));
+    dlcAchievementGroups.append(group);
+  }
 }
 
 function renderAchievementCards(results, list, progress, endingResults = []) {
@@ -1060,16 +1070,19 @@ function characterCard(id, { popup = false, reveal = false } = {}) {
   if (!popup && canOpenCharacterStory(id)) {
     const actions = document.createElement('div');
     actions.className = 'character-story-actions';
-    const play = document.createElement('button');
-    play.type = 'button';
-    play.className = 'pixel-button';
-    play.textContent = `Пройти сюжет ${characterStories[id].name}`;
-    play.addEventListener('click', () => playCharacterStory(id));
+    if (id === 'seryozha' || characterStories[id].episodes.length) {
+      const play = document.createElement('button');
+      play.type = 'button';
+      play.className = 'pixel-button';
+      play.textContent = `Пройти сюжет ${characterStories[id].name}`;
+      play.addEventListener('click', () => playCharacterStory(id));
+      actions.append(play);
+    }
     const map = document.createElement('a');
     map.className = 'nav-link';
     map.href = characterStoryHash(id);
     map.textContent = 'Карта сюжета';
-    actions.append(play, map);
+    actions.append(map);
     info.append(actions);
   }
   card.append(portrait, info);
@@ -1862,14 +1875,11 @@ window.addEventListener('storage', (event) => {
     else if (event.newValue !== '1' && !characterStoryPanel.hidden && window.location.hash === characterStoryHash(id)) syncRoute(true);
   }
   const rewardChanged = event.key === endingsStorageKey || achievements.some(({ id }) => event.key === gameStoragePrefix + id);
-  if (rewardChanged) {
-    if (window.location.hash === '#achievements') renderAchievements();
-    if (window.location.hash === '#story-map' && !endingPreview.open) renderStoryRewards();
-  }
-  if (!dlcMenuPanel.hidden && dlcOverview.hidden && downloadableStories.some(({ achievements: results = [] }) =>
-    results.some(({ id }) => event.key === gameStoragePrefix + id))) {
-    syncRoute();
-  }
+  const dlcRewardChanged = downloadableStories.some(({ achievements: results = [] }) =>
+    results.some(({ id }) => event.key === gameStoragePrefix + id));
+  if ((rewardChanged || dlcRewardChanged) && !achievementsPanel.hidden) renderAchievements();
+  if (rewardChanged && !storyMapPanel.hidden && !endingPreview.open) renderStoryRewards();
+  if (dlcRewardChanged && !dlcMenuPanel.hidden && dlcOverview.hidden) syncRoute();
   if (!storyMapPanel.hidden && event.key === decisionStorageKey) {
     renderLastDecision();
     renderStoryStarts();

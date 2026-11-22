@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=nikita-dlc">
-  <script src="story.js?v=nikita-dlc" defer></script>
+  <link rel="stylesheet" href="style.css?v=dlc-achievements">
+  <script src="story.js?v=dlc-achievements" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=nikita-dlc" defer></script>
+  <script src="game.js?v=dlc-achievements" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -92,6 +92,16 @@
           <p id="achievement-progress"></p>
         </div>
         <div id="achievement-list" class="achievement-list"></div>
+        <div id="dlc-achievement-groups"></div>
+        <template id="dlc-achievement-group-template">
+          <section>
+            <div class="achievement-heading">
+              <h3></h3>
+              <p></p>
+            </div>
+            <div class="achievement-list"></div>
+          </section>
+        </template>
       </section>
 
       <section id="characters-panel" aria-labelledby="characters-title" hidden>
