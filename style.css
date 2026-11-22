@@ -1906,6 +1906,57 @@ h1, h2, h3, p { margin: 0; }
   paint-order: stroke fill;
   text-shadow: .045em .065em #8d314c, .085em .1em #2a1329;
 }
+
+.holdem-bet {
+  position: absolute;
+  right: .8rem;
+  bottom: .8rem;
+  padding: .35em .6em;
+  border: 1px solid #a6bfee;
+  border-radius: .2rem;
+  background: #182b5aeb;
+  color: #f0f6ff;
+  box-shadow: 0 .2rem .7rem #141038;
+}
+
+.holdem-panel {
+  container-type: inline-size;
+  padding: clamp(.75rem, 2.6vw, 1.35rem);
+  border-block: 1px solid #4e7162;
+  background: radial-gradient(ellipse at 18% 0, #275047, #122b29 80%);
+}
+
+.holdem-panel[data-layout]:not([data-layout='']) { padding-block: clamp(1.45rem, 5vw, 3.8rem); }
+.holdem-panel[data-layout='royal'] { background: radial-gradient(ellipse at 27% 20%, #3e5849, #102c2a 72%); }
+.holdem-panel[data-layout='manga'] { background: repeating-conic-gradient(from 20deg, #251d2c 0 8deg, #1a1620 9deg 19deg); }
+.holdem-panel h2 { margin: 0 0 .65rem; color: #ffecae; font: 400 clamp(.75rem, 2.9vw, 1.15rem)/1.5 var(--pixel); }
+.holdem-table { display: flex; flex-wrap: wrap; gap: .8rem; align-items: flex-start; }
+.holdem-group { display: grid; gap: .35rem; color: #e3efe2; font-size: .85rem; }
+.holdem-cards { display: flex; gap: clamp(.2rem, 1cqi, .5rem); }
+.holdem-card {
+  display: block;
+  width: clamp(1.65rem, 9.2cqi, 3.45rem);
+  height: auto;
+  aspect-ratio: 159 / 235;
+  border: 1px solid #d6c5a5;
+  border-radius: .22rem;
+  background: #fffdfa;
+}
+.holdem-panel[data-layout]:not([data-layout='']) .holdem-card { width: clamp(1.75rem, 10cqi, 4.3rem); }
+.holdem-card-highlighted { box-shadow: 0 0 0 1px #f3d47b, 0 0 .65rem #f8cc6075; }
+.holdem-card-muted { opacity: .52; filter: saturate(.55); }
+.holdem-manga-caption {
+  width: fit-content;
+  margin: 1rem 0 0;
+  padding: .45em .7em;
+  border: 2px solid #19111d;
+  background: #f8edda;
+  color: #211724;
+  box-shadow: .2rem .2rem #9e86a8;
+  font-weight: 800;
+  transform: rotate(-1deg);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .favorite-correction.is-writing strong { animation: favorite-write .5s .27s both; }
   .history-door-slam:not([hidden]) { animation: history-door-pop .33s cubic-bezier(.2, .85, .32, 1.22) both; }

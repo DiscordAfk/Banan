@@ -31,6 +31,290 @@ const characters = {
   yana: { name: 'Яна', art: 'profile-yana', keyword: 'Формы', description: 'Одноклассница Серёжи с 5-го по 11-й класс. Серёже нравится её фигура. Яна заинтересовалась покером благодаря ему. Парня у неё, кажется, нет.' },
 };
 
+const holdemBoard = ['Qs', 'Js', 'Ts', '8d', 'Qh'];
+const holdemFlop = holdemBoard.slice(0, 3);
+const holdemTurn = holdemBoard.slice(0, 4);
+const holdemChapter = [
+  {
+    id: 'history-poker-questions', title: 'Что вы тут делаете?',
+    line: 'Аня, Диана и Яна заглядывают в коморку. «Вы что, в покер играете? А если вас увидят?»',
+  },
+  {
+    id: 'history-poker-under-control', title: 'Всё под контролем',
+    alt: 'Серёжа объясняет правила. Никита и Матвей сидят на двух стульях напротив него.',
+    line: 'Серёжа успокаивает их. «Ирина Анатольевна прикрывает. И мы пока в дурака играем».',
+  },
+  {
+    id: 'history-poker-join', title: 'А можно с вами?',
+    line: 'Девочки переглядываются и смотрят на ребят за партой.',
+  },
+  {
+    id: 'history-poker-finish-durak', title: 'Сейчас доиграем',
+    line: 'Кирилл кивает. «Доиграем партию, и можете присоединяться».',
+  },
+  {
+    id: 'history-poker-behind-chair', title: 'Трое за спиной',
+    alt: 'Три девочки стоят за деревянным стулом Серёжи и опираются на спинку.',
+    line: 'Яна, Аня и Диана стоят прямо за Серёжей и опираются на спинку его стула. Серёжа чувствует, что за ним кто-то стоит.',
+  },
+  {
+    id: 'history-poker-look-up', title: 'Взгляд снизу',
+    alt: 'Серёжа задирает голову к девочкам, стоящим позади стула.',
+    line: 'Серёжа задирает голову. Девочки склоняются над спинкой его стула. Сердце колотится, он сглатывает.',
+  },
+  {
+    id: 'history-poker-daydream', title: 'На секунду показалось',
+    alt: 'В розовом свете фантазии Серёжа откидывается назад, а Аня наклоняется к нему над спинкой.',
+    line: 'В воображении Серёжа откидывает голову назад через спинку, а Аня наклоняется к нему сверху. Их лица почти соприкасаются.',
+  },
+  {
+    id: 'history-poker-back-to-game', title: 'Резко назад',
+    line: 'Серёжа мотает головой. Девочки всё так же стоят за стулом и ждут, когда освободится место. Он снова смотрит в карты.',
+  },
+  {
+    id: 'history-poker-vova-joke', title: 'Вова подшучивает',
+    line: 'Вова неожиданно громко выдаёт «Ого, Серый, сразу троих обрабатываешь?»',
+  },
+  {
+    id: 'history-poker-vova-poke', title: 'Серёжа привстаёт',
+    sound: 'assets/route/history-card-tap.mp3',
+    alt: 'Сосредоточенный Серёжа касается живота Вовы только кончиками пальцев.',
+    line: 'Смущённый Серёжа привстаёт и тычет Вову в живот кончиками пальцев. Вова складывается пополам.',
+  },
+  {
+    id: 'history-poker-chip-case', title: 'Набор на сукне',
+    alt: 'На переднем плане открытый покерный кейс. Вова и Матвей уходят через проход у шкафа.',
+    line: '«Дурак» заканчивается. Серёжа открывает кейс с фишками и картами. Вова и Матвей уходят на урок.',
+  },
+  {
+    id: 'history-poker-deal', title: 'Никита снова раздаёт',
+    prop: 'card-quick-move',
+    sound: 'assets/route/history-card-deal.mp3',
+    alt: 'Никита раздаёт карты на шесть рук. У Ани и Дианы одна пара карт на двоих.',
+    line: 'Для холдема 6+ Никита сдаёт по две карты на руку. Аня и Диана делят одну пару карт. Яна играет отдельно.',
+  },
+  {
+    id: 'history-poker-pair-of-queens', title: 'Две дамы с раздачи',
+    sound: 'assets/route/history-card-tap.mp3',
+    line: 'Серёжа видит пару дам и выжидает. Ставки до флопа уравнивают по большому блайнду.',
+    holdem: {
+      hole: ['Qc', 'Qd'],
+      title: 'Пара дам',
+      highlight: ['Qc', 'Qd'],
+    },
+  },
+  {
+    id: 'history-poker-flop', title: 'Третья дама',
+    line: 'На флопе открывается третья дама. Серёжа едва скрывает радость. Все чекают.',
+    holdem: {
+      board: holdemFlop,
+      hole: ['Qc', 'Qd'],
+      title: 'Сет дам',
+      highlight: ['Qs', 'Qc', 'Qd'],
+    },
+  },
+  {
+    id: 'history-poker-turn', title: 'Одна синяя фишка',
+    prop: 'card-quick-move',
+    sound: 'assets/route/history-card-tap.mp3',
+    holdemBet: '50',
+    line: 'На тёрне выходит восьмёрка бубен. Никита бросает фишку на 50. Ребята понимают, что у него что-то сильное.',
+    holdem: {
+      board: holdemTurn,
+    },
+  },
+  {
+    id: 'history-poker-girls-fold', title: 'Аня и Диана',
+    line: 'Девочки делили одну пару карт. Их две пары видит зритель.',
+    holdem: {
+      board: holdemTurn,
+      hole: ['Jh', 'Tc'],
+      title: 'Две пары',
+      highlight: ['Js', 'Ts', 'Jh', 'Tc'],
+    },
+  },
+  {
+    id: 'history-poker-kirill-fold', title: 'Кирилл',
+    line: 'Кирилл отправляет в сброс пару валетов.',
+    holdem: {
+      board: holdemTurn,
+      hole: ['Ad', 'Jc'],
+      title: 'Пара',
+      highlight: ['Js', 'Jc'],
+    },
+  },
+  {
+    id: 'history-poker-two-folds', title: 'Два паса',
+    line: 'Аня и Диана вместе отодвигают карты. «Мы пас». Кирилл следом: «Я тоже пас». Серёжа, Дима и Яна уравнивают ставку Никиты.',
+  },
+  {
+    id: 'history-poker-river', title: 'Ривер',
+    line: 'Пятая общая карта — дама червей. Серёжа внутри ликует, а снаружи сохраняет серьёзное лицо.',
+    holdem: {
+      board: holdemBoard,
+      hole: ['Qc', 'Qd'],
+      title: 'Каре из дам',
+      highlight: ['Qs', 'Qh', 'Qc', 'Qd'],
+      layout: 'river',
+    },
+  },
+  {
+    id: 'history-poker-seryozha-bets', title: 'Серёжа ставит',
+    prop: 'card-quick-move',
+    sound: 'assets/route/history-card-tap.mp3',
+    holdemBet: '4 × 50',
+    line: 'Четыре синие фишки по 50. Серёжа подвигает их к центру с таким видом, будто ничего особенного не случилось.',
+  },
+  {
+    id: 'history-poker-nikita-calls', title: 'Никита принимает',
+    prop: 'card-quick-move',
+    sound: 'assets/route/history-card-tap.mp3',
+    holdemBet: '4 × 50',
+    line: 'Никита пододвигает свои четыре фишки, едва усмехнувшись.',
+  },
+  {
+    id: 'history-poker-yana-calls', title: 'Яна принимает',
+    prop: 'card-quick-move',
+    sound: 'assets/route/history-card-tap.mp3',
+    holdemBet: '4 × 50',
+    line: 'Яна аккуратно подталкивает четыре фишки к банку. Остальные переглядываются.',
+  },
+  {
+    id: 'history-poker-last-call', title: 'Последние четыре фишки',
+    prop: 'card-quick-move',
+    sound: 'assets/route/history-card-tap.mp3',
+    holdemBet: '4 × 50',
+    line: 'Четвёртая рука уравнивает ставку. В кадре только рукав и фишки. Лицо Димы всё ещё вне кадра.',
+  },
+  {
+    id: 'history-poker-quads', title: '«Каре из дам!»',
+    prop: 'card-quick-move',
+    sound: 'assets/route/history-card-deal.mp3',
+    line: 'Серёжа эффектно бросает карты на стол и расплывается в улыбке.',
+    holdem: {
+      board: holdemBoard,
+      hole: ['Qc', 'Qd'],
+      title: 'Каре из дам',
+      highlight: ['Qs', 'Qh', 'Qc', 'Qd'],
+    },
+  },
+  {
+    id: 'history-poker-yana-reacts', title: 'Яна пытается разобраться',
+    line: 'Яна смотрит на карты, пока ещё не понимая, насколько редкая комбинация выпала Серёже.',
+  },
+  {
+    id: 'history-poker-straight-flush', title: '«Неплохо. Но смотри сюда»',
+    prop: 'card-quick-move',
+    sound: 'assets/route/history-card-deal.mp3',
+    line: 'Никита с ухмылкой открывает две пики. У него стрит-флэш от восьмёрки до дамы.',
+    holdem: {
+      board: holdemBoard,
+      hole: ['9s', '8s'],
+      title: 'Стрит-флэш',
+      highlight: ['Qs', 'Js', 'Ts', '9s', '8s'],
+    },
+  },
+  {
+    id: 'history-poker-disbelief', title: '«Мне выпало каре, и я проиграл?!»',
+    line: 'Улыбка Серёжи исчезает. «Никита, как тебе ТАК везёт?!» Никита отвечает с лёгкой гордостью: «Ну бывает, Серёж. Повезло разочек». «РАЗОЧЕК?! ТЕБЕ ПОСТОЯННО ВЕЗЁТ!» Никита пожимает плечами.',
+  },
+  {
+    id: 'history-poker-yana-shows', title: 'Яна открывается',
+    line: '«Ребят, я не очень поняла… а что у меня?» Яна аккуратно кладёт две карты и убирает руку.',
+  },
+  {
+    id: 'history-poker-speechless', title: 'Они теряют дар речи',
+    line: 'Никита и Серёжа открывают рты и оба пытаются хоть что-нибудь сказать.',
+  },
+  {
+    id: 'history-poker-royal-flush', title: 'Флэш-рояль',
+    line: 'Десятка, валет, дама, король и туз одной масти. Самая сильная рука.',
+    holdem: {
+      board: holdemBoard,
+      hole: ['As', 'Ks'],
+      title: 'Флэш-рояль',
+      highlight: ['Qs', 'Js', 'Ts', 'As', 'Ks'],
+      layout: 'royal',
+    },
+  },
+  {
+    id: 'history-poker-nikita-facepalm', title: 'Без слов',
+    line: 'Серёжа с открытым ртом поворачивается к Никите. Никита запрокидывает голову и закрывает лицо обеими ладонями.',
+  },
+  {
+    id: 'history-poker-nikita-shock', title: 'Ладони медленно сползают',
+    line: 'Никита так и не подбирает слов. «Ну как ты… Каким образом… Она первый раз играет! И это когда у меня стрит-флэш!»',
+  },
+  {
+    id: 'history-poker-beginners-luck', title: 'Плечами пожала',
+    line: 'Яна смущённо пожимает плечами. Серёжа чуть ехидно улыбается: «Ну, новичкам везёт».',
+  },
+  {
+    id: 'history-poker-dima-spirit', title: 'А где Дима?',
+    alt: 'Из-за запрокинутой головы обмякшего на скамейке Димы выплывает полупрозрачный дух.',
+    line: 'Все наконец вспоминают про четвёртую руку. Дима обмяк на скамейке. Изо рта выплывает маленький полупрозрачный дух.',
+  },
+  {
+    id: 'history-poker-dima-flush', title: 'Флэш Димы',
+    line: '«Проиграл в ноль с лучшей комбинацией за последний месяц».',
+    holdem: {
+      board: holdemBoard,
+      hole: ['7s', '6s'],
+      title: 'Флэш',
+      highlight: ['Qs', 'Js', 'Ts', '7s', '6s'],
+      layout: 'manga',
+    },
+  },
+  {
+    id: 'history-poker-bell', title: 'Звонок',
+    sound: 'assets/route/history-school-bell.mp3',
+    alt: 'Пятеро ребят бегут к проходу между шкафом и стеной, Серёжа и Дима остаются.',
+    line: 'Звонок сгоняет всех к узкому проходу между шкафом и стеной. В коморке остаются Серёжа и Дима.',
+  },
+  {
+    id: 'history-poker-pack-up', title: 'Набор в портфель',
+    line: 'Серёжа спешно сгребает фишки и карты в набор и убирает его в портфель.',
+  },
+  {
+    id: 'history-poker-wake-dima', title: 'Лёгким шагом',
+    alt: 'Дима обмяк на скамейке, а Серёжа подходит к нему, подняв руку.',
+    line: 'Дима так и лежит на скамейке, будто из него вышел дух. Серёжа подходит и непринуждённо поднимает ладонь. У пальцев на миг мелькает аниме-блик.',
+  },
+  {
+    id: 'history-poker-dima-poke', title: 'Смена тона',
+    prop: 'card-quick-move',
+    sound: 'assets/route/history-card-tap.mp3',
+    alt: 'С серьёзным лицом Серёжа касается живота Димы кончиками пальцев.',
+    line: 'Коморка сменяется линиями скорости. На фоне вспышки видно, как Кончики пальцев Серёжи касаются живота Димы, пока тот ещё лежит на скамейке.',
+  },
+  {
+    id: 'history-poker-corridor-grumble', title: 'Уже в коридоре',
+    line: 'Дима поправляет помятую кофту. «Можно было просто аккуратненько коснуться, а не бить так сильно…»',
+  },
+  {
+    id: 'history-poker-corridor-warning', title: 'Что ты сказал?',
+    line: 'Серёжа снова поднимает ладонь и смотрит на Диму. Дима тут же натягивает улыбку.',
+  },
+  {
+    id: 'history-poker-dima-grin', title: '«Ничего, ничего!»',
+    alt: 'Дима чешет затылок и бросает нервный взгляд на Серёжу, выдавливая улыбку.',
+    line: 'Дима чешет затылок и выдавливает улыбку, поглядывая на Серёжу. «Говорю, на урок пошли скорее».',
+  },
+  {
+    id: 'history-poker-seryozha-thinks', title: 'Серёжа на секунду задумывается',
+    line: 'Взгляд смягчается. Кажется, ему просто послышалось.',
+  },
+  {
+    id: 'history-poker-lets-go', title: '«Хм. Ну ладно»',
+    line: 'Серёжа опускает руку.',
+  },
+  {
+    id: 'history-poker-walk-away', title: 'Со спины',
+    alt: 'Серёжа и Дима идут рядом по школьному коридору и удаляются от камеры.',
+    line: 'Камера остаётся на месте. Серёжа и Дима постепенно удаляются по коридору плечом к плечу.',
+  },
+];
+
 const kirillAtUniversity = [
   {
     id: 'kirill-shadow', title: 'Внутри ГУАП',
@@ -352,15 +636,16 @@ const kirillAtUniversity = [
     line: 'За шкафом щёлкает ручка. Все смотрим вправо.',
   },
   {
-    id: 'history-card-slam', title: 'Хлопок', prop: 'card-door-slam', sound: 'assets/route/history-card-slam.mp3',
-    alt: 'Над проходом между сплошной стеной слева и задней стенкой высокого шкафа справа появляется надпись «ХЛОП!».',
+    id: 'history-card-slam', title: 'Хлопок', art: 'history-card-passage', prop: 'card-door-slam', sound: 'assets/route/history-card-slam.mp3',
+    alt: 'В узком проходе слева видны раковина, зеркало и корзина, справа видна боковина шкафа и поворот. Появляется надпись «ХЛОП!».',
     line: 'Дверь хлопает за шкафом.',
   },
   {
-    id: 'history-card-arrival', title: 'Аня, Диана и Яна', meet: ['anya', 'schoolDiana', 'yana'],
+    id: 'history-card-arrival', title: 'Аня, Диана и Яна', art: 'history-card-girls', meet: ['anya', 'schoolDiana', 'yana'],
     alt: 'Аня в очках, светловолосая Диана и темноволосая Яна стоят в проходе слева от высокого шкафа.',
     line: 'В проходе слева от шкафа появляются Аня, Диана и Яна.',
   },
+  ...holdemChapter,
 ];
 
 const departure = [30.05, 59.73];
@@ -1001,7 +1286,7 @@ for (const chapter of [doorShift, dianaDay, kirillAtUniversity, ozonEpisode, ozo
   for (const [index, { id, ...scene }] of chapter.entries()) {
     scenes[id] = {
       ...scene,
-      art: scene.intertitle || scene.callStage !== undefined ? undefined : scene.art ?? id,
+      art: scene.intertitle || scene.holdem?.layout || scene.callStage !== undefined ? undefined : scene.art ?? id,
       next: scene.options ? undefined : chapter[index + 1]?.id,
     };
   }

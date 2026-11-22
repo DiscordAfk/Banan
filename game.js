@@ -11,6 +11,8 @@ const sceneAudio = document.querySelector('#scene-audio');
 const rewardAudio = document.querySelector('#reward-audio');
 const doorNameplate = document.querySelector('#door-nameplate');
 const scenePicture = document.querySelector('#story-picture');
+const holdemPanel = document.querySelector('#holdem-panel');
+const holdemBet = document.querySelector('#holdem-bet');
 const routeCaption = document.querySelector('#route-caption');
 const routeStep = document.querySelector('#route-step');
 const shoppingLabels = document.querySelector('#shopping-labels');
@@ -805,6 +807,58 @@ function renderNightProps(scene) {
   }
 }
 
+const holdemRankNames = { T: '10', J: 'валет', Q: 'дама', K: 'король', A: 'туз' };
+const holdemSuitNames = { c: 'треф', d: 'бубен', h: 'червей', s: 'пик' };
+
+function renderHoldem(scene) {
+  holdemBet.hidden = !scene.holdemBet;
+  holdemBet.textContent = scene.holdemBet ? `Фишки ${scene.holdemBet}` : '';
+  const hand = scene.holdem;
+  holdemPanel.hidden = !hand;
+  holdemPanel.dataset.layout = hand?.layout ?? '';
+  holdemPanel.replaceChildren();
+  if (!hand) return;
+
+  if (hand.title) {
+    const title = document.createElement('h2');
+    title.textContent = hand.title;
+    holdemPanel.append(title);
+  }
+  const table = document.createElement('div');
+  table.className = 'holdem-table';
+  for (const [label, cards] of [['На столе', hand.board], ['На руках', hand.hole]]) {
+    if (!cards?.length) continue;
+    const group = document.createElement('div');
+    group.className = 'holdem-group';
+    const groupLabel = document.createElement('span');
+    groupLabel.textContent = label;
+    const row = document.createElement('div');
+    row.className = 'holdem-cards';
+    for (const code of cards) {
+      const [rank, suit] = code;
+      const highlighted = hand.highlight?.includes(code);
+      const card = document.createElement('img');
+      card.className = 'holdem-card';
+      card.classList.toggle('holdem-card-highlighted', Boolean(highlighted));
+      card.classList.toggle('holdem-card-muted', Boolean(hand.highlight && !highlighted));
+      card.src = `assets/cards/${code}.svg`;
+      card.alt = `${holdemRankNames[rank] ?? rank} ${holdemSuitNames[suit]}${highlighted ? ', в комбинации' : ''}`;
+      card.width = 159;
+      card.height = 235;
+      row.append(card);
+    }
+    group.append(groupLabel, row);
+    table.append(group);
+  }
+  holdemPanel.append(table);
+  if (hand.layout === 'manga') {
+    const caption = document.createElement('p');
+    caption.className = 'holdem-manga-caption';
+    caption.textContent = scene.line;
+    holdemPanel.append(caption);
+  }
+}
+
 function renderScene(key, { phone, remember = true } = {}) {
   rewardAudio.pause();
   clearSceneTimers();
@@ -841,7 +895,8 @@ function renderScene(key, { phone, remember = true } = {}) {
   historyInformaticsPlate.classList.toggle('is-closeup', seesInformaticsPlaque);
   historyLockscreen.hidden = scene.prop !== 'history-date';
   historyDoorSlam.hidden = scene.prop !== 'card-door-slam';
-  scenePicture.hidden = Boolean(scene.intertitle) || !workCall.hidden || !nightVoice.hidden;
+  scenePicture.hidden = Boolean(scene.intertitle || scene.holdem?.layout) || !workCall.hidden || !nightVoice.hidden;
+  renderHoldem(scene);
   thoughtBubble.hidden = !scene.thought;
   thoughtBubble.classList.toggle('thought-angry', Boolean(scene.thought?.angry));
   thoughtMoney.hidden = !scene.thought?.money;
@@ -898,7 +953,7 @@ function renderScene(key, { phone, remember = true } = {}) {
   }
   renderSceneTitle(scene);
   sceneSpeaker.textContent = scene.speaker ?? 'Серёжа';
-  sceneLine.hidden = !scene.line || scene.callStage > 0;
+  sceneLine.hidden = !scene.line || scene.callStage > 0 || scene.holdem?.layout === 'manga';
   sceneLine.textContent = (!discoveredCharacters.has('diana') ? scene.unknownLine : undefined) ?? scene.line ?? '';
   choices.replaceChildren();
   for (const [label, next] of scene.options ?? []) {

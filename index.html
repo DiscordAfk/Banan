@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=storage-card-game">
-  <script src="story.js?v=storage-card-game" defer></script>
+  <link rel="stylesheet" href="style.css?v=storeroom-holdem">
+  <script src="story.js?v=storeroom-holdem" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=storage-card-game" defer></script>
+  <script src="game.js?v=storeroom-holdem" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -228,6 +228,7 @@
             <small>Четверг</small><strong>2 октября</strong><span>2025 года</span>
           </time>
           <strong id="history-door-slam" class="history-door-slam" aria-hidden="true" hidden>ХЛОП!</strong>
+          <strong id="holdem-bet" class="holdem-bet" hidden></strong>
           <div id="night-clock-card" class="night-clock-card" hidden></div>
           <div id="night-time-badge" class="night-time-badge" hidden></div>
           <div id="night-phone-note" class="night-phone-note" hidden>
@@ -439,6 +440,7 @@
         </section>
         <audio id="scene-audio" preload="none"></audio>
         <audio id="reward-audio" preload="none"></audio>
+        <section id="holdem-panel" class="holdem-panel" aria-label="Карты в покере" hidden></section>
         <div class="dialogue" id="dialogue">
           <p class="genre" id="speaker">Серёжа</p>
           <h1 id="scene-title" tabindex="-1"></h1>

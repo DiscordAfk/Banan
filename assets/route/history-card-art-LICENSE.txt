@@ -1,4 +1,5 @@
-Playing-card face artwork in the history-card WebP stills is from SVG-cards 4.0.2.
+Playing-card face artwork in the history-card and history-poker WebP stills
+and in assets/cards is from SVG-cards 4.0.2.
 Copyright (C) 2005 David Bellot
 Copyright (C) 2016, 2017 Huub de Beer
 The card faces are licensed under the GNU Lesser General Public License,
