@@ -1525,6 +1525,39 @@ Object.assign(scenes, {
     title: 'Аграрный', speaker: 'Даша', art: 'dlc/kirill/agrarian',
     alt: 'Настя подала Кириллу чай. Он делает глоток из зелёной кружки, пока Даша отвечает.',
     line: 'Да… Еле поступила. Со 165 баллами было непросто.',
+    next: 'kirill-dlc-late',
+  },
+  'kirill-dlc-late': {
+    title: 'Опоздание', speaker: 'Кирилл', art: 'dlc/kirill/late',
+    alt: 'На часах 09:00. Вскочив из-за стола, Кирилл на прощание целует Настю в щёку.',
+    line: 'Чёрт! Уже опаздываю на встречу со своими парнями. Ладно, давайте!',
+    next: 'kirill-dlc-marathon',
+  },
+  'kirill-dlc-marathon': {
+    title: 'Марафон', speaker: 'Автор', art: 'dlc/kirill/marathon',
+    alt: 'Перепуганный Кирилл со всех ног бежит по залитой солнцем улице.',
+    line: 'Субъект бежал сломя голову. Лишь бы успеть к своим парням в мужской бар.',
+    next: 'kirill-dlc-club',
+  },
+  'kirill-dlc-club': {
+    title: 'Клуб', speaker: 'Автор', art: 'dlc/kirill/club',
+    alt: 'Запыхавшийся Кирилл у дверей клуба под розовой вывеской FOR KIR.',
+    line: 'Наш объект повествования наконец добрался до цели.',
+    next: 'kirill-dlc-club-interior',
+  },
+  'kirill-dlc-club-interior': {
+    title: 'Внутренности', speaker: 'Дрочеслав', art: 'dlc/kirill/club-interior',
+    alt: 'Дрочеслав, Ямополк и Филлип встречают Кирилла, сидя на чёрном диване с красной прострочкой.',
+    line: 'Наконец-то наш первокурсник пришёл. Можно начинать посвящение в ряды дельтарун-фанов!',
+    next: 'kirill-dlc-one-hour-later',
+  },
+  'kirill-dlc-one-hour-later': {
+    title: 'Час спустя', intertitle: true, intertitleLang: 'ru',
+    poster: 'assets/dlc/kirill/one-hour-later.webp', sound: 'assets/dlc/kirill/initiation.m4a',
+    next: 'kirill-dlc-end',
+  },
+  'kirill-dlc-end': {
+    onlyEndCard: true,
     endCard: 'Продолжение следует…', endCardLang: 'ru',
   },
 });
@@ -1535,8 +1568,8 @@ const downloadableStories = [
     title: 'Утро душнилы',
     roadmap: [
       { number: 1, scene: 'kirill-dlc-morning' },
-      { number: 5 },
-      { number: 7 },
+      { number: 5, scene: 'kirill-dlc-late' },
+      { number: 7, scene: 'kirill-dlc-club' },
     ],
     codeHash: 'ff00468effbef848e51ca7e6e99a3677b2c4f32fc6357e188812840061a0be54',
   },

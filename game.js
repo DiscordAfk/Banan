@@ -47,6 +47,10 @@ const dlcMenuTitle = document.querySelector('#dlc-menu-title');
 const dlcMenuCover = document.querySelector('#dlc-menu-cover');
 const playDlcButton = document.querySelector('#play-dlc');
 const dlcRoadmap = document.querySelector('#dlc-roadmap');
+const dlcCheckpoints = new Set(downloadableStories
+  .flatMap(({ roadmap = [] }) => roadmap.slice(1))
+  .map(({ scene }) => scene)
+  .filter(Boolean));
 const dlcSections = {
   achievements: { tab: document.querySelector('#dlc-achievements-tab'), panel: document.querySelector('#dlc-achievements-panel') },
   'story-map': { tab: document.querySelector('#dlc-story-map-tab'), panel: document.querySelector('#dlc-story-map-panel') },
@@ -371,13 +375,14 @@ function renderDlcMenu(dlc, section) {
     else tab.removeAttribute('aria-current');
   }
   if (section !== 'story-map') return;
-  dlcRoadmap.replaceChildren(...dlc.roadmap.map(({ number, scene }) => {
+  dlcRoadmap.replaceChildren(...dlc.roadmap.map(({ number, scene }, index) => {
     const item = document.createElement('li');
     item.value = number;
     const button = document.createElement('button');
     button.className = 'story-point';
     button.type = 'button';
-    button.disabled = !scene;
+    button.disabled = !scene || (index > 0 && !isStoryStartUnlocked(scene));
+    if (scene && index > 0) button.dataset.dlcCheckpoint = scene;
     const title = document.createElement('strong');
     title.textContent = scene ? scenes[scene].title : 'В разработке';
     button.append(title);
@@ -388,7 +393,8 @@ function renderDlcMenu(dlc, section) {
 }
 
 function rememberStoryStart(scene) {
-  if (scene === 'morning' || !storyStarts.has(scene) || visitedStoryStarts.has(scene)) return;
+  if (scene === 'morning' || visitedStoryStarts.has(scene)) return;
+  if (!storyStarts.has(scene) && !dlcCheckpoints.has(scene)) return;
   visitedStoryStarts.add(scene);
   try {
     localStorage.setItem(storyStartStoragePrefix + scene, '1');
@@ -409,6 +415,9 @@ function isStoryStartUnlocked(scene) {
 
 function renderStoryStarts() {
   for (const [scene, button] of storyStarts) button.disabled = !isStoryStartUnlocked(scene);
+  for (const button of dlcRoadmap.querySelectorAll('[data-dlc-checkpoint]')) {
+    button.disabled = !isStoryStartUnlocked(button.dataset.dlcCheckpoint);
+  }
 }
 
 function rememberDecision(scene, phone) {
@@ -973,8 +982,11 @@ function renderIntertitle(scene) {
 
   intertitleArt.src = scene.poster;
   intertitleArt.alt = scene.title;
+  intertitleArt.lang = scene.intertitleLang ?? 'en';
   intertitleStatus.textContent = '';
+  intertitleSound.hidden = !scene.audio;
   intertitleSound.setAttribute('aria-pressed', 'false');
+  if (!scene.audio) return;
   if (intertitleAudio.getAttribute('src') !== scene.audio) intertitleAudio.src = scene.audio;
   intertitleAudio.currentTime = 0;
 }
@@ -1180,10 +1192,8 @@ function renderScene(key, { phone, remember = true } = {}) {
   activeScene = scene;
   activePosition = { key };
   updateSceneBack();
-  if (!activeCharacterStory) {
-    rememberStoryStart(key);
-    if (remember && scene.options) rememberDecision(key);
-  }
+  if (!activeCharacterStory || activeCharacterStory.dlc) rememberStoryStart(key);
+  if (!activeCharacterStory && remember && scene.options) rememberDecision(key);
   renderIntertitle(scene);
   renderWorkCall(scene);
   renderNightProps(scene);
@@ -1530,7 +1540,7 @@ window.addEventListener('storage', (event) => {
     renderLastDecision();
     renderStoryStarts();
   }
-  if (!storyMapPanel.hidden && event.key?.startsWith(storyStartStoragePrefix)) renderStoryStarts();
+  if (event.key?.startsWith(storyStartStoragePrefix)) renderStoryStarts();
 });
 try {
   applySoundSetting(localStorage.getItem(mutedSoundStorageKey) === '1');
