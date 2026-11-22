@@ -707,9 +707,12 @@ function characterCard(id, { popup = false, reveal = false } = {}) {
   const title = document.createElement(popup ? 'h2' : 'h3');
   if (popup) title.id = 'profile-name';
   title.textContent = name;
-  const bio = document.createElement('p');
-  bio.textContent = description;
-  info.append(title, bio);
+  info.append(title);
+  if (description) {
+    const bio = document.createElement('p');
+    bio.textContent = description;
+    info.append(bio);
+  }
   if (quote) {
     const thought = document.createElement('figure');
     thought.className = 'character-thought';
@@ -760,12 +763,14 @@ function characterCard(id, { popup = false, reveal = false } = {}) {
     alias.textContent = dianaAlias === 'chat' ? 'В переписке — «Неизвестная»' : 'В вариантах ответа — «Неизвестная»';
     info.append(alias);
   }
-  const trait = document.createElement('p');
-  trait.className = 'character-keyword';
-  const word = document.createElement('strong');
-  word.textContent = keyword;
-  trait.append('В одном слове ', word);
-  info.append(trait);
+  if (keyword) {
+    const trait = document.createElement('p');
+    trait.className = 'character-keyword';
+    const word = document.createElement('strong');
+    word.textContent = keyword;
+    trait.append('В одном слове ', word);
+    info.append(trait);
+  }
   if (!popup && canOpenCharacterStory(id)) {
     const actions = document.createElement('div');
     actions.className = 'character-story-actions';
@@ -786,8 +791,10 @@ function characterCard(id, { popup = false, reveal = false } = {}) {
 }
 
 function renderCharacters() {
-  characterList.replaceChildren(...Object.keys(characters)
-    .map((id) => id === 'seryozha' || discoveredCharacters.has(id) ? characterCard(id) : lockedCharacterCard()));
+  characterList.replaceChildren(...Object.entries(characters).map(([id, character]) => {
+    const visible = id === 'seryozha' || character.catalogPreview || discoveredCharacters.has(id);
+    return visible ? characterCard(id) : lockedCharacterCard();
+  }));
 }
 
 function resetCharacters() {

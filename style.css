@@ -2076,6 +2076,10 @@ h1, h2, h3, p { margin: 0; }
   .favorite-correction.is-writing strong { animation: favorite-write .5s .27s both; }
   .history-door-slam:not([hidden]) { animation: history-door-pop .33s cubic-bezier(.2, .85, .32, 1.22) both; }
   [data-night-effect='card-quick-move'] > #scene-art { animation: history-card-cut .4s ease-out both; }
+  [data-night-effect='chemistry-focus'] > #scene-art { animation: chemistry-focus .75s ease-out both; }
+}
+@keyframes chemistry-focus {
+  from { filter: blur(6px); transform: scale(1.02); }
 }
 @keyframes favorite-write {
   from { opacity: 0; clip-path: inset(0 100% 0 0); }
