@@ -739,7 +739,7 @@ h1, h2, h3, p { margin: 0; }
   align-items: start;
   gap: clamp(.7rem, 2.3vw, 1.35rem);
 }
-.character-list .character-card {
+.character-list .character-card, .dlc-card {
   padding: clamp(.75rem, 2.4vw, 1.4rem);
   border: 1px solid #5e477e;
   background: #1c152c;
@@ -759,6 +759,40 @@ h1, h2, h3, p { margin: 0; }
   font: 1rem/1.5 var(--pixel);
 }
 .character-card p { margin: 0; line-height: 1.5; }
+
+.dlc-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 30rem), 1fr));
+  gap: 1rem;
+}
+.dlc-card { grid-template-columns: min(28%, 9rem) minmax(0, 1fr); }
+.dlc-character { color: var(--muted); }
+.dlc-form {
+  display: grid;
+  gap: .6rem;
+  margin-top: .85rem;
+}
+.dlc-form label { display: grid; gap: .3rem; }
+.dlc-form input {
+  width: 100%;
+  min-height: 44px;
+  padding: .5rem .65rem;
+  border: 1px solid #755b92;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+.dlc-form input:focus-visible, .dlc-details summary:focus-visible {
+  outline: 3px solid #74f3e6;
+  outline-offset: 3px;
+}
+.dlc-form input[aria-invalid="true"] { border-color: #ff9ba8; }
+.dlc-form .pixel-button { justify-self: start; min-height: 44px; padding: .45rem .7rem; }
+.dlc-code-status { color: #ffb5c0; font-size: .9rem; }
+.dlc-details { margin-top: .85rem; }
+.dlc-details summary { color: var(--accent); font-weight: 750; cursor: pointer; }
+.dlc-details[open] p { margin-top: .4rem; }
+
 .character-card .character-favorite { margin-top: .55em; color: #e1b8ff; }
 .character-thought {
   margin: .55em 0;

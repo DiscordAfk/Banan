@@ -1371,6 +1371,14 @@ for (const chapter of [blenderDawn, nightAfterEnding]) {
   }
 }
 
+const downloadableStories = [
+  {
+    character: 'kirill',
+    title: 'Утро душнилы',
+    codeHash: 'ff00468effbef848e51ca7e6e99a3677b2c4f32fc6357e188812840061a0be54',
+  },
+];
+
 // Add each character's own episodes here when their story is written.
 const characterStories = {
   seryozha: { name: 'Серёжи', episodes: [] },

@@ -35,6 +35,10 @@ const gameMapLink = novel.querySelector('.game-map-link');
 const novelTabs = novel.querySelector('#novel-tabs');
 const achievementsPanel = document.querySelector('#achievements-panel');
 const achievementsTab = document.querySelector('#achievements-tab');
+const dlcPanel = document.querySelector('#dlc-panel');
+const dlcTab = document.querySelector('#dlc-tab');
+const dlcList = document.querySelector('#dlc-list');
+const dlcCardTemplate = document.querySelector('#dlc-card-template');
 const charactersPanel = document.querySelector('#characters-panel');
 const charactersTab = document.querySelector('#characters-tab');
 const characterList = document.querySelector('#character-list');
@@ -140,6 +144,7 @@ const endingsStorageKey = 'minigames.seryozha.endings';
 const achievementStoragePrefix = 'minigames.seryozha.';
 const decisionStorageKey = 'minigames.seryozha.last-decision';
 const storyStartStoragePrefix = 'minigames.seryozha.story-start.';
+const dlcStoragePrefix = 'minigames.seryozha.dlc.';
 const characterStoragePrefix = 'minigames.seryozha.character.';
 const dianaAliasStorageKey = `${characterStoragePrefix}diana-alias`;
 const discoveredCharacters = new Set();
@@ -150,6 +155,7 @@ let morningProfileTimer;
 const unlockedEndings = new Set();
 const unlockedAchievements = new Set();
 const visitedStoryStarts = new Set();
+const unlockedDlc = new Set();
 const hiddenRewardTitle = '????????????';
 let phoneQuiz;
 let lastDecision;
@@ -213,6 +219,74 @@ function renderCharacterStoryMap(id) {
     button.append(art, label);
     episode.append(button);
     return episode;
+  }));
+}
+
+function hasDlcAccess(character) {
+  if (unlockedDlc.has(character)) return true;
+  try {
+    return localStorage.getItem(dlcStoragePrefix + character) === '1';
+  } catch {
+    return false;
+  }
+}
+
+async function matchesDlcCode(code, hash) {
+  const bytes = new TextEncoder().encode(code.trim().toUpperCase());
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('') === hash;
+}
+
+function renderDlc() {
+  dlcList.replaceChildren(...downloadableStories.map(({ character, title, codeHash }) => {
+    const card = dlcCardTemplate.content.firstElementChild.cloneNode(true);
+    card.querySelector('img').src = artPath(characters[character].art);
+    card.querySelector('h3').textContent = title;
+    card.querySelector('.dlc-character').textContent = characters[character].name;
+
+    const form = card.querySelector('form');
+    const input = form.elements.namedItem('code');
+    const submit = form.querySelector('button');
+    const feedback = form.querySelector('[role="status"]');
+    const details = card.querySelector('details');
+    const hasAccess = hasDlcAccess(character);
+    form.hidden = hasAccess;
+    details.hidden = !hasAccess;
+
+    input.addEventListener('input', () => {
+      input.removeAttribute('aria-invalid');
+      feedback.textContent = '';
+    });
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      submit.disabled = true;
+      try {
+        if (!await matchesDlcCode(input.value, codeHash)) {
+          input.setAttribute('aria-invalid', 'true');
+          feedback.textContent = 'Неверный код доступа.';
+          input.focus();
+          return;
+        }
+      } catch {
+        feedback.textContent = 'Проверка кода недоступна. Попробуй открыть сайт через HTTPS или localhost.';
+        return;
+      } finally {
+        submit.disabled = false;
+      }
+
+      unlockedDlc.add(character);
+      try {
+        localStorage.setItem(dlcStoragePrefix + character, '1');
+      } catch {
+        // Access lasts for this visit if storage is unavailable.
+      }
+      form.reset();
+      form.hidden = true;
+      details.hidden = false;
+      details.open = true;
+      details.querySelector('summary').focus();
+    });
+    return card;
   }));
 }
 
@@ -1142,17 +1216,20 @@ function syncRoute(moveFocus = false) {
   const inAchievements = hash === '#achievements';
   const inCharacters = hash === '#characters';
   const inStoryMap = hash === '#story-map';
-  const highlightedTab = inStoryMap ? storyMapTab : inAchievements ? achievementsTab : inCharacters || inCharacterStory ? charactersTab : null;
-  for (const tab of [achievementsTab, charactersTab, storyMapTab]) {
+  const inDlc = hash === '#dlc';
+  const highlightedTab = inStoryMap ? storyMapTab : inAchievements ? achievementsTab : inCharacters || inCharacterStory ? charactersTab : inDlc ? dlcTab : null;
+  for (const tab of [achievementsTab, charactersTab, storyMapTab, dlcTab]) {
     if (tab === highlightedTab) tab.setAttribute('aria-current', 'page');
     else tab.removeAttribute('aria-current');
   }
   achievementsPanel.hidden = !inAchievements;
   charactersPanel.hidden = !inCharacters;
   storyMapPanel.hidden = !inStoryMap;
+  dlcPanel.hidden = !inDlc;
   characterStoryPanel.hidden = !inCharacterStory;
   if (inAchievements) renderAchievements();
   if (inCharacters) renderCharacters();
+  if (inDlc) renderDlc();
   if (inCharacterStory) renderCharacterStoryMap(characterStoryId);
   if (inStoryMap) {
     renderLastDecision();
@@ -1173,7 +1250,7 @@ function syncRoute(moveFocus = false) {
   activeCharacterStory = undefined;
   showScreen(inGame ? 'menu' : highlightedTab ? 'details' : 'catalog');
   if (moveFocus) {
-    const focusTarget = inGame ? '#menu-title' : inStoryMap ? '#story-map-title' : inAchievements ? '#achievements-title' : inCharacterStory ? '#character-story-title' : inCharacters ? '#characters-title' : '#collection-title';
+    const focusTarget = inGame ? '#menu-title' : inCharacterStory ? '#character-story-title' : highlightedTab ? `${highlightedTab.hash}-title` : '#collection-title';
     document.querySelector(focusTarget).focus({ preventScroll: true });
     window.scrollTo(0, 0);
   }

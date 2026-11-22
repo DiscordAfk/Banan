@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=story-progress">
-  <script src="story.js?v=character-story-slots" defer></script>
+  <link rel="stylesheet" href="style.css?v=dlc">
+  <script src="story.js?v=dlc" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=story-progress" defer></script>
+  <script src="game.js?v=dlc" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -59,6 +59,7 @@
         <a id="achievements-tab" href="#achievements">Достижения</a>
         <a id="characters-tab" href="#characters">Персонажи</a>
         <a id="story-map-tab" href="#story-map">Карта сюжета</a>
+        <a id="dlc-tab" href="#dlc">Дополнения</a>
       </nav>
 
       <section id="game-menu" class="game-menu">
@@ -220,6 +221,35 @@
             </li>
           </ul>
         </div>
+      </section>
+
+      <section id="dlc-panel" aria-labelledby="dlc-title" hidden>
+        <div class="section-heading">
+          <h2 id="dlc-title" tabindex="-1">Дополнения</h2>
+          <span class="section-rule" aria-hidden="true"></span>
+        </div>
+        <div id="dlc-list" class="dlc-list"></div>
+        <template id="dlc-card-template">
+          <article class="character-card dlc-card">
+            <img alt="" width="320" height="320">
+            <div>
+              <h3></h3>
+              <p class="dlc-character"></p>
+              <form class="dlc-form">
+                <label>
+                  Код доступа
+                  <input name="code" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="64" required>
+                </label>
+                <button class="pixel-button" type="submit">Активировать</button>
+                <p class="dlc-code-status" role="status"></p>
+              </form>
+              <details class="dlc-details" hidden>
+                <summary>Открыть дополнение</summary>
+                <p>Доступ открыт. Сюжет пока в разработке.</p>
+              </details>
+            </div>
+          </article>
+        </template>
       </section>
 
       <section id="story" class="story" aria-label="Сцена новеллы" hidden>
