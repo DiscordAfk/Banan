@@ -804,6 +804,7 @@ h1, h2, h3, p { margin: 0; }
 }
 .dlc-card { grid-template-columns: min(28%, 9rem) minmax(0, 1fr); }
 .dlc-character { color: var(--muted); }
+.dlc-card .dlc-locked { margin-top: .85rem; }
 :is(.dlc-form, .game-access-form) {
   display: grid;
   gap: .6rem;
@@ -811,7 +812,8 @@ h1, h2, h3, p { margin: 0; }
 }
 .dlc-form label { display: grid; gap: .3rem; }
 .game-access-form { width: min(100%, 20rem); }
-:is(.dlc-form, .game-access-form) input {
+:is(.dlc-form, .game-access-form, .developer-form) input,
+.developer-form select {
   width: 100%;
   min-height: 44px;
   padding: .5rem .65rem;
@@ -820,11 +822,12 @@ h1, h2, h3, p { margin: 0; }
   color: var(--text);
   font: inherit;
 }
-:is(.dlc-form, .game-access-form) input:focus-visible, .dlc-details summary:focus-visible {
+:is(.dlc-form, .game-access-form, .developer-form) :is(input, select):focus-visible,
+.dlc-details summary:focus-visible {
   outline: 3px solid #74f3e6;
   outline-offset: 3px;
 }
-:is(.dlc-form, .game-access-form) input[aria-invalid="true"] { border-color: #ff9ba8; }
+:is(.dlc-form, .game-access-form, .developer-form) input[aria-invalid="true"] { border-color: #ff9ba8; }
 .dlc-form .pixel-button { justify-self: start; min-height: 44px; padding: .45rem .7rem; }
 .code-status { color: #ffb5c0; font-size: .9rem; }
 .code-status:empty { display: none; }
@@ -842,37 +845,8 @@ h1, h2, h3, p { margin: 0; }
   inset: 13% 30%;
   clip-path: polygon(0 65%, 4% 23%, 25% 18%, 36% 34%, 48% 2%, 65% 0, 71% 26%, 90% 19%, 100% 67%, 82% 45%, 68% 53%, 68% 75%, 83% 100%, 17% 100%, 32% 75%, 30% 53%, 18% 45%);
 }
-.dlc-roadmap {
-  --roadmap-gap: 1.4rem;
-  display: flex;
-  gap: var(--roadmap-gap);
-  max-width: 43rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.dlc-roadmap li { position: relative; flex: 1 1 0; min-width: 0; }
-.dlc-roadmap .story-point { height: 100%; }
-.dlc-roadmap li + li::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: 100%;
-  width: var(--roadmap-gap);
-  border-top: 1px solid #755b92;
-}
-@media (max-width: 465px) {
-  .dlc-roadmap { flex-direction: column; }
-  .dlc-roadmap li + li::before {
-    top: auto;
-    right: 50%;
-    bottom: 100%;
-    width: 0;
-    height: var(--roadmap-gap);
-    border-top: 0;
-    border-right: 1px solid #755b92;
-  }
-}
+.dlc-story-board { overflow-x: auto; }
+.dlc-story-board .story-point strong { overflow-wrap: anywhere; }
 
 .character-card .character-favorite { margin-top: .55em; color: #e1b8ff; }
 .character-thought {
@@ -1322,6 +1296,7 @@ h1, h2, h3, p { margin: 0; }
   .story-point-art { display: grid; grid-template-columns: 54px minmax(0, 1fr); align-items: center; }
   .story-point-art img { height: 43px; }
   .story-map-resume { justify-items: start; }
+  .dlc-story-board .story-tree-node { width: clamp(160px, 50vw, 240px); }
 }
 @media (max-width: 465px) {
   .collection-tabs { flex-wrap: wrap; }
@@ -1409,6 +1384,21 @@ h1, h2, h3, p { margin: 0; }
 .settings-reset { color: #ffbcc6; }
 .progress-reset-confirmation { margin-top: 1rem; }
 .progress-reset-confirmation .settings-actions { margin-top: .7rem; }
+.developer-tools, .developer-scene-map {
+  margin-block: 1rem;
+  padding: .75rem;
+  border: 1px solid var(--edge);
+  background: var(--panel);
+}
+.developer-tools > summary, .developer-scene-map > summary {
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+.developer-form { display: grid; gap: .55rem; margin-top: .75rem; }
+.developer-form select { min-width: 0; }
+.developer-form option { padding: .25rem .4rem; }
+.developer-form .pixel-button { justify-self: start; }
 
 .story-chapter-points { display: grid; gap: .55rem; }
 
