@@ -96,6 +96,7 @@ const developerCodeStatus = document.querySelector('#developer-code-status');
 const developerActions = document.querySelector('#developer-actions');
 const developerUnlock = document.querySelector('#developer-unlock');
 const developerUnlockCharacters = document.querySelector('#developer-unlock-characters');
+const developerSaveAchievements = document.querySelector('#developer-save-achievements');
 const developerSceneMap = document.querySelector('#developer-scene-map');
 const developerSceneForm = document.querySelector('#developer-scene-form');
 const developerSceneFilter = document.querySelector('#developer-scene-filter');
@@ -590,7 +591,6 @@ function unlockEnding(id) {
 }
 
 function unlockAchievement(id) {
-  if (developerMode) return false;
   if (unlockedAchievements.has(id)) return false;
   unlockedAchievements.add(id);
   try {
@@ -674,17 +674,23 @@ function renderAchievementCards(results, list, progress, endingResults = []) {
   );
 }
 
-function renderAchievementAward(id, remember = true, container = scenePicture) {
+function renderAchievementAward(id, container = scenePicture) {
   const results = activeCharacterStory?.achievements ?? achievements;
   const achievement = results.find((result) => result.id === id);
   achievementAward.hidden = !achievement?.showOnScene;
   if (!achievement) return false;
 
+  const recordsProgress = (!activeCharacterStory || Boolean(activeCharacterStory.dlc))
+    && (!developerMode || developerSaveAchievements.checked);
   if (achievement.showOnScene) {
-    achievementAward.replaceChildren(rewardCard(achievement, true, 'h2'));
+    const card = rewardCard(achievement, true, 'h2');
+    const label = recordsProgress ? 'Достижение открыто' : 'Предпросмотр достижения';
+    if (!recordsProgress) card.querySelector('.genre').textContent = label;
+    achievementAward.setAttribute('aria-label', label);
+    achievementAward.replaceChildren(card);
     if (achievementAward.parentElement !== container) container.append(achievementAward);
   }
-  return remember && unlockAchievement(achievement.id);
+  return recordsProgress && unlockAchievement(achievement.id);
 }
 
 function showEndingPreview(result) {
@@ -1415,8 +1421,7 @@ function renderScene(key, { phone, remember = true } = {}) {
     endingAward.replaceChildren(rewardCard(endingResult, true, 'h2'));
   }
   const earnedAchievement = renderAchievementAward(
-    scene.achievement, !activeCharacterStory || Boolean(activeCharacterStory.dlc),
-    scene.holdem?.layout ? holdemPanel : scenePicture,
+    scene.achievement, scene.holdem?.layout ? holdemPanel : scenePicture,
   );
   if (scene.prop === 'chat') renderDianaChat(scene.dianaReply);
   scenePicture.classList.toggle('is-dull-view', scene.prop === 'dull-view');
@@ -1438,7 +1443,9 @@ function renderScene(key, { phone, remember = true } = {}) {
     sceneArt.alt = scene.alt ?? '';
   }
   renderSceneTitle(scene);
-  sceneSpeaker.textContent = scene.speaker ?? 'Серёжа';
+  sceneSpeaker.textContent = scene.prop === 'achievement' && developerMode && !developerSaveAchievements.checked
+    ? 'Предпросмотр достижения'
+    : scene.speaker ?? 'Серёжа';
   sceneLine.hidden = !scene.line || scene.callStage > 0 || scene.holdem?.layout === 'manga';
   sceneLine.textContent = (!discoveredCharacters.has('diana') ? scene.unknownLine : undefined) ?? scene.line ?? '';
   choices.replaceChildren();
@@ -1687,6 +1694,7 @@ function setDeveloperMode(enabled) {
   developerSceneMap.hidden = !enabled;
   developerUnlock.checked = false;
   developerUnlockCharacters.checked = false;
+  developerSaveAchievements.checked = false;
   developerSceneMap.open = false;
   developerSceneFilter.value = '';
   if (enabled) renderDeveloperScenes();
@@ -1807,6 +1815,10 @@ window.addEventListener('storage', (event) => {
   if (rewardChanged) {
     if (window.location.hash === '#achievements') renderAchievements();
     if (window.location.hash === '#story-map' && !endingPreview.open) renderStoryRewards();
+  }
+  if (!dlcMenuPanel.hidden && !dlcSections.achievements.panel.hidden && downloadableStories.some(({ achievements: results = [] }) =>
+    results.some(({ id }) => event.key === gameStoragePrefix + id))) {
+    syncRoute();
   }
   if (!storyMapPanel.hidden && event.key === decisionStorageKey) {
     renderLastDecision();
