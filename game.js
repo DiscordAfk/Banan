@@ -40,6 +40,9 @@ const backLink = document.querySelector('#game-back');
 const gameLabel = novel.querySelector('#game-label');
 const gameMapLink = novel.querySelector('.game-map-link');
 const novelTabs = novel.querySelector('#novel-tabs');
+const allScenesTab = document.querySelector('#all-scenes-tab');
+const allScenesPanel = document.querySelector('#all-scenes-panel');
+const sceneGalleryTemplate = document.querySelector('#scene-gallery-template');
 const achievementsPanel = document.querySelector('#achievements-panel');
 const achievementsTab = document.querySelector('#achievements-tab');
 const dlcPanel = document.querySelector('#dlc-panel');
@@ -62,6 +65,7 @@ const dlcCheckpoints = new Set(downloadableStories
 const dlcSections = {
   achievements: { tab: document.querySelector('#dlc-achievements-tab'), panel: document.querySelector('#dlc-achievements-panel') },
   'story-map': { tab: document.querySelector('#dlc-story-map-tab'), panel: document.querySelector('#dlc-story-map-panel') },
+  'all-scenes': { tab: document.querySelector('#dlc-all-scenes-tab'), panel: document.querySelector('#dlc-all-scenes-panel') },
 };
 const charactersPanel = document.querySelector('#characters-panel');
 const charactersTab = document.querySelector('#characters-tab');
@@ -97,11 +101,6 @@ const developerActions = document.querySelector('#developer-actions');
 const developerUnlock = document.querySelector('#developer-unlock');
 const developerUnlockCharacters = document.querySelector('#developer-unlock-characters');
 const developerSaveAchievements = document.querySelector('#developer-save-achievements');
-const developerSceneMap = document.querySelector('#developer-scene-map');
-const developerSceneForm = document.querySelector('#developer-scene-form');
-const developerSceneFilter = document.querySelector('#developer-scene-filter');
-const developerSceneList = document.querySelector('#developer-scene-list');
-const developerSceneStatus = document.querySelector('#developer-scene-status');
 const muteSound = document.querySelector('#mute-sound');
 const requestProgressReset = document.querySelector('#request-progress-reset');
 const progressResetConfirmation = document.querySelector('#progress-reset-confirmation');
@@ -478,6 +477,7 @@ function renderDlcMenu(dlc, section) {
   }
   for (const [name, { tab, panel }] of Object.entries(dlcSections)) {
     tab.href = dlcMenuHash(dlc.character, name);
+    tab.hidden = name === 'all-scenes' && !developerMode;
     panel.hidden = name !== section;
     if (name === section) tab.setAttribute('aria-current', 'page');
     else tab.removeAttribute('aria-current');
@@ -489,6 +489,7 @@ function renderDlcMenu(dlc, section) {
     dlcAchievementsEmpty.hidden = Boolean(results.length);
   }
   if (section === 'story-map') renderDlcRoadmap(dlc);
+  if (section === 'all-scenes') renderSceneGallery(dlcSections[section].panel, dlc);
 }
 
 function renderDlcRoadmap(dlc) {
@@ -1556,6 +1557,13 @@ function renderScene(key, { phone, remember = true } = {}) {
 
 function syncRoute(moveFocus = false) {
   let hash = window.location.hash;
+  if (!developerMode) {
+    const publicHash = hash === '#all-scenes' ? '#story-map' : hash.replace(/^(#dlc\/[^/]+)\/all-scenes$/, '$1/story-map');
+    if (hash !== publicHash) {
+      hash = publicHash;
+      window.history.replaceState(null, '', hash);
+    }
+  }
   if (!hasGameAccess() && /^#(?:achievements|characters|story-map|character-story(?:\/.*)?|dlc(?:\/.*)?)$/.test(hash)) {
     hash = '#seryozha';
     window.history.replaceState(null, '', hash);
@@ -1571,7 +1579,7 @@ function syncRoute(moveFocus = false) {
     hash = '#characters';
     window.history.replaceState(null, '', hash);
   }
-  const [, dlcCharacter, dlcSection] = hash.match(/^#dlc\/([^/]+)(?:\/(achievements|story-map))?$/) ?? [];
+  const [, dlcCharacter, dlcSection] = hash.match(/^#dlc\/([^/]+)(?:\/(achievements|story-map|all-scenes))?$/) ?? [];
   const dlc = downloadableStories.find(({ character, roadmap }) =>
     character === dlcCharacter && roadmap?.[0]?.scene && hasDlcAccess(character));
   if (hash.startsWith('#dlc/') && !dlc) {
@@ -1583,8 +1591,9 @@ function syncRoute(moveFocus = false) {
   const inCharacters = hash === '#characters';
   const inStoryMap = hash === '#story-map';
   const inDlc = hash === '#dlc';
-  const highlightedTab = inStoryMap ? storyMapTab : inAchievements ? achievementsTab : inCharacters || inCharacterStory ? charactersTab : inDlc ? dlcTab : null;
-  for (const tab of [achievementsTab, charactersTab, storyMapTab, dlcTab]) {
+  const inAllScenes = developerMode && hash === '#all-scenes';
+  const highlightedTab = inAllScenes ? allScenesTab : inStoryMap ? storyMapTab : inAchievements ? achievementsTab : inCharacters || inCharacterStory ? charactersTab : inDlc ? dlcTab : null;
+  for (const tab of [achievementsTab, charactersTab, storyMapTab, allScenesTab, dlcTab]) {
     if (tab === highlightedTab) tab.setAttribute('aria-current', 'page');
     else tab.removeAttribute('aria-current');
   }
@@ -1594,6 +1603,15 @@ function syncRoute(moveFocus = false) {
   dlcPanel.hidden = !inDlc;
   dlcMenuPanel.hidden = !dlc;
   characterStoryPanel.hidden = !inCharacterStory;
+  allScenesTab.hidden = !developerMode;
+  allScenesPanel.hidden = !inAllScenes;
+  if (!developerMode) {
+    allScenesPanel.querySelector('.scene-gallery')?.remove();
+    dlcSections['all-scenes'].panel.querySelector('.scene-gallery')?.remove();
+    dlcSections['all-scenes'].tab.hidden = true;
+    dlcSections['all-scenes'].panel.hidden = true;
+  }
+  if (inAllScenes) renderSceneGallery(allScenesPanel);
   if (inAchievements) renderAchievements();
   if (inCharacters) renderCharacters();
   if (inDlc) renderDlc();
@@ -1618,9 +1636,7 @@ function syncRoute(moveFocus = false) {
   activeCharacterStory = undefined;
   showScreen(dlc ? 'dlc-menu' : inGame ? 'menu' : highlightedTab ? 'details' : 'catalog', dlc, dlcSection);
   if (moveFocus) {
-    const focusTarget = inStoryMap && developerMode && developerSceneMap.open
-      ? '#developer-scene-filter'
-      : dlc ? `#dlc-${dlcSection ?? 'menu'}-title` : inGame ? '#menu-title' : inCharacterStory ? '#character-story-title' : highlightedTab ? `${highlightedTab.hash}-title` : '#collection-title';
+    const focusTarget = dlc ? `#dlc-${dlcSection ?? 'menu'}-title` : inGame ? '#menu-title' : inCharacterStory ? '#character-story-title' : highlightedTab ? `${highlightedTab.hash}-title` : '#collection-title';
     document.querySelector(focusTarget).focus({ preventScroll: true });
     window.scrollTo(0, 0);
   }
@@ -1732,33 +1748,87 @@ for (const trigger of document.querySelectorAll('[data-open-settings]')) {
   trigger.addEventListener('click', () => settingsDialog.showModal());
 }
 
-function renderDeveloperScenes() {
-  const query = developerSceneFilter.value.trim().toLowerCase();
-  const previousSelection = developerSceneList.value;
-  const matches = Object.entries(scenes).filter(([key, scene]) => {
-    const title = scene.title ?? scene.endCard ?? '';
-    return `${key} ${title}`.toLowerCase().includes(query);
+function getDlcSceneKeys(dlc) {
+  const visited = new Set();
+  const pending = (dlc.roadmap ?? []).map(({ scene }) => scene).reverse();
+  while (pending.length) {
+    const key = pending.pop();
+    if (!key || visited.has(key) || !Object.hasOwn(scenes, key)) continue;
+    visited.add(key);
+    const { next, afterEndCard, options = [] } = scenes[key];
+    pending.push(afterEndCard, ...options.map(([, target]) => target).reverse(), next);
+  }
+  return visited;
+}
+
+const dlcSceneKeys = new Map(downloadableStories.map((dlc) => [dlc.character, getDlcSceneKeys(dlc)]));
+const allDlcSceneKeys = new Set([...dlcSceneKeys.values()].flatMap((keys) => [...keys]));
+
+function renderSceneGallery(panel, dlc) {
+  const chapter = dlc?.character ?? '';
+  const previous = panel.querySelector('.scene-gallery');
+  if (previous?.dataset.chapter === chapter) return;
+  previous?.remove();
+
+  const gallery = sceneGalleryTemplate.content.firstElementChild.cloneNode(true);
+  gallery.dataset.chapter = chapter;
+  const search = gallery.querySelector('input');
+  const status = gallery.querySelector('[role="status"]');
+  const list = gallery.querySelector('ul');
+  const keys = dlc ? dlcSceneKeys.get(chapter) : Object.keys(scenes).filter((key) => !allDlcSceneKeys.has(key));
+  const entries = Array.from(keys, (key) => {
+    const scene = scenes[key];
+    const title = scene.title ?? scene.endCard ?? key;
+    const image = scene.endCardArt ?? scene.art;
+    const item = document.createElement('li');
+    const button = document.createElement('button');
+    button.className = 'story-point scene-gallery-card';
+    button.type = 'button';
+    const thumbnail = document.createElement('span');
+    thumbnail.className = 'scene-gallery-thumbnail';
+    if (scene.poster || image) {
+      const img = document.createElement('img');
+      img.src = scene.poster ?? artPath(image);
+      img.alt = '';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      thumbnail.append(img);
+    } else {
+      thumbnail.textContent = 'Без иллюстрации';
+    }
+    const caption = document.createElement('strong');
+    caption.textContent = title;
+    button.dataset.scene = key;
+    button.append(thumbnail, caption);
+    button.addEventListener('click', () => {
+      if (!developerMode) return;
+      if (dlc) playDlc(dlc, key);
+      else openStoryAt({ scene: key });
+    });
+    item.append(button);
+    return { item, searchText: `${title} ${key}`.toLowerCase() };
   });
-  developerSceneList.replaceChildren(...matches.map(([key, scene]) =>
-    new Option(`${scene.title ?? scene.endCard ?? key} · ${key}`, key)));
-  if (matches.some(([key]) => key === previousSelection)) developerSceneList.value = previousSelection;
-  else developerSceneList.selectedIndex = matches.length ? 0 : -1;
-  developerSceneForm.querySelector('button').disabled = !matches.length;
-  developerSceneStatus.textContent = matches.length ? '' : 'Сцены не найдены.';
+  list.append(...entries.map(({ item }) => item));
+  search.addEventListener('input', () => {
+    const query = search.value.trim().toLowerCase();
+    let found = false;
+    for (const { item, searchText } of entries) {
+      item.hidden = !searchText.includes(query);
+      found ||= !item.hidden;
+    }
+    status.hidden = found;
+    status.textContent = found ? '' : 'Сцены не найдены.';
+  });
+  panel.append(gallery);
 }
 
 function setDeveloperMode(enabled) {
   developerMode = enabled;
   developerAccessForm.hidden = enabled;
   developerActions.hidden = !enabled;
-  developerSceneMap.hidden = !enabled;
   developerUnlock.checked = false;
   developerUnlockCharacters.checked = false;
   developerSaveAchievements.checked = false;
-  developerSceneMap.open = false;
-  developerSceneFilter.value = '';
-  if (enabled) renderDeveloperScenes();
-  else developerSceneList.replaceChildren();
   if (!enabled || (story.hidden && ending.hidden)) syncRoute();
 }
 
@@ -1805,31 +1875,12 @@ document.querySelector('#developer-exit').addEventListener('click', () => {
 document.querySelector('#developer-open-map').addEventListener('click', () => {
   if (!developerMode) return;
   settingsDialog.close();
-  developerSceneMap.open = true;
-  if (window.location.hash === '#story-map') developerSceneFilter.focus();
-  else window.location.hash = '#story-map';
-});
-
-developerSceneFilter.addEventListener('input', renderDeveloperScenes);
-developerSceneForm.addEventListener('submit', (event) => {
-  event.preventDefault();
-  const key = developerSceneList.value;
-  if (!developerMode || !Object.hasOwn(scenes, key)) return;
-
-  const dlc = downloadableStories.find(({ roadmap }) => {
-    const visited = new Set();
-    const pending = [roadmap?.[0]?.scene];
-    while (pending.length) {
-      const sceneKey = pending.pop();
-      if (sceneKey === key) return true;
-      if (!sceneKey || visited.has(sceneKey) || !Object.hasOwn(scenes, sceneKey)) continue;
-      visited.add(sceneKey);
-      const { next, options = [] } = scenes[sceneKey];
-      pending.push(next, ...options.map(([, target]) => target));
-    }
-    return false;
-  });
-  openStoryAt(dlc ? dlcStoryStart(dlc, key) : { scene: key });
+  const character = activeCharacterStory?.dlc
+    ? activeCharacterStory.id
+    : window.location.hash.match(/^#dlc\/([^/]+)/)?.[1];
+  const hash = character ? dlcMenuHash(character, 'all-scenes') : '#all-scenes';
+  if (window.location.hash === hash) document.querySelector(`${character ? '#dlc-all-scenes-panel' : '#all-scenes-panel'} input`).focus();
+  else window.location.hash = hash;
 });
 
 document.querySelector('#close-settings').addEventListener('click', () => settingsDialog.close());
