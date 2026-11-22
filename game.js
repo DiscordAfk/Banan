@@ -580,14 +580,13 @@ function renderStoryRewards() {
   for (const branch of [...storyEndingBranches, ...storyAchievementBranches]) {
     const achievementScenes = branch.dataset.storyAchievements?.split(' ');
     const leaves = achievementScenes
-      ? achievementScenes.map((key) => achievements.find(({ id }) => id === scenes[key].achievement))
+      ? achievementScenes.map((key) => achievements.find(({ id }) => id === scenes[key]?.achievement)).filter(Boolean)
       : endings.filter((result) => result.branch === branch.dataset.storyEndings);
     const unlocked = achievementScenes ? unlockedAchievements : unlockedEndings;
     branch.replaceChildren(...leaves.map((result) => {
       const leaf = document.createElement('li');
       const card = rewardCard(result, unlocked.has(result.id), 'h4', true);
       card.classList.add('story-tree-node');
-      if (achievementScenes && !unlocked.has(result.id)) card.classList.add('story-achievement-locked');
       leaf.append(card);
       return leaf;
     }));
