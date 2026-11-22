@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=kirill-club-sleep">
-  <script src="story.js?v=kirill-club-sleep" defer></script>
+  <link rel="stylesheet" href="style.css?v=kirill-finale">
+  <script src="story.js?v=kirill-finale" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=kirill-club-sleep" defer></script>
+  <script src="game.js?v=kirill-finale" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -276,7 +276,9 @@
             <h2 id="dlc-achievements-title" tabindex="-1">Достижения</h2>
             <span class="section-rule" aria-hidden="true"></span>
           </div>
-          <p class="dlc-achievements-empty">В этом дополнении пока нет достижений.</p>
+          <p id="dlc-achievement-progress" class="dlc-achievement-progress"></p>
+          <div id="dlc-achievement-list" class="achievement-list"></div>
+          <p id="dlc-achievements-empty" class="dlc-achievements-empty" hidden>В этом дополнении пока нет достижений.</p>
         </section>
         <section id="dlc-story-map-panel" aria-labelledby="dlc-story-map-title" hidden>
           <div class="section-heading">

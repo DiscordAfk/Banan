@@ -1670,6 +1670,9 @@ for (const chapter of [blenderDawn, nightAfterEnding, sleepBranch]) {
   }
 }
 
+const piercedAce = { id: 'kirill-pierced-ace', title: 'Дырявый туз', art: 'dlc/kirill/pierced-ace' };
+const jester = { id: 'kirill-jester', title: 'Шут', art: 'dlc/kirill/jester' };
+
 Object.assign(scenes, {
   'kirill-dlc-morning': {
     title: 'Утро', speaker: 'Кирилл', art: 'dlc/kirill/morning',
@@ -1722,11 +1725,101 @@ Object.assign(scenes, {
   'kirill-dlc-one-hour-later': {
     title: 'Час спустя', intertitle: true, intertitleLang: 'ru',
     poster: 'assets/dlc/kirill/one-hour-later.webp', sound: 'assets/dlc/kirill/initiation.m4a',
+    next: 'kirill-dlc-pierced-ace',
+  },
+  'kirill-dlc-pierced-ace': {
+    title: piercedAce.title, speaker: 'Достижение', art: piercedAce.art,
+    alt: 'Пиковый туз с дыркой посередине на чёрном фоне.',
+    achievement: piercedAce.id, prop: 'achievement', continueLabel: 'Далее',
+    next: 'kirill-dlc-training',
+  },
+  'kirill-dlc-training': {
+    title: 'Бодрая тренировка', speaker: 'Кирилл', art: 'dlc/kirill/training',
+    alt: 'Запыхавшийся Кирилл и трое его друзей отдыхают после тренировки в клубе.',
+    line: 'Ух, бодрая вышла тренировка. Пора в ГУАП. Вы пока найдите костюмы для вечеринки в мою честь, а я разберусь с документами.',
+    next: 'kirill-dlc-bus',
+  },
+  'kirill-dlc-bus': {
+    title: 'Автобус', speaker: 'Автор', art: 'dlc/kirill/bus',
+    alt: 'Разъярённый Кирилл бежит за автобусом № 301, который отъезжает от остановки.',
+    line: 'И вот наш растяпа снова опоздал. На этот раз на автобус до ГУАПа.',
+    next: 'kirill-dlc-deltarune',
+  },
+  'kirill-dlc-deltarune': {
+    title: 'Дельтарун', speaker: 'Кирилл', art: 'dlc/kirill/deltarune',
+    alt: 'Кирилла стиснули бабушки с сумками в автобусе № 127.',
+    line: 'Ну и зачем я ввязался в этот кружок по интересам?',
+    next: 'kirill-dlc-guap',
+  },
+  'kirill-dlc-guap': {
+    title: 'Новый день', speaker: 'Кирилл', art: 'dlc/kirill/guap',
+    alt: 'Кирилл стоит на ступенях под вывеской ГУАП, а к зданию подъезжает автобус.',
+    line: 'Наконец-то я здесь. Прямо второй дом.',
+    next: 'kirill-dlc-hall',
+  },
+  'kirill-dlc-hall': {
+    title: 'Путь до клуба', speaker: 'Автор', art: 'dlc/kirill/hall',
+    alt: 'Кирилл идёт по коридору ГУАПа мимо высоких окон.',
+    line: 'Наш герой направляется в аудиторию, где собирается его кружок.',
+    next: 'kirill-dlc-room',
+  },
+  'kirill-dlc-room': {
+    title: 'Комната', speaker: 'Автор', art: 'dlc/kirill/room',
+    alt: 'Кирилл входит в аудиторию, где по кругу сидят четыре незнакомца и трое его друзей в костюмах.',
+    line: 'И вот наш юный и продырявленный герой заходит в аудиторию.',
+    next: 'kirill-dlc-theory',
+  },
+  'kirill-dlc-theory': {
+    title: 'Теория дырявости', speaker: 'Ямополк', art: 'dlc/kirill/theory',
+    alt: 'Ямополк и его друзья с улыбками машут Кириллу, стоящему на пороге.',
+    line: 'О, наш новичок вернулся! Подсаживайся. Мы как раз собирались тебя обсудить.',
+    next: 'kirill-dlc-introduction',
+  },
+  'kirill-dlc-introduction': {
+    title: 'Знакомство', speaker: 'Ямополк', art: 'dlc/kirill/introduction',
+    alt: 'Кирилл сидит рядом с Дрочеславом, а Ямополк знакомит его с участниками кружка.',
+    line: 'Друзья, это Кирилл. Ему сегодня выдали пропуск на неделю. Кирилл, знакомься. Тут каждый ветеран и знает все самые безумные теории.',
+    next: 'kirill-dlc-reflection',
+  },
+  'kirill-dlc-reflection': {
+    title: 'Раздумия', speaker: 'Автор', art: 'dlc/kirill/reflection',
+    alt: 'Кирилл расслабленно откинулся на спинку стула и слушает собравшихся.',
+    line: 'Кирилл наконец расслабился. По тому, как его приняли, он понял, что попал куда надо.',
+    next: 'kirill-dlc-eight-hours-later',
+  },
+  'kirill-dlc-eight-hours-later': {
+    title: '8 часов спустя', intertitle: true, intertitleLang: 'ru',
+    poster: 'assets/dlc/kirill/eight-hours-later.webp',
+    next: 'kirill-dlc-homecoming',
+  },
+  'kirill-dlc-homecoming': {
+    title: 'Возвращение', speaker: 'Настя', art: 'dlc/kirill/homecoming',
+    alt: 'Настя встречает Кирилла у входной двери и целует его в щёку.',
+    line: 'Наконец-то ты вернулся! Мы тебя заждались. Разувайся и иди на кухню.',
+    next: 'kirill-dlc-celebration',
+  },
+  'kirill-dlc-celebration': {
+    title: 'Торжество', speaker: 'Автор', art: 'dlc/kirill/celebration',
+    alt: 'Кирилл, Лиза, Настя и Даша улыбаются за кухонным столом с чаем и тортом.',
+    line: 'Да я хрен знает, что за хрень я придумал.',
+    transition: 'ripple-collapse',
+    next: 'kirill-dlc-fiction',
+  },
+  'kirill-dlc-fiction': {
+    title: 'Всего лишь выдумка', speaker: 'Автор', art: 'dlc/kirill/fiction',
+    alt: 'Настя одна в маленькой каморке пишет в блокноте и усмехается.',
+    line: 'Весь этот рассказ — один большой рейджбайт.',
+    next: 'kirill-dlc-jester',
+  },
+  'kirill-dlc-jester': {
+    title: jester.title, speaker: 'Достижение', art: jester.art,
+    alt: 'Ухмыляющийся шут в фиолетово-жёлтом колпаке на чёрном фоне.',
+    achievement: jester.id, prop: 'achievement', continueLabel: 'Далее',
     next: 'kirill-dlc-end',
   },
   'kirill-dlc-end': {
     onlyEndCard: true,
-    endCard: 'Продолжение следует…', endCardLang: 'ru',
+    endCard: 'Конец', endCardLang: 'ru',
   },
 });
 
@@ -1734,6 +1827,7 @@ const downloadableStories = [
   {
     character: 'kirill',
     title: 'Утро душнилы',
+    achievements: [piercedAce, jester],
     roadmap: [
       { number: 1, scene: 'kirill-dlc-morning' },
       { number: 5, scene: 'kirill-dlc-late' },

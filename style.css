@@ -256,6 +256,19 @@ h1, h2, h3, p { margin: 0; }
 .story { max-width: 960px; margin-inline: auto; border: 1px solid #513e70; background: var(--panel); }
 .story-picture { background: #100c1f; }
 .story-picture img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: contain; }
+.story-picture.is-achievement, .story-picture.is-ripple-collapse { background: #000; }
+.story-picture.is-ripple-collapse { overflow: hidden; }
+.is-ripple-collapse > #scene-art { animation: ripple-collapse 1.25s ease-in both; }
+@keyframes ripple-collapse {
+  0% { transform: scale(1); }
+  12% { transform: scale(1.04, .96) skewX(-2deg); filter: contrast(1.2); }
+  24% { transform: scale(.96, 1.03) skewX(3deg); filter: contrast(.9) hue-rotate(15deg); }
+  38% { transform: scale(1.04, .94) skewX(-4deg); filter: contrast(1.3); }
+  50% { transform: scale(.94, .96) skewX(5deg); filter: contrast(1.1) hue-rotate(-15deg); }
+  67% { transform: scale(.88, .26) skewX(-7deg); filter: brightness(1.3); border-radius: 50%; }
+  88% { transform: scale(.04, .025); filter: brightness(1.7); border-radius: 50%; opacity: 1; }
+  100% { transform: scale(0); opacity: 0; }
+}
 .dialogue { border-top: 1px solid #513e70; padding: clamp(1rem, 3.6vw, 2rem); }
 .dialogue h1 { margin: .4rem 0 .7rem; font: 400 clamp(1rem, 2.8vw, 1.45rem)/1.5 var(--pixel); }
 .dialogue h1.ozon-price { font-size: clamp(1.2rem, 4vw, 2.2rem); white-space: nowrap; }
@@ -817,6 +830,16 @@ h1, h2, h3, p { margin: 0; }
 .dlc-details summary { color: var(--accent); font-weight: 750; cursor: pointer; }
 .dlc-details[open] p { margin-top: .4rem; }
 .dlc-achievements-empty { color: var(--muted); }
+.dlc-achievement-progress { color: var(--muted); margin-bottom: 1rem; }
+.silhouette-kirill-pierced-ace::before {
+  inset: 12% 39%;
+  border-radius: .35rem;
+  transform: rotate(-9deg);
+}
+.silhouette-kirill-jester::before {
+  inset: 13% 30%;
+  clip-path: polygon(0 65%, 4% 23%, 25% 18%, 36% 34%, 48% 2%, 65% 0, 71% 26%, 90% 19%, 100% 67%, 82% 45%, 68% 53%, 68% 75%, 83% 100%, 17% 100%, 32% 75%, 30% 53%, 18% 45%);
+}
 .dlc-roadmap {
   --roadmap-gap: 1.4rem;
   display: flex;

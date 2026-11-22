@@ -47,6 +47,9 @@ const dlcMenuTitle = document.querySelector('#dlc-menu-title');
 const dlcMenuCover = document.querySelector('#dlc-menu-cover');
 const playDlcButton = document.querySelector('#play-dlc');
 const dlcRoadmap = document.querySelector('#dlc-roadmap');
+const dlcAchievementList = document.querySelector('#dlc-achievement-list');
+const dlcAchievementProgress = document.querySelector('#dlc-achievement-progress');
+const dlcAchievementsEmpty = document.querySelector('#dlc-achievements-empty');
 const dlcCheckpoints = new Set(downloadableStories
   .flatMap(({ roadmap = [] }) => roadmap.slice(1))
   .map(({ scene }) => scene)
@@ -368,7 +371,9 @@ function renderDlc() {
 
 function playDlc(dlc, scene) {
   if (!scene || !hasDlcAccess(dlc.character)) return;
-  openStoryAt({ scene, characterStory: { id: dlc.character, dlc: dlc.title } });
+  openStoryAt({
+    scene, characterStory: { id: dlc.character, dlc: dlc.title, achievements: dlc.achievements ?? [] },
+  });
 }
 
 function renderDlcMenu(dlc, section) {
@@ -384,6 +389,12 @@ function renderDlcMenu(dlc, section) {
     panel.hidden = name !== section;
     if (name === section) tab.setAttribute('aria-current', 'page');
     else tab.removeAttribute('aria-current');
+  }
+  if (section === 'achievements') {
+    const results = dlc.achievements ?? [];
+    renderAchievementCards(results, dlcAchievementList, dlcAchievementProgress);
+    dlcAchievementProgress.hidden = !results.length;
+    dlcAchievementsEmpty.hidden = Boolean(results.length);
   }
   if (section !== 'story-map') return;
   dlcRoadmap.replaceChildren(...dlc.roadmap.map(({ number, scene }, index) => {
@@ -553,9 +564,9 @@ function rewardCard(result, unlocked, headingTag, preview = false) {
   return card;
 }
 
-function readAchievements() {
+function readAchievements(results = achievements) {
   try {
-    for (const { id } of achievements) {
+    for (const { id } of results) {
       if (localStorage.getItem(gameStoragePrefix + id) === '1') unlockedAchievements.add(id);
     }
   } catch {
@@ -565,16 +576,23 @@ function readAchievements() {
 
 function renderAchievements() {
   readEndings();
-  readAchievements();
-  achievementProgress.textContent = `Открыто ${unlockedEndings.size + unlockedAchievements.size} из ${endings.length + achievements.length}`;
-  achievementList.replaceChildren(
-    ...endings.map((result) => rewardCard(result, unlockedEndings.has(result.id), 'h4')),
-    ...achievements.map((result) => rewardCard(result, unlockedAchievements.has(result.id), 'h4')),
+  renderAchievementCards(achievements, achievementList, achievementProgress, endings);
+}
+
+function renderAchievementCards(results, list, progress, endingResults = []) {
+  readAchievements(results);
+  const unlocked = results.filter(({ id }) => unlockedAchievements.has(id)).length;
+  const ended = endingResults.filter(({ id }) => unlockedEndings.has(id)).length;
+  progress.textContent = `Открыто ${ended + unlocked} из ${endingResults.length + results.length}`;
+  list.replaceChildren(
+    ...endingResults.map((result) => rewardCard(result, unlockedEndings.has(result.id), 'h4')),
+    ...results.map((result) => rewardCard(result, unlockedAchievements.has(result.id), 'h4')),
   );
 }
 
 function renderAchievementAward(id, remember = true, container = scenePicture) {
-  const achievement = achievements.find((result) => result.id === id);
+  const results = activeCharacterStory?.achievements ?? achievements;
+  const achievement = results.find((result) => result.id === id);
   achievementAward.hidden = !achievement?.showOnScene;
   if (!achievement) return false;
 
@@ -1036,6 +1054,7 @@ function renderSceneTitle(scene) {
 function clearSceneTimers() {
   for (const timer of sceneTimers) clearTimeout(timer);
   sceneTimers.length = 0;
+  scenePicture.classList.remove('is-ripple-collapse');
   cancelAnimationFrame(voiceSequenceFrame);
   voiceSequence = undefined;
   continueButton.disabled = false;
@@ -1295,6 +1314,7 @@ function renderScene(key, { phone, remember = true } = {}) {
     ozonChatName.textContent = dianaContactName();
   }
   scenePicture.classList.toggle('has-ending-award', Boolean(scene.ending));
+  scenePicture.classList.toggle('is-achievement', scene.prop === 'achievement');
   scenePicture.classList.toggle('has-chat', scene.prop === 'chat');
   const endingResult = endings.find(({ id }) => id === scene.ending);
   if (endingResult) {
@@ -1302,7 +1322,8 @@ function renderScene(key, { phone, remember = true } = {}) {
     endingAward.replaceChildren(rewardCard(endingResult, true, 'h2'));
   }
   const earnedAchievement = renderAchievementAward(
-    scene.achievement, !activeCharacterStory, scene.holdem?.layout ? holdemPanel : scenePicture,
+    scene.achievement, !activeCharacterStory || Boolean(activeCharacterStory.dlc),
+    scene.holdem?.layout ? holdemPanel : scenePicture,
   );
   if (scene.prop === 'chat') renderDianaChat(scene.dianaReply);
   scenePicture.classList.toggle('is-dull-view', scene.prop === 'dull-view');
@@ -1480,6 +1501,13 @@ continueButton.addEventListener('click', () => {
     return;
   }
   if (activeScene.next) {
+    if (activeScene.transition === 'ripple-collapse' && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const next = activeScene.next;
+      continueButton.disabled = true;
+      scenePicture.classList.add('is-ripple-collapse');
+      sceneTimers.push(setTimeout(() => goToScene(next), 1250));
+      return;
+    }
     goToScene(activeScene.next, { remember: activeScene.ending !== 'time-loop' });
     return;
   }
