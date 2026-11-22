@@ -1419,10 +1419,38 @@ for (const chapter of [blenderDawn, nightAfterEnding]) {
   }
 }
 
+Object.assign(scenes, {
+  'kirill-dlc-morning': {
+    title: 'Утро', speaker: 'Кирилл', art: 'dlc/kirill/morning',
+    alt: 'Кирилл просыпается на рассвете рядом со спящей Лизой в голубой спальне.',
+    line: 'Проснулся с первыми лучами солнца. Рядом спала моя любимая Лиза.',
+    next: 'kirill-dlc-breakfast',
+  },
+  'kirill-dlc-breakfast': {
+    title: 'Утренний завтрак', speaker: 'Кирилл', art: 'dlc/kirill/breakfast',
+    alt: 'Кирилл стоит в дверях кухни. Настя и Даша сидят за столом с кружками чая.',
+    line: 'Надо же, как рано мои любимки встают.',
+    next: 'kirill-dlc-conversation',
+  },
+  'kirill-dlc-conversation': {
+    title: 'Любовный разговор', speaker: 'Кирилл', art: 'dlc/kirill/conversation',
+    alt: 'Кирилл за столом разговаривает с Дашей, а Настя берёт зелёную кружку у чайника.',
+    line: 'О, привет, Даша! Слышал, ты наконец поступила в Аграрный.',
+    next: 'kirill-dlc-agrarian',
+  },
+  'kirill-dlc-agrarian': {
+    title: 'Аграрный', speaker: 'Даша', art: 'dlc/kirill/agrarian',
+    alt: 'Настя подала Кириллу чай. Он делает глоток из зелёной кружки, пока Даша отвечает.',
+    line: 'Да… Еле поступила. Со 165 баллами было непросто.',
+    endCard: 'Продолжение следует…', endCardLang: 'ru',
+  },
+});
+
 const downloadableStories = [
   {
     character: 'kirill',
     title: 'Утро душнилы',
+    firstScene: 'kirill-dlc-morning',
     codeHash: 'ff00468effbef848e51ca7e6e99a3677b2c4f32fc6357e188812840061a0be54',
   },
 ];

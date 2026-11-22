@@ -789,7 +789,7 @@ h1, h2, h3, p { margin: 0; }
 .dlc-form input[aria-invalid="true"] { border-color: #ff9ba8; }
 .dlc-form .pixel-button { justify-self: start; min-height: 44px; padding: .45rem .7rem; }
 .dlc-code-status { color: #ffb5c0; font-size: .9rem; }
-.dlc-details { margin-top: .85rem; }
+.dlc-details, .dlc-play { margin-top: .85rem; }
 .dlc-details summary { color: var(--accent); font-weight: 750; cursor: pointer; }
 .dlc-details[open] p { margin-top: .4rem; }
 

@@ -31,6 +31,7 @@ const choices = document.querySelector('#choices');
 const continueButton = document.querySelector('#continue');
 const sceneBackButtons = document.querySelectorAll('[data-scene-back]');
 const backLink = document.querySelector('#game-back');
+const gameLabel = novel.querySelector('#game-label');
 const gameMapLink = novel.querySelector('.game-map-link');
 const novelTabs = novel.querySelector('#novel-tabs');
 const achievementsPanel = document.querySelector('#achievements-panel');
@@ -238,7 +239,7 @@ async function matchesDlcCode(code, hash) {
 }
 
 function renderDlc() {
-  dlcList.replaceChildren(...downloadableStories.map(({ character, title, codeHash }) => {
+  dlcList.replaceChildren(...downloadableStories.map(({ character, title, codeHash, firstScene }) => {
     const card = dlcCardTemplate.content.firstElementChild.cloneNode(true);
     card.querySelector('img').src = artPath(characters[character].art);
     card.querySelector('h3').textContent = title;
@@ -248,10 +249,18 @@ function renderDlc() {
     const input = form.elements.namedItem('code');
     const submit = form.querySelector('button');
     const feedback = form.querySelector('[role="status"]');
+    const play = card.querySelector('.dlc-play');
     const details = card.querySelector('details');
     const hasAccess = hasDlcAccess(character);
     form.hidden = hasAccess;
-    details.hidden = !hasAccess;
+    play.hidden = !hasAccess || !firstScene;
+    details.hidden = !hasAccess || Boolean(firstScene);
+
+    play.addEventListener('click', () => {
+      if (firstScene && hasDlcAccess(character)) {
+        openStoryAt({ scene: firstScene, characterStory: { id: character, dlc: title } });
+      }
+    });
 
     input.addEventListener('input', () => {
       input.removeAttribute('aria-invalid');
@@ -282,9 +291,14 @@ function renderDlc() {
       }
       form.reset();
       form.hidden = true;
-      details.hidden = false;
-      details.open = true;
-      details.querySelector('summary').focus();
+      if (firstScene) {
+        play.hidden = false;
+        play.focus();
+      } else {
+        details.hidden = false;
+        details.open = true;
+        details.querySelector('summary').focus();
+      }
     });
     return card;
   }));
@@ -603,14 +617,15 @@ function showScreen(screen) {
   catalog.hidden = screen !== 'catalog';
   novel.hidden = screen === 'catalog';
   novelTabs.hidden = screen !== 'menu' && screen !== 'details';
-  gameMapLink.hidden = screen !== 'story';
+  gameLabel.textContent = activeCharacterStory?.dlc ?? 'День Серёжи';
+  gameMapLink.hidden = screen !== 'story' || Boolean(activeCharacterStory?.dlc);
   menu.hidden = screen !== 'menu';
   story.hidden = screen !== 'story';
   ending.hidden = screen !== 'ending';
   novel.classList.toggle('is-ending', screen === 'ending');
   if (activeCharacterStory && (screen === 'story' || screen === 'ending')) {
-    backLink.href = characterStoryHash(activeCharacterStory.id);
-    backLink.textContent = 'К карте персонажа';
+    backLink.href = activeCharacterStory.dlc ? '#dlc' : characterStoryHash(activeCharacterStory.id);
+    backLink.textContent = activeCharacterStory.dlc ? 'К дополнениям' : 'К карте персонажа';
   } else {
     backLink.href = screen === 'menu' ? '#' : '#seryozha';
     backLink.textContent = screen === 'menu' ? 'К играм' : 'В меню игры';
@@ -644,6 +659,7 @@ function goBackScene() {
 }
 
 function artPath(art) {
+  if (art.startsWith('dlc/')) return `assets/${art}.webp`;
   let folder = 'route/';
   if (['wake', 'coffee', 'tea'].includes(art)) folder = '';
   if (art.startsWith('phone-')) folder = 'endings/';
@@ -1066,7 +1082,7 @@ function renderHoldem(scene) {
 function renderScene(key, { phone, remember = true } = {}) {
   rewardAudio.pause();
   clearSceneTimers();
-  const scene = activeCharacterStory
+  const scene = activeCharacterStory?.nextByScene
     ? { ...scenes[key], next: activeCharacterStory.nextByScene.get(key) }
     : scenes[key];
   activeScene = scene;
@@ -1277,16 +1293,17 @@ document.querySelector('#launch-blender').addEventListener('click', () => goToSc
 document.querySelector('#blender-notification').addEventListener('click', () => goToScene(activeScene.next));
 function showEndCard(scene) {
   updateSceneBack();
-  const character = activeCharacterStory && characterStories[activeCharacterStory.id];
-  const next = character ? undefined : scene.afterEndCard;
+  const inDlc = activeCharacterStory?.dlc;
+  const character = activeCharacterStory && !inDlc && characterStories[activeCharacterStory.id];
+  const next = activeCharacterStory ? undefined : scene.afterEndCard;
   endingTitle.textContent = character ? `Сюжет ${character.name} пройден` : scene.endCard ?? 'Soon ...';
   endingTitle.lang = character ? 'ru' : scene.endCardLang ?? 'en';
   endingNote.textContent = character ? '' : scene.endCardNote ?? '';
   endingNote.hidden = !endingNote.textContent;
   endingContinue.hidden = !next;
   endingContinue.dataset.next = next ?? '';
-  endingMapLink.href = character ? characterStoryHash(activeCharacterStory.id) : '#story-map';
-  endingMapLink.textContent = character ? 'К карте персонажа' : 'Карта сюжета';
+  endingMapLink.href = inDlc ? '#dlc' : character ? characterStoryHash(activeCharacterStory.id) : '#story-map';
+  endingMapLink.textContent = inDlc ? 'К дополнениям' : character ? 'К карте персонажа' : 'Карта сюжета';
   if (next) preloadScene(next);
   showScreen('ending');
   endingTitle.focus();
