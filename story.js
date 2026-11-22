@@ -10,11 +10,12 @@ const schoolTrip = [
 ];
 
 const backInTime = { id: 'back-in-time', title: 'Назад в прошлое', art: 'history-clock' };
+const pokerBeginner = { id: 'poker-beginner', title: 'Проебать новичку', art: 'history-poker-beginner-award', showOnScene: true };
 const ozonDeltarune = { id: 'ozon-deltarune', title: 'На#!$ Deltarune!!!', art: 'ozon-deltarune', crossed: true, showOnScene: true };
 const ozonCrossroads = { id: 'ozon-crossroads', title: 'Ад или Рай', art: 'ozon-crossroads-award', fullArt: true, showOnScene: true };
 const ozonDoubt = { id: 'ozon-doubt', title: 'Правильный выбор или нет...?', art: 'ozon-demon-grin-kirill', fullArt: true, showOnScene: true };
 const newDay = { id: 'new-day', title: 'Новый день', art: 'blender-neva-sunrise', fullArt: true, showOnScene: true };
-const achievements = [backInTime, ozonDeltarune, ozonCrossroads, ozonDoubt, newDay];
+const achievements = [backInTime, pokerBeginner, ozonDeltarune, ozonCrossroads, ozonDoubt, newDay];
 
 const characters = {
   seryozha: { name: 'Серёжа', art: 'profile-seryozha', keyword: 'Экспонат', description: 'Главный герой, студент ГУАП. Любит компьютерные игры, среди которых War Thunder, Hearts of Iron IV (HOI4), Hollow Knight, Hollow Knight: Silksong, Rain World и Factorio. Интересуется 3D-моделированием в Blender. Пока сам не понимает, ищет ли девушку. Подрабатывает установкой дверей.' },
@@ -32,6 +33,9 @@ const characters = {
   liza: { name: 'Лиза', art: 'profile-liza-refined', keyword: 'Неизвестная', description: 'Одноклассница Серёжи с 10-го по 11-й класс. Они почти не пересекались и не общались. Лиза редко бывает в школе, и больше Серёжа о ней ничего не знает.' },
   nastya: { name: 'Настя', art: 'profile-nastya', keyword: 'Нормальная (пока что)', description: 'Одноклассница Серёжи с 10-го по 11-й класс. Пока кажется обычной отличницей, которая помогает с учёбой. Но вскоре она раскроется совсем иначе. А именно… ???????' },
   dasha: { name: 'Даша', art: 'profile-dasha-original-style', catalogPreview: true },
+  drocheslav: { name: 'Дрочеслав', art: 'profile-drocheslav' },
+  yamopolk: { name: 'Ямополк', art: 'profile-yamopolk' },
+  fillip: { name: 'Филлип', art: 'profile-fillip' },
 };
 
 const holdemBoard = ['Qs', 'Js', 'Ts', '8d', 'Qh'];
@@ -230,7 +234,7 @@ const holdemChapter = [
     line: 'Никита и Серёжа открывают рты и оба пытаются хоть что-нибудь сказать.',
   },
   {
-    id: 'history-poker-royal-flush', title: 'Флэш-рояль',
+    id: 'history-poker-royal-flush', title: 'Флэш-рояль', achievement: pokerBeginner.id,
     line: 'Десятка, валет, дама, король и туз одной масти. Самая сильная рука.',
     holdem: {
       board: holdemBoard,
@@ -693,6 +697,85 @@ const kirillAtUniversity = [
     id: 'history-chemistry-liza-nastya', title: 'Лиза и Настя', art: 'history-chemistry-liza-nastya-updated', meet: ['liza', 'nastya'],
     alt: 'За второй партой слева сидит Лиза с рыжим каре и бордовыми очками. Справа сидит Настя с короткими тёмными волнистыми волосами.',
     line: 'Слева Лиза. Странно, я её в школе почти не вижу. Справа Настя. Перед ней уже открыта тетрадь.',
+  },
+  {
+    id: 'history-chemistry-footsteps', title: 'Тяжёлые шаги', prop: 'chemistry-footsteps',
+    sound: 'assets/route/history-chemistry-footsteps.mp3', autoAdvance: 2650,
+    alt: 'Ученики поворачиваются к двери. В стакане на столе расходятся круги.',
+    line: 'Из коридора доносятся тяжёлые шаги. С каждым шагом трясётся вся школа. Звук всё ближе.',
+  },
+  {
+    id: 'history-chemistry-door-pause', title: 'Прямо у двери', autoAdvance: 1000,
+    alt: 'Неподвижная ручка закрытой двери крупным планом.',
+    line: 'Шаги стихают прямо за дверью. На секунду становится тихо.',
+  },
+  {
+    id: 'history-chemistry-door-crash', title: 'Грохот', prop: 'chemistry-impact',
+    sound: 'assets/route/history-chemistry-door-crash.mp3',
+    alt: 'Деревянная дверь лежит на полу. В проёме виден силуэт Даши.',
+    line: 'БАХ! Дверь с грохотом падает на пол кабинета.',
+  },
+  {
+    id: 'history-chemistry-dasha-enter', title: 'Даша входит', prop: 'chemistry-impact',
+    sound: 'assets/route/history-chemistry-heavy-step.mp3',
+    alt: 'Даша в бордовой толстовке переступает порог. Парты дрожат.',
+    line: 'В кабинет заходит Даша. От её первого шага снова вздрагивает пол.',
+  },
+  {
+    id: 'history-chemistry-dasha-boss', title: 'Даша',
+    alt: 'Портрет Даши на карточке босса. Поле сводки пустое.',
+  },
+  {
+    id: 'history-chemistry-fight-vs', title: 'Вера Павловна VS Даша', prop: 'chemistry-fight-cut',
+    alt: 'Вера Павловна слева, Даша справа. Между ними надпись VS, сверху полные полоски здоровья.',
+  },
+  {
+    id: 'history-chemistry-attack', title: 'Серия ударов', prop: 'chemistry-combo',
+    sound: 'assets/route/history-chemistry-combo.mp3',
+    alt: 'Из пробирок Веры Павловны летят разноцветные вспышки. На полоске Даши пропал тонкий сегмент.',
+    line: 'Вера Павловна обрушивает на Дашу целую серию цветных вспышек. Полоска здоровья Даши сдвигается едва заметно.',
+  },
+  {
+    id: 'history-chemistry-dasha-roar', title: 'Ответ Даши', prop: 'chemistry-roar',
+    sound: 'assets/route/history-chemistry-roar.mp3',
+    alt: 'Даша рычит и колотит себя кулаками в грудь. Вера Павловна взмывает над рингом.',
+    line: 'Даша взревела, застучала кулаками по груди и подхватила Веру Павловну. Та аж взлетела над рингом.',
+  },
+  {
+    id: 'history-chemistry-window', title: 'Через окно', prop: 'chemistry-window-impact',
+    sound: 'assets/route/history-chemistry-window.mp3',
+    alt: 'Даша и Вера Павловна вылетают из кабинета на фоне разлетающихся осколков.',
+    line: 'Обе вылетают через окно. Стекло звенит, а через мгновение от удара вздрагивает вся школа.',
+  },
+  {
+    id: 'history-chemistry-class-reaction', title: 'У всех отвисли челюсти',
+    alt: 'Класс ошарашенно смотрит на разбитое окно. Несколько ребят переговариваются.',
+    line: 'Мы молча смотрим на окно. Потом кто-то шепчет: «Это сейчас урок отменили?» Тут весь класс разом начинает говорить.',
+  },
+  {
+    id: 'history-chemistry-drocheslav', title: 'Замена', art: 'history-chemistry-guap-students',
+    timeBadge: 'Через 10 минут', meet: ['drocheslav'], speaker: characters.drocheslav.name,
+    alt: 'У доски стоят трое учеников в школьной форме. Первым говорит парень в синем кардигане.',
+    line: 'Мы ученики школы № 69. Сегодня у вас на замене. Я Дрочеслав, у нас в школе веду викторины.',
+  },
+  {
+    id: 'history-chemistry-yamopolk', title: 'Ямополк', art: 'history-chemistry-guap-students',
+    meet: ['yamopolk'], speaker: characters.yamopolk.name,
+    line: 'А я Ямополк. Больше всего люблю физику. Сейчас собираю радиоприёмник, пока ловит только шипение.',
+  },
+  {
+    id: 'history-chemistry-fillip', title: 'Филлип', art: 'history-chemistry-guap-students',
+    meet: ['fillip'], speaker: characters.fillip.name,
+    line: 'Я Филлип. Делаю афиши для нашего школьного театра. А после школы мы все трое планируем поступать в ГУАП.',
+  },
+  {
+    id: 'history-chemistry-kirill-excited', title: 'Кирилл', prop: 'chemistry-kirill-reveal',
+    alt: 'Крупный план Кирилла. В глазах вспыхивает огонь, на лице появляется улыбка.',
+    line: 'При слове «ГУАП» Кирилл вскидывает глаза. Улыбка сама лезет на лицо.',
+  },
+  {
+    id: 'history-chemistry-soon', title: 'soon...', onlyEndCard: true,
+    endCard: 'soon...', endCardArt: 'history-chemistry-soon',
   },
 ];
 

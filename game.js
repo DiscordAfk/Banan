@@ -3,6 +3,7 @@ const novel = document.querySelector('#novel');
 const menu = document.querySelector('#game-menu');
 const story = document.querySelector('#story');
 const ending = document.querySelector('#ending');
+const endingArt = document.querySelector('#ending-art');
 const endingTitle = document.querySelector('#ending-title');
 const endingNote = document.querySelector('#ending-note');
 const sceneArt = document.querySelector('#scene-art');
@@ -552,12 +553,15 @@ function renderAchievements() {
   );
 }
 
-function renderAchievementAward(id, remember = true) {
+function renderAchievementAward(id, remember = true, container = scenePicture) {
   const achievement = achievements.find((result) => result.id === id);
   achievementAward.hidden = !achievement?.showOnScene;
   if (!achievement) return false;
 
-  if (achievement.showOnScene) achievementAward.replaceChildren(rewardCard(achievement, true, 'h2'));
+  if (achievement.showOnScene) {
+    achievementAward.replaceChildren(rewardCard(achievement, true, 'h2'));
+    if (achievementAward.parentElement !== container) container.append(achievementAward);
+  }
   return remember && unlockAchievement(achievement.id);
 }
 
@@ -950,8 +954,9 @@ function showCharacterEncounters(key, meet = []) {
 }
 
 function preloadScene(key) {
-  const { art, poster } = scenes[key];
-  preloadArt(poster ?? (art && artPath(art)));
+  const { art, poster, endCardArt } = scenes[key];
+  const image = endCardArt ?? art;
+  preloadArt(poster ?? (image && artPath(image)));
 }
 
 function preloadArt(path) {
@@ -1244,7 +1249,9 @@ function renderScene(key, { phone, remember = true } = {}) {
     if (!activeCharacterStory) unlockEnding(endingResult.id);
     endingAward.replaceChildren(rewardCard(endingResult, true, 'h2'));
   }
-  const earnedAchievement = renderAchievementAward(scene.achievement, !activeCharacterStory);
+  const earnedAchievement = renderAchievementAward(
+    scene.achievement, !activeCharacterStory, scene.holdem?.layout ? holdemPanel : scenePicture,
+  );
   if (scene.prop === 'chat') renderDianaChat(scene.dianaReply);
   scenePicture.classList.toggle('is-dull-view', scene.prop === 'dull-view');
   scenePicture.classList.toggle('is-rain-reveal', scene.prop === 'rain-reveal');
@@ -1279,6 +1286,10 @@ function renderScene(key, { phone, remember = true } = {}) {
   continueButton.textContent = scene.continueLabel ?? 'Дальше';
   if (scene.quiz) renderPhoneRound();
   showScreen('story');
+  if (scene.autoAdvance && scene.next) {
+    continueButton.disabled = true;
+    sceneTimers.push(setTimeout(() => renderScene(scene.next), scene.autoAdvance));
+  }
   if (!sceneAudio.paused) sceneAudio.pause();
   sceneAudio.loop = Boolean(scene.loopSound);
   stormLight.hidden = !scene.lightning;
@@ -1393,6 +1404,10 @@ function showEndCard(scene) {
   const inDlc = activeCharacterStory?.dlc;
   const character = activeCharacterStory && !inDlc && characterStories[activeCharacterStory.id];
   const next = activeCharacterStory ? undefined : scene.afterEndCard;
+  const artwork = character ? undefined : scene.endCardArt;
+  endingArt.hidden = !artwork;
+  if (artwork) endingArt.src = artPath(artwork);
+  endingTitle.classList.toggle('ending-title-over-art', Boolean(artwork));
   endingTitle.textContent = character ? `Сюжет ${character.name} пройден` : scene.endCard ?? 'Soon ...';
   endingTitle.lang = character ? 'ru' : scene.endCardLang ?? 'en';
   endingNote.textContent = character ? '' : scene.endCardNote ?? '';
