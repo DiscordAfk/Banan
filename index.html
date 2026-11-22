@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=character-story-slots">
+  <link rel="stylesheet" href="style.css?v=story-progress">
   <script src="story.js?v=character-story-slots" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=novel-sections" defer></script>
+  <script src="game.js?v=story-progress" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -119,7 +119,7 @@
         <div class="story-map-heading">
           <div>
             <h3>День Серёжи</h3>
-            <p>Выбери, с какой ветки или развилки продолжить.</p>
+            <p>Точки открываются по мере прохождения. К открытым сценам можно вернуться с карты.</p>
           </div>
           <div class="story-map-resume">
             <button id="resume-decision" class="pixel-button" type="button" aria-describedby="resume-detail" disabled>Последняя развилка</button>
@@ -135,21 +135,21 @@
                   <strong>Утро</strong>
                 </button>
                 <div class="story-morning-options" aria-label="Утренние ветки">
-                  <button class="story-point story-point-small" type="button" data-story-start="coffee">Кофе</button>
-                  <button class="story-point story-point-small" type="button" data-story-start="tea">Чай</button>
+                  <button class="story-point story-point-small" type="button" data-story-start="coffee" disabled>Кофе</button>
+                  <button class="story-point story-point-small" type="button" data-story-start="tea" disabled>Чай</button>
                 </div>
               </div>
               <ul class="story-branches">
                 <li>
                   <div class="story-tree-node">
-                    <button class="story-point story-point-fork" type="button" data-story-start="plans">
+                    <button class="story-point story-point-fork" type="button" data-story-start="plans" disabled>
                       <span class="story-point-type">Развилка</span><strong>Что делать дальше?</strong>
                     </button>
                   </div>
                   <ul class="story-branches">
                     <li>
                       <div class="story-tree-node">
-                        <button class="story-point story-point-art" type="button" data-story-start="school-door">
+                        <button class="story-point story-point-art" type="button" data-story-start="school-door" disabled>
                           <img src="assets/route/school-snow.webp" alt="" loading="lazy">
                           <strong>На пары</strong>
                         </button>
@@ -157,9 +157,9 @@
                       <ul class="story-branches">
                         <li>
                           <div class="story-tree-node story-chapter-points">
-                            <button class="story-point" type="button" data-story-start="kirill-shadow"><strong>Внутри ГУАП</strong></button>
-                            <button class="story-point" type="button" data-story-start="guap-classmates"><strong>После грома</strong></button>
-                            <button class="story-point" type="button" data-story-start="history-card-felt"><strong>Карты в коморке</strong></button>
+                            <button class="story-point" type="button" data-story-start="kirill-shadow" disabled><strong>Внутри ГУАП</strong></button>
+                            <button class="story-point" type="button" data-story-start="guap-classmates" disabled><strong>После грома</strong></button>
+                            <button class="story-point" type="button" data-story-start="history-card-felt" disabled><strong>Карты в коморке</strong></button>
                           </div>
                           <ul class="story-branches story-endings" data-story-achievements="history-school" aria-label="Достижения университетской ветки"></ul>
                         </li>
@@ -167,7 +167,7 @@
                     </li>
                     <li>
                       <div class="story-tree-node">
-                        <button class="story-point story-point-art" type="button" data-story-start="work-catamaran">
+                        <button class="story-point story-point-art" type="button" data-story-start="work-catamaran" disabled>
                           <img src="assets/route/work-catamaran.webp" alt="" loading="lazy">
                           <strong>На работу</strong>
                         </button>
@@ -175,10 +175,10 @@
                       <ul class="story-branches">
                         <li>
                           <div class="story-tree-node story-chapter-points">
-                            <button class="story-point" type="button" data-story-start="shift-money">
+                            <button class="story-point" type="button" data-story-start="shift-money" disabled>
                               <span class="story-point-type">После дороги</span><strong>В мастерской</strong>
                             </button>
-                            <button class="story-point" type="button" data-story-start="shift-rise"><strong>После смены</strong></button>
+                            <button class="story-point" type="button" data-story-start="shift-rise" disabled><strong>После смены</strong></button>
                           </div>
                           <ul class="story-branches story-endings" data-story-endings="shift-rise" aria-label="Концовки рабочей ветки"></ul>
                         </li>
@@ -186,28 +186,28 @@
                     </li>
                     <li>
                       <div class="story-tree-node">
-                        <button class="story-point story-point-art story-point-fork" type="button" data-story-start="home">
+                        <button class="story-point story-point-art story-point-fork" type="button" data-story-start="home" disabled>
                           <img src="assets/route/home-desk.webp" alt="" loading="lazy">
                           <strong>Остаться дома</strong>
                         </button>
                       </div>
                       <ul class="story-branches story-home-options">
                         <li>
-                          <div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-blender"><strong>Blender</strong></button></div>
+                          <div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-blender" disabled><strong>Blender</strong></button></div>
                           <ul class="story-branches story-endings" data-story-achievements="blender-neva-sunrise" aria-label="Достижение ветки Blender"></ul>
                         </li>
                         <li>
                           <div class="story-tree-node story-chapter-points">
-                            <button class="story-point" type="button" data-story-start="home-phone"><strong>?????????</strong></button>
-                            <button id="story-night-start" class="story-point story-point-fork" type="button" data-story-start="night-choice" hidden><strong>Перед сном</strong></button>
+                            <button class="story-point" type="button" data-story-start="home-phone" disabled><strong>?????????</strong></button>
+                            <button id="story-night-start" class="story-point story-point-fork" type="button" data-story-start="night-choice" disabled hidden><strong>Перед сном</strong></button>
                           </div>
                           <ul class="story-branches story-endings" data-story-endings="home-phone" aria-label="Концовки этой ветки"></ul>
                         </li>
                         <li>
-                          <div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-shopping"><strong>Ozon</strong></button></div>
+                          <div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-shopping" disabled><strong>Ozon</strong></button></div>
                           <ul class="story-branches">
                             <li>
-                              <div class="story-tree-node"><button class="story-point story-point-fork" type="button" data-story-start="ozon-decide"><strong>Ангел или демон</strong></button></div>
+                              <div class="story-tree-node"><button class="story-point story-point-fork" type="button" data-story-start="ozon-decide" disabled><strong>Ангел или демон</strong></button></div>
                               <ul class="story-branches story-endings" data-story-achievements="ozon-decide ozon-pin ozon-demon-grin" aria-label="Достижения ветки Ozon"></ul>
                             </li>
                           </ul>

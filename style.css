@@ -1166,7 +1166,9 @@ h1, h2, h3, p { margin: 0; }
   text-align: center;
   cursor: pointer;
 }
-.story-point:hover { background: #45315f; border-color: #d2a8fc; }
+.story-point:not(:disabled):hover { background: #45315f; border-color: #d2a8fc; }
+.story-point:disabled { opacity: .6; cursor: not-allowed; }
+.story-point:disabled img { filter: grayscale(1); }
 .story-point-fork { border-color: #bc91f0; background: #34234d; }
 .story-point-type { color: #d2b6ec; font-size: .8rem; }
 .story-point-art {

@@ -51,6 +51,8 @@ const characterProfileBody = document.querySelector('#character-profile-body');
 const characterRevealAudio = document.querySelector('#character-reveal-audio');
 const storyMapPanel = document.querySelector('#story-map-panel');
 const storyMapTab = document.querySelector('#story-map-tab');
+const storyStarts = new Map(Array.from(storyMapPanel.querySelectorAll('[data-story-start]'),
+  (button) => [button.dataset.storyStart, button]));
 const resumeButton = document.querySelector('#resume-decision');
 const resumeDetail = document.querySelector('#resume-detail');
 const storyEndingBranches = storyMapPanel.querySelectorAll('[data-story-endings]');
@@ -137,6 +139,7 @@ const nightPhoneMessages = {
 const endingsStorageKey = 'minigames.seryozha.endings';
 const achievementStoragePrefix = 'minigames.seryozha.';
 const decisionStorageKey = 'minigames.seryozha.last-decision';
+const storyStartStoragePrefix = 'minigames.seryozha.story-start.';
 const characterStoragePrefix = 'minigames.seryozha.character.';
 const dianaAliasStorageKey = `${characterStoragePrefix}diana-alias`;
 const discoveredCharacters = new Set();
@@ -146,6 +149,7 @@ let activeProfile;
 let morningProfileTimer;
 const unlockedEndings = new Set();
 const unlockedAchievements = new Set();
+const visitedStoryStarts = new Set();
 const hiddenRewardTitle = '????????????';
 let phoneQuiz;
 let lastDecision;
@@ -212,6 +216,30 @@ function renderCharacterStoryMap(id) {
   }));
 }
 
+function rememberStoryStart(scene) {
+  if (scene === 'morning' || !storyStarts.has(scene) || visitedStoryStarts.has(scene)) return;
+  visitedStoryStarts.add(scene);
+  try {
+    localStorage.setItem(storyStartStoragePrefix + scene, '1');
+  } catch {
+    // Visited points stay available during the current visit.
+  }
+}
+
+function isStoryStartUnlocked(scene) {
+  if (scene === 'morning' || visitedStoryStarts.has(scene)) return true;
+  if (scene === 'night-choice' && unlockedEndings.has('first-step')) return true;
+  try {
+    return localStorage.getItem(storyStartStoragePrefix + scene) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function renderStoryStarts() {
+  for (const [scene, button] of storyStarts) button.disabled = !isStoryStartUnlocked(scene);
+}
+
 function rememberDecision(scene, phone) {
   lastDecision = phone ? { scene, phone: { index: phone.index, correct: phone.correct } } : { scene };
   try {
@@ -238,6 +266,7 @@ function renderLastDecision() {
     // A blocked or invalid save can be replaced by playing to a decision.
   }
 
+  if (lastDecision) rememberStoryStart(lastDecision.phone ? 'home-phone' : lastDecision.scene);
   resumeButton.disabled = !lastDecision;
   if (!lastDecision) {
     resumeDetail.textContent = 'Появится после первой развилки.';
@@ -373,6 +402,7 @@ function renderStoryRewards() {
   readEndings();
   readAchievements();
   storyNightStart.hidden = !unlockedEndings.has('first-step');
+  renderStoryStarts();
   for (const branch of [...storyEndingBranches, ...storyAchievementBranches]) {
     const achievementScenes = branch.dataset.storyAchievements?.split(' ');
     const leaves = achievementScenes
@@ -961,7 +991,10 @@ function renderScene(key, { phone, remember = true } = {}) {
   activeScene = scene;
   activePosition = { key };
   updateSceneBack();
-  if (!activeCharacterStory && remember && scene.options) rememberDecision(key);
+  if (!activeCharacterStory) {
+    rememberStoryStart(key);
+    if (remember && scene.options) rememberDecision(key);
+  }
   renderIntertitle(scene);
   renderWorkCall(scene);
   renderNightProps(scene);
@@ -1146,8 +1179,8 @@ function syncRoute(moveFocus = false) {
   }
 }
 
-for (const start of storyMapPanel.querySelectorAll('[data-story-start]')) {
-  start.addEventListener('click', () => openStoryAt({ scene: start.dataset.storyStart }));
+for (const [scene, button] of storyStarts) {
+  button.addEventListener('click', () => openStoryAt({ scene }));
 }
 resumeButton.addEventListener('click', () => {
   if (lastDecision) openStoryAt(lastDecision);
@@ -1251,6 +1284,10 @@ window.addEventListener('storage', (event) => {
     if (window.location.hash === '#achievements') renderAchievements();
     if (window.location.hash === '#story-map' && !endingPreview.open) renderStoryRewards();
   }
-  if (event.key === decisionStorageKey && window.location.hash === '#story-map') renderLastDecision();
+  if (!storyMapPanel.hidden && event.key === decisionStorageKey) {
+    renderLastDecision();
+    renderStoryStarts();
+  }
+  if (!storyMapPanel.hidden && event.key?.startsWith(storyStartStoragePrefix)) renderStoryStarts();
 });
 syncRoute();
