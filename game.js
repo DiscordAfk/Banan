@@ -40,6 +40,16 @@ const dlcPanel = document.querySelector('#dlc-panel');
 const dlcTab = document.querySelector('#dlc-tab');
 const dlcList = document.querySelector('#dlc-list');
 const dlcCardTemplate = document.querySelector('#dlc-card-template');
+const dlcMenuPanel = document.querySelector('#dlc-menu-panel');
+const dlcOverview = document.querySelector('#dlc-overview');
+const dlcMenuTitle = document.querySelector('#dlc-menu-title');
+const dlcMenuCover = document.querySelector('#dlc-menu-cover');
+const playDlcButton = document.querySelector('#play-dlc');
+const dlcRoadmap = document.querySelector('#dlc-roadmap');
+const dlcSections = {
+  achievements: { tab: document.querySelector('#dlc-achievements-tab'), panel: document.querySelector('#dlc-achievements-panel') },
+  'story-map': { tab: document.querySelector('#dlc-story-map-tab'), panel: document.querySelector('#dlc-story-map-panel') },
+};
 const charactersPanel = document.querySelector('#characters-panel');
 const charactersTab = document.querySelector('#characters-tab');
 const characterList = document.querySelector('#character-list');
@@ -274,8 +284,13 @@ async function matchesDlcCode(code, hash) {
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('') === hash;
 }
 
+function dlcMenuHash(character, section) {
+  return section ? `#dlc/${character}/${section}` : `#dlc/${character}`;
+}
+
 function renderDlc() {
-  dlcList.replaceChildren(...downloadableStories.map(({ character, title, codeHash, firstScene }) => {
+  dlcList.replaceChildren(...downloadableStories.map(({ character, title, codeHash, roadmap }) => {
+    const firstScene = roadmap?.[0]?.scene;
     const card = dlcCardTemplate.content.firstElementChild.cloneNode(true);
     card.querySelector('img').src = artPath(characters[character].art);
     card.querySelector('h3').textContent = title;
@@ -291,12 +306,7 @@ function renderDlc() {
     form.hidden = hasAccess;
     play.hidden = !hasAccess || !firstScene;
     details.hidden = !hasAccess || Boolean(firstScene);
-
-    play.addEventListener('click', () => {
-      if (firstScene && hasDlcAccess(character)) {
-        openStoryAt({ scene: firstScene, characterStory: { id: character, dlc: title } });
-      }
-    });
+    if (firstScene) play.href = dlcMenuHash(character);
 
     input.addEventListener('input', () => {
       input.removeAttribute('aria-invalid');
@@ -337,6 +347,44 @@ function renderDlc() {
       }
     });
     return card;
+  }));
+}
+
+function playDlc(dlc, scene) {
+  if (!scene || !hasDlcAccess(dlc.character)) return;
+  openStoryAt({ scene, characterStory: { id: dlc.character, dlc: dlc.title } });
+}
+
+function renderDlcMenu(dlc, section) {
+  dlcOverview.hidden = Boolean(section);
+  if (!section) {
+    const firstScene = dlc.roadmap[0].scene;
+    dlcMenuTitle.textContent = dlc.title;
+    dlcMenuCover.src = artPath(scenes[firstScene].art);
+    playDlcButton.onclick = () => playDlc(dlc, firstScene);
+  }
+  for (const [name, { tab, panel }] of Object.entries(dlcSections)) {
+    tab.href = dlcMenuHash(dlc.character, name);
+    panel.hidden = name !== section;
+    if (name === section) tab.setAttribute('aria-current', 'page');
+    else tab.removeAttribute('aria-current');
+  }
+  if (section !== 'story-map') return;
+  dlcRoadmap.replaceChildren(...dlc.roadmap.map(({ number, scene }) => {
+    const item = document.createElement('li');
+    const button = document.createElement('button');
+    button.className = 'story-point';
+    button.type = 'button';
+    button.disabled = !scene;
+    const label = document.createElement('span');
+    label.className = 'story-point-type';
+    label.textContent = `Сцена ${number}`;
+    const title = document.createElement('strong');
+    title.textContent = scene ? scenes[scene].title : 'В разработке';
+    button.append(label, title);
+    button.addEventListener('click', () => playDlc(dlc, scene));
+    item.append(button);
+    return item;
   }));
 }
 
@@ -637,7 +685,7 @@ function advancePhoneRound() {
   goToScene(correct === 0 ? 'phone-game-over' : correct === phoneRounds.length ? 'phone-chat' : 'phone-loop');
 }
 
-function showScreen(screen) {
+function showScreen(screen, dlc, dlcSection) {
   if (screen !== 'story' && screen !== 'ending') rewardAudio.pause();
   if (screen !== 'story') {
     clearSceneTimers();
@@ -653,8 +701,10 @@ function showScreen(screen) {
   catalog.hidden = screen !== 'catalog';
   novel.hidden = screen === 'catalog';
   novelTabs.hidden = screen !== 'menu' && screen !== 'details';
-  gameLabel.textContent = activeCharacterStory?.dlc ?? 'День Серёжи';
-  gameMapLink.hidden = screen !== 'story' || Boolean(activeCharacterStory?.dlc);
+  const playingDlc = activeCharacterStory?.dlc;
+  gameLabel.textContent = playingDlc ?? dlc?.title ?? 'День Серёжи';
+  gameMapLink.href = playingDlc ? dlcMenuHash(activeCharacterStory.id, 'story-map') : '#story-map';
+  gameMapLink.hidden = screen !== 'story';
   menu.hidden = screen !== 'menu';
   story.hidden = screen !== 'story';
   ending.hidden = screen !== 'ending';
@@ -663,6 +713,9 @@ function showScreen(screen) {
   if (activeCharacterStory && (screen === 'story' || screen === 'ending')) {
     backLink.href = activeCharacterStory.dlc ? '#dlc' : characterStoryHash(activeCharacterStory.id);
     backLink.textContent = activeCharacterStory.dlc ? 'К дополнениям' : 'К карте персонажа';
+  } else if (dlc) {
+    backLink.href = dlcSection ? dlcMenuHash(dlc.character) : '#dlc';
+    backLink.textContent = dlcSection ? 'В меню DLC' : 'К дополнениям';
   } else {
     backLink.href = screen === 'menu' ? '#' : '#seryozha';
     backLink.textContent = screen === 'menu' ? 'К играм' : 'В меню игры';
@@ -1272,6 +1325,13 @@ function syncRoute(moveFocus = false) {
     hash = '#characters';
     window.history.replaceState(null, '', hash);
   }
+  const [, dlcCharacter, dlcSection] = hash.match(/^#dlc\/([^/]+)(?:\/(achievements|story-map))?$/) ?? [];
+  const dlc = downloadableStories.find(({ character, roadmap }) =>
+    character === dlcCharacter && roadmap?.[0]?.scene && hasDlcAccess(character));
+  if (hash.startsWith('#dlc/') && !dlc) {
+    hash = '#dlc';
+    window.history.replaceState(null, '', hash);
+  }
   const inGame = hash === '#seryozha';
   const inAchievements = hash === '#achievements';
   const inCharacters = hash === '#characters';
@@ -1286,10 +1346,12 @@ function syncRoute(moveFocus = false) {
   charactersPanel.hidden = !inCharacters;
   storyMapPanel.hidden = !inStoryMap;
   dlcPanel.hidden = !inDlc;
+  dlcMenuPanel.hidden = !dlc;
   characterStoryPanel.hidden = !inCharacterStory;
   if (inAchievements) renderAchievements();
   if (inCharacters) renderCharacters();
   if (inDlc) renderDlc();
+  if (dlc) renderDlcMenu(dlc, dlcSection);
   if (inCharacterStory) renderCharacterStoryMap(characterStoryId);
   if (inStoryMap) {
     renderLastDecision();
@@ -1298,7 +1360,7 @@ function syncRoute(moveFocus = false) {
     endingPreview.close();
   }
 
-  const sectionTitle = inCharacterStory ? characterStoryTitle.textContent : highlightedTab?.textContent;
+  const sectionTitle = dlc?.title ?? (inCharacterStory ? characterStoryTitle.textContent : highlightedTab?.textContent);
   document.title = sectionTitle ? `${sectionTitle} — День Серёжи — Minigames` : inGame ? 'День Серёжи — Minigames' : 'Minigames';
   const start = pendingStoryStart;
   pendingStoryStart = undefined;
@@ -1308,9 +1370,9 @@ function syncRoute(moveFocus = false) {
   }
 
   activeCharacterStory = undefined;
-  showScreen(inGame ? 'menu' : highlightedTab ? 'details' : 'catalog');
+  showScreen(dlc ? 'dlc-menu' : inGame ? 'menu' : highlightedTab ? 'details' : 'catalog', dlc, dlcSection);
   if (moveFocus) {
-    const focusTarget = inGame ? '#menu-title' : inCharacterStory ? '#character-story-title' : highlightedTab ? `${highlightedTab.hash}-title` : '#collection-title';
+    const focusTarget = dlc ? `#dlc-${dlcSection ?? 'menu'}-title` : inGame ? '#menu-title' : inCharacterStory ? '#character-story-title' : highlightedTab ? `${highlightedTab.hash}-title` : '#collection-title';
     document.querySelector(focusTarget).focus({ preventScroll: true });
     window.scrollTo(0, 0);
   }

@@ -808,6 +808,38 @@ h1, h2, h3, p { margin: 0; }
 .dlc-details, .dlc-play { margin-top: .85rem; }
 .dlc-details summary { color: var(--accent); font-weight: 750; cursor: pointer; }
 .dlc-details[open] p { margin-top: .4rem; }
+.dlc-achievements-empty { color: var(--muted); }
+.dlc-roadmap {
+  --roadmap-gap: 1.4rem;
+  display: flex;
+  gap: var(--roadmap-gap);
+  max-width: 43rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dlc-roadmap li { position: relative; flex: 1 1 0; min-width: 0; }
+.dlc-roadmap .story-point { height: 100%; }
+.dlc-roadmap li + li::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  width: var(--roadmap-gap);
+  border-top: 1px solid #755b92;
+}
+@media (max-width: 465px) {
+  .dlc-roadmap { flex-direction: column; }
+  .dlc-roadmap li + li::before {
+    top: auto;
+    right: 50%;
+    bottom: 100%;
+    width: 0;
+    height: var(--roadmap-gap);
+    border-top: 0;
+    border-right: 1px solid #755b92;
+  }
+}
 
 .character-card .character-favorite { margin-top: .55em; color: #e1b8ff; }
 .character-thought {

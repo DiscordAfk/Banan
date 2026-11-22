@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=settings">
-  <script src="story.js?v=kirill-morning" defer></script>
+  <link rel="stylesheet" href="style.css?v=dlc-menu">
+  <script src="story.js?v=dlc-menu" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=settings" defer></script>
+  <script src="game.js?v=dlc-menu" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -245,7 +245,7 @@
                 <button class="pixel-button" type="submit">Активировать</button>
                 <p class="dlc-code-status" role="status"></p>
               </form>
-              <button class="pixel-button dlc-play" type="button" hidden>Играть</button>
+              <a class="pixel-button dlc-play" hidden>Открыть дополнение</a>
               <details class="dlc-details" hidden>
                 <summary>Открыть дополнение</summary>
                 <p>Доступ открыт. Сюжет пока в разработке.</p>
@@ -253,6 +253,36 @@
             </div>
           </article>
         </template>
+      </section>
+
+      <section id="dlc-menu-panel" aria-label="Меню дополнения" hidden>
+        <nav class="collection-tabs" aria-label="Разделы дополнения">
+          <a id="dlc-achievements-tab">Достижения</a>
+          <a id="dlc-story-map-tab">Карта сюжета</a>
+        </nav>
+        <section id="dlc-overview" class="game-menu" aria-labelledby="dlc-menu-title">
+          <div class="cover"><img id="dlc-menu-cover" alt=""></div>
+          <div class="menu-content">
+            <h1 id="dlc-menu-title" tabindex="-1"></h1>
+            <button id="play-dlc" class="pixel-button" type="button"><span class="play-icon" aria-hidden="true"></span> Играть</button>
+          </div>
+        </section>
+        <section id="dlc-achievements-panel" aria-labelledby="dlc-achievements-title" hidden>
+          <div class="section-heading">
+            <h2 id="dlc-achievements-title" tabindex="-1">Достижения</h2>
+            <span class="section-rule" aria-hidden="true"></span>
+          </div>
+          <p class="dlc-achievements-empty">В этом дополнении пока нет достижений.</p>
+        </section>
+        <section id="dlc-story-map-panel" aria-labelledby="dlc-story-map-title" hidden>
+          <div class="section-heading">
+            <h2 id="dlc-story-map-title" tabindex="-1">Карта сюжета</h2>
+            <span class="section-rule" aria-hidden="true"></span>
+          </div>
+          <div class="story-board">
+            <ol id="dlc-roadmap" class="dlc-roadmap" aria-label="Сцены дополнения"></ol>
+          </div>
+        </section>
       </section>
 
       <section id="story" class="story" aria-label="Сцена новеллы" hidden>

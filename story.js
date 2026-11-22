@@ -1450,7 +1450,11 @@ const downloadableStories = [
   {
     character: 'kirill',
     title: 'Утро душнилы',
-    firstScene: 'kirill-dlc-morning',
+    roadmap: [
+      { number: 1, scene: 'kirill-dlc-morning' },
+      { number: 5 },
+      { number: 7 },
+    ],
     codeHash: 'ff00468effbef848e51ca7e6e99a3677b2c4f32fc6357e188812840061a0be54',
   },
 ];
