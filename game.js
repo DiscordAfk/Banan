@@ -65,6 +65,11 @@ const storyAchievementBranches = storyMapPanel.querySelectorAll('[data-story-ach
 const endingPreview = document.querySelector('#ending-preview');
 const endingPreviewTitle = document.querySelector('#ending-preview-title');
 const endingPreviewArt = document.querySelector('#ending-preview-art');
+const settingsDialog = document.querySelector('#settings');
+const muteSound = document.querySelector('#mute-sound');
+const requestProgressReset = document.querySelector('#request-progress-reset');
+const progressResetConfirmation = document.querySelector('#progress-reset-confirmation');
+const cancelProgressReset = document.querySelector('#cancel-progress-reset');
 const achievementList = document.querySelector('#achievement-list');
 const achievementProgress = document.querySelector('#achievement-progress');
 const achievementAward = document.querySelector('#achievement-award');
@@ -141,13 +146,15 @@ const nightPhoneMessages = {
   denis: ['Вызов принят', 'Денис'],
 };
 
-const endingsStorageKey = 'minigames.seryozha.endings';
-const achievementStoragePrefix = 'minigames.seryozha.';
-const decisionStorageKey = 'minigames.seryozha.last-decision';
-const storyStartStoragePrefix = 'minigames.seryozha.story-start.';
-const dlcStoragePrefix = 'minigames.seryozha.dlc.';
-const characterStoragePrefix = 'minigames.seryozha.character.';
+const gameStoragePrefix = 'minigames.seryozha.';
+const endingsStorageKey = `${gameStoragePrefix}endings`;
+const decisionStorageKey = `${gameStoragePrefix}last-decision`;
+const storyStartStoragePrefix = `${gameStoragePrefix}story-start.`;
+const dlcStoragePrefix = `${gameStoragePrefix}dlc.`;
+const characterStoragePrefix = `${gameStoragePrefix}character.`;
 const dianaAliasStorageKey = `${characterStoragePrefix}diana-alias`;
+const mutedSoundStorageKey = 'minigames.settings.mute-sound';
+const progressResetStorageKey = 'minigames.settings.progress-reset';
 const discoveredCharacters = new Set();
 let dianaAlias;
 const profileQueue = [];
@@ -162,6 +169,35 @@ let phoneQuiz;
 let lastDecision;
 let pendingStoryStart;
 let activeCharacterStory;
+
+function applySoundSetting(muted) {
+  muteSound.checked = muted;
+  for (const audio of document.querySelectorAll('audio')) audio.muted = muted;
+}
+
+function showProgressResetConfirmation(visible) {
+  progressResetConfirmation.hidden = !visible;
+  requestProgressReset.setAttribute('aria-expanded', String(visible));
+}
+
+function restartAtCatalog() {
+  const url = new URL(window.location.href);
+  url.hash = '';
+  window.history.replaceState(null, '', url);
+  window.location.reload();
+}
+
+function resetProgress() {
+  try {
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith(gameStoragePrefix) && !key.startsWith(dlcStoragePrefix)) localStorage.removeItem(key);
+    }
+    localStorage.setItem(progressResetStorageKey, String(Date.now()));
+  } catch {
+    // Reloading still clears in-memory progress when storage is unavailable.
+  }
+  restartAtCatalog();
+}
 
 const characterStoryHash = (id) => id === 'seryozha' ? '#story-map' : `#character-story/${id}`;
 
@@ -396,7 +432,7 @@ function unlockAchievement(id) {
   if (unlockedAchievements.has(id)) return false;
   unlockedAchievements.add(id);
   try {
-    const key = achievementStoragePrefix + id;
+    const key = gameStoragePrefix + id;
     if (localStorage.getItem(key) === '1') return false;
     localStorage.setItem(key, '1');
   } catch {
@@ -453,7 +489,7 @@ function rewardCard(result, unlocked, headingTag, preview = false) {
 function readAchievements() {
   try {
     for (const { id } of achievements) {
-      if (localStorage.getItem(achievementStoragePrefix + id) === '1') unlockedAchievements.add(id);
+      if (localStorage.getItem(gameStoragePrefix + id) === '1') unlockedAchievements.add(id);
     }
   } catch {
     // In-memory progress is available when storage is blocked.
@@ -622,6 +658,7 @@ function showScreen(screen) {
   menu.hidden = screen !== 'menu';
   story.hidden = screen !== 'story';
   ending.hidden = screen !== 'ending';
+  novel.classList.toggle('is-playing', screen === 'story');
   novel.classList.toggle('is-ending', screen === 'ending');
   if (activeCharacterStory && (screen === 'story' || screen === 'ending')) {
     backLink.href = activeCharacterStory.dlc ? '#dlc' : characterStoryHash(activeCharacterStory.id);
@@ -1368,8 +1405,38 @@ characterProfile.addEventListener('close', () => {
 endingPreview.addEventListener('click', (event) => {
   if (event.target === endingPreview) endingPreview.close();
 });
+for (const trigger of document.querySelectorAll('[data-open-settings]')) {
+  trigger.addEventListener('click', () => settingsDialog.showModal());
+}
+document.querySelector('#close-settings').addEventListener('click', () => settingsDialog.close());
+settingsDialog.addEventListener('close', () => showProgressResetConfirmation(false));
+muteSound.addEventListener('change', () => {
+  applySoundSetting(muteSound.checked);
+  try {
+    localStorage.setItem(mutedSoundStorageKey, muteSound.checked ? '1' : '0');
+  } catch {
+    // Sound can still be changed for the current visit.
+  }
+});
+requestProgressReset.addEventListener('click', () => {
+  showProgressResetConfirmation(true);
+  cancelProgressReset.focus();
+});
+cancelProgressReset.addEventListener('click', () => {
+  showProgressResetConfirmation(false);
+  requestProgressReset.focus();
+});
+document.querySelector('#confirm-progress-reset').addEventListener('click', resetProgress);
 window.addEventListener('hashchange', () => syncRoute(true));
 window.addEventListener('storage', (event) => {
+  if (event.key === mutedSoundStorageKey) {
+    applySoundSetting(event.newValue === '1');
+    return;
+  }
+  if (event.key === progressResetStorageKey) {
+    restartAtCatalog();
+    return;
+  }
   if (event.key === dianaAliasStorageKey) {
     dianaAlias = event.newValue;
   } else if (event.key?.startsWith(characterStoragePrefix)) {
@@ -1380,7 +1447,7 @@ window.addEventListener('storage', (event) => {
     if (!charactersPanel.hidden) renderCharacters();
     if (event.newValue !== '1' && !characterStoryPanel.hidden && window.location.hash === characterStoryHash(id)) syncRoute(true);
   }
-  const rewardChanged = event.key === endingsStorageKey || achievements.some(({ id }) => event.key === achievementStoragePrefix + id);
+  const rewardChanged = event.key === endingsStorageKey || achievements.some(({ id }) => event.key === gameStoragePrefix + id);
   if (rewardChanged) {
     if (window.location.hash === '#achievements') renderAchievements();
     if (window.location.hash === '#story-map' && !endingPreview.open) renderStoryRewards();
@@ -1391,4 +1458,9 @@ window.addEventListener('storage', (event) => {
   }
   if (!storyMapPanel.hidden && event.key?.startsWith(storyStartStoragePrefix)) renderStoryStarts();
 });
+try {
+  applySoundSetting(localStorage.getItem(mutedSoundStorageKey) === '1');
+} catch {
+  // The default sound setting remains available without storage.
+}
 syncRoute();

@@ -6,15 +6,16 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=kirill-morning">
+  <link rel="stylesheet" href="style.css?v=settings">
   <script src="story.js?v=kirill-morning" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=kirill-morning" defer></script>
+  <script src="game.js?v=settings" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
     <header class="masthead">
+      <button class="nav-link settings-trigger" type="button" data-open-settings aria-haspopup="dialog">Настройки</button>
       <div class="masthead-rule" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <div class="tetromino tetromino-left" aria-hidden="true"></div>
       <div class="tetromino tetromino-right" aria-hidden="true"></div>
@@ -52,6 +53,7 @@
       <a class="nav-link" id="game-back" href="#">К играм</a>
       <a class="nav-link game-map-link" href="#story-map" hidden>Карта сюжета</a>
       <span id="game-label">День Серёжи</span>
+      <button class="nav-link settings-trigger" type="button" data-open-settings aria-haspopup="dialog">Настройки</button>
     </nav>
 
     <div class="stage">
@@ -515,14 +517,38 @@
   <dialog id="character-profile" class="character-profile" aria-labelledby="profile-name">
     <div id="character-profile-body"></div>
     <audio id="character-reveal-audio" src="assets/rewards/character-reveal.mp3" preload="auto"></audio>
-    <button id="close-character-profile" class="choice" type="button" autofocus>Понятно</button>
+    <div class="character-profile-actions">
+      <button class="nav-link settings-trigger" type="button" data-open-settings aria-haspopup="dialog">Настройки</button>
+      <button id="close-character-profile" class="choice" type="button" autofocus>Понятно</button>
+    </div>
   </dialog>
   <dialog id="ending-preview" class="ending-preview" aria-labelledby="ending-preview-title">
     <header class="ending-preview-header">
       <h2 id="ending-preview-title"></h2>
-      <button id="close-ending-preview" class="choice" type="button" autofocus>Закрыть</button>
+      <div class="ending-preview-actions">
+        <button class="nav-link settings-trigger" type="button" data-open-settings aria-haspopup="dialog">Настройки</button>
+        <button id="close-ending-preview" class="choice" type="button" autofocus>Закрыть</button>
+      </div>
     </header>
     <img id="ending-preview-art" alt="">
+  </dialog>
+  <dialog id="settings" class="settings-dialog" aria-labelledby="settings-title">
+    <header class="settings-header">
+      <h2 id="settings-title">Настройки</h2>
+      <button id="close-settings" class="choice" type="button" autofocus>Закрыть</button>
+    </header>
+    <label class="settings-sound">
+      <input id="mute-sound" type="checkbox">
+      Отключить звук
+    </label>
+    <button id="request-progress-reset" class="choice settings-reset" type="button" aria-controls="progress-reset-confirmation" aria-expanded="false">Сбросить весь прогресс</button>
+    <div id="progress-reset-confirmation" class="progress-reset-confirmation" hidden>
+      <p>Удалить открытых персонажей, точки карты, достижения, концовки и последнее сохранение? Допуски к DLC сохранятся.</p>
+      <div class="settings-actions">
+        <button id="cancel-progress-reset" class="choice" type="button">Отмена</button>
+        <button id="confirm-progress-reset" class="choice settings-reset" type="button">Сбросить</button>
+      </div>
+    </div>
   </dialog>
 </body>
 </html>
