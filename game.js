@@ -38,6 +38,13 @@ const achievementsTab = document.querySelector('#achievements-tab');
 const charactersPanel = document.querySelector('#characters-panel');
 const charactersTab = document.querySelector('#characters-tab');
 const characterList = document.querySelector('#character-list');
+const characterStoryPanel = document.querySelector('#character-story-panel');
+const characterStoryTitle = document.querySelector('#character-story-title');
+const characterStoryPortrait = document.querySelector('#character-story-portrait');
+const characterStoryQualifier = document.querySelector('#character-story-qualifier');
+const characterStoryEpisodes = document.querySelector('#character-story-episodes');
+const characterStoryPlay = document.querySelector('#character-story-play');
+const endingMapLink = document.querySelector('#ending-map-link');
 const characterProfile = document.querySelector('#character-profile');
 const characterProfileBody = document.querySelector('#character-profile-body');
 const characterRevealAudio = document.querySelector('#character-reveal-audio');
@@ -142,6 +149,55 @@ const hiddenRewardTitle = '????????????';
 let phoneQuiz;
 let lastDecision;
 let pendingStoryStart;
+let activeCharacterStory;
+
+const characterStoryHash = (id) => `#character-story/${id}`;
+
+function canPlayCharacterStory(id) {
+  return Object.hasOwn(characterStories, id) && (id === 'seryozha' || discoveredCharacters.has(id));
+}
+
+function playCharacterStory(id, chapter = 0) {
+  if (!canPlayCharacterStory(id)) return;
+  const { episodes } = characterStories[id];
+  if (!episodes[chapter]) return;
+
+  const nextByScene = new Map();
+  for (const [index, [, first, last]] of episodes.entries()) {
+    let key = first;
+    while (scenes[key] && !nextByScene.has(key)) {
+      nextByScene.set(key, key === last ? episodes[index + 1]?.[1] : scenes[key].next);
+      if (key === last) break;
+      key = scenes[key].next;
+    }
+  }
+  openStoryAt({ scene: episodes[chapter][1], characterStory: { id, nextByScene } });
+}
+
+function renderCharacterStoryMap(id) {
+  const route = characterStories[id];
+  characterStoryTitle.textContent = `Сюжет ${route.name}`;
+  characterStoryQualifier.hidden = !route.qualifier;
+  characterStoryQualifier.textContent = route.qualifier ?? '';
+  characterStoryPortrait.src = artPath(characters[id].art);
+  characterStoryPlay.onclick = () => playCharacterStory(id);
+  characterStoryEpisodes.replaceChildren(...route.episodes.map(([title, first, , artwork], index) => {
+    const episode = document.createElement('li');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'story-point story-point-art character-story-point';
+    button.addEventListener('click', () => playCharacterStory(id, index));
+    const art = document.createElement('img');
+    art.alt = '';
+    art.loading = 'lazy';
+    art.src = artPath(artwork ?? scenes[first].art ?? characters[id].art);
+    const label = document.createElement('strong');
+    label.textContent = title;
+    button.append(art, label);
+    episode.append(button);
+    return episode;
+  }));
+}
 
 function rememberDecision(scene, phone) {
   lastDecision = phone ? { scene, phone: { index: phone.index, correct: phone.correct } } : { scene };
@@ -284,13 +340,13 @@ function renderAchievements() {
   );
 }
 
-function renderAchievementAward(id) {
+function renderAchievementAward(id, remember = true) {
   const achievement = achievements.find((result) => result.id === id);
   achievementAward.hidden = !achievement?.showOnScene;
   if (!achievement) return false;
 
   if (achievement.showOnScene) achievementAward.replaceChildren(rewardCard(achievement, true, 'h2'));
-  return unlockAchievement(achievement.id);
+  return remember && unlockAchievement(achievement.id);
 }
 
 function showEndingPreview(result) {
@@ -433,8 +489,13 @@ function showScreen(screen) {
   story.hidden = screen !== 'story';
   ending.hidden = screen !== 'ending';
   novel.classList.toggle('is-ending', screen === 'ending');
-  backLink.href = screen === 'menu' ? '#' : '#seryozha';
-  backLink.textContent = screen === 'menu' ? 'К играм' : 'В меню игры';
+  if (activeCharacterStory && (screen === 'story' || screen === 'ending')) {
+    backLink.href = characterStoryHash(activeCharacterStory.id);
+    backLink.textContent = 'К карте персонажа';
+  } else {
+    backLink.href = screen === 'menu' ? '#' : '#seryozha';
+    backLink.textContent = screen === 'menu' ? 'К играм' : 'В меню игры';
+  }
 }
 
 const preloadedArt = new Set();
@@ -446,8 +507,9 @@ function updateSceneBack() {
   for (const button of sceneBackButtons) button.disabled = !sceneHistory.length;
 }
 
-function startStory(key, options) {
+function startStory(key, { characterStory, ...options } = {}) {
   sceneHistory.length = 0;
+  activeCharacterStory = characterStory;
   renderScene(key, options);
 }
 
@@ -487,6 +549,7 @@ function dianaContactName() {
 }
 
 function rememberDianaAlias(context) {
+  if (activeCharacterStory) return;
   if (discoveredCharacters.has('diana') || dianaAlias === 'chat' || dianaAlias === context) return;
   dianaAlias = context;
   try {
@@ -584,6 +647,21 @@ function characterCard(id, { popup = false, reveal = false } = {}) {
   word.textContent = keyword;
   trait.append('В одном слове ', word);
   info.append(trait);
+  if (!popup && canPlayCharacterStory(id)) {
+    const actions = document.createElement('div');
+    actions.className = 'character-story-actions';
+    const play = document.createElement('button');
+    play.type = 'button';
+    play.className = 'pixel-button';
+    play.textContent = `Пройти сюжет ${characterStories[id].name}`;
+    play.addEventListener('click', () => playCharacterStory(id));
+    const map = document.createElement('a');
+    map.className = 'nav-link';
+    map.href = characterStoryHash(id);
+    map.textContent = 'Карта сюжета';
+    actions.append(play, map);
+    info.append(actions);
+  }
   card.append(portrait, info);
   return card;
 }
@@ -862,11 +940,13 @@ function renderHoldem(scene) {
 function renderScene(key, { phone, remember = true } = {}) {
   rewardAudio.pause();
   clearSceneTimers();
-  const scene = scenes[key];
+  const scene = activeCharacterStory
+    ? { ...scenes[key], next: activeCharacterStory.nextByScene.get(key) }
+    : scenes[key];
   activeScene = scene;
   activePosition = { key };
   updateSceneBack();
-  if (remember && scene.options) rememberDecision(key);
+  if (!activeCharacterStory && remember && scene.options) rememberDecision(key);
   renderIntertitle(scene);
   renderWorkCall(scene);
   renderNightProps(scene);
@@ -928,10 +1008,10 @@ function renderScene(key, { phone, remember = true } = {}) {
   scenePicture.classList.toggle('has-chat', scene.prop === 'chat');
   const endingResult = endings.find(({ id }) => id === scene.ending);
   if (endingResult) {
-    unlockEnding(endingResult.id);
+    if (!activeCharacterStory) unlockEnding(endingResult.id);
     endingAward.replaceChildren(rewardCard(endingResult, true, 'h2'));
   }
-  const earnedAchievement = renderAchievementAward(scene.achievement);
+  const earnedAchievement = renderAchievementAward(scene.achievement, !activeCharacterStory);
   if (scene.prop === 'chat') renderDianaChat(scene.dianaReply);
   scenePicture.classList.toggle('is-dull-view', scene.prop === 'dull-view');
   scenePicture.classList.toggle('is-rain-reveal', scene.prop === 'rain-reveal');
@@ -994,25 +1074,33 @@ function renderScene(key, { phone, remember = true } = {}) {
   }
   (scene.intertitle ? intertitleNext : sceneTitle).focus({ preventScroll: true });
   window.scrollTo(0, 0);
-  showCharacterEncounters(key, scene.meet);
+  if (!activeCharacterStory) showCharacterEncounters(key, scene.meet);
 }
 
 function syncRoute(moveFocus = false) {
-  const hash = window.location.hash;
+  let hash = window.location.hash;
+  readCharacters();
+  const characterStoryId = hash.startsWith('#character-story/') ? hash.slice('#character-story/'.length) : undefined;
+  const inCharacterStory = characterStoryId !== undefined && canPlayCharacterStory(characterStoryId);
+  if (characterStoryId !== undefined && !inCharacterStory) {
+    hash = '#characters';
+    window.history.replaceState(null, '', hash);
+  }
   const inGame = hash === '#seryozha';
   const inAchievements = hash === '#achievements';
   const inCharacters = hash === '#characters';
   const inStoryMap = hash === '#story-map';
-  const highlightedTab = inStoryMap ? storyMapTab : inAchievements ? achievementsTab : inCharacters ? charactersTab : gamesTab;
+  const highlightedTab = inStoryMap ? storyMapTab : inAchievements ? achievementsTab : inCharacters || inCharacterStory ? charactersTab : gamesTab;
   for (const tab of [gamesTab, achievementsTab, charactersTab, storyMapTab]) tab.removeAttribute('aria-current');
   highlightedTab.setAttribute('aria-current', 'page');
-  gamesPanel.hidden = inAchievements || inCharacters || inStoryMap;
+  gamesPanel.hidden = inAchievements || inCharacters || inStoryMap || inCharacterStory;
   achievementsPanel.hidden = !inAchievements;
   charactersPanel.hidden = !inCharacters;
   storyMapPanel.hidden = !inStoryMap;
-  readCharacters();
+  characterStoryPanel.hidden = !inCharacterStory;
   if (inAchievements) renderAchievements();
   if (inCharacters) renderCharacters();
+  if (inCharacterStory) renderCharacterStoryMap(characterStoryId);
   if (inStoryMap) {
     renderLastDecision();
     renderStoryRewards();
@@ -1020,18 +1108,19 @@ function syncRoute(moveFocus = false) {
     endingPreview.close();
   }
 
-  const pageTitle = inGame ? 'День Серёжи' : highlightedTab === gamesTab ? '' : highlightedTab.textContent;
+  const pageTitle = inGame ? 'День Серёжи' : inCharacterStory ? characterStoryTitle.textContent : highlightedTab === gamesTab ? '' : highlightedTab.textContent;
   document.title = pageTitle ? `${pageTitle} — Minigames` : 'Minigames';
   const start = pendingStoryStart;
   pendingStoryStart = undefined;
   if (inGame && start) {
-    startStory(start.scene, { phone: start.phone });
+    startStory(start.scene, { phone: start.phone, characterStory: start.characterStory });
     return;
   }
 
+  activeCharacterStory = undefined;
   showScreen(inGame ? 'menu' : 'catalog');
   if (moveFocus) {
-    const focusTarget = inGame ? '#menu-title' : inStoryMap ? '#story-map-title' : inAchievements ? '#achievements-title' : inCharacters ? '#characters-title' : '#games-tab';
+    const focusTarget = inGame ? '#menu-title' : inStoryMap ? '#story-map-title' : inAchievements ? '#achievements-title' : inCharacterStory ? '#character-story-title' : inCharacters ? '#characters-title' : '#games-tab';
     document.querySelector(focusTarget).focus({ preventScroll: true });
     window.scrollTo(0, 0);
   }
@@ -1051,13 +1140,17 @@ document.querySelector('#launch-blender').addEventListener('click', () => goToSc
 document.querySelector('#blender-notification').addEventListener('click', () => goToScene(activeScene.next));
 function showEndCard(scene) {
   updateSceneBack();
-  endingTitle.textContent = scene.endCard ?? 'Soon ...';
-  endingTitle.lang = scene.endCardLang ?? 'en';
-  endingNote.textContent = scene.endCardNote ?? '';
-  endingNote.hidden = !scene.endCardNote;
-  endingContinue.hidden = !scene.afterEndCard;
-  endingContinue.dataset.next = scene.afterEndCard ?? '';
-  if (scene.afterEndCard) preloadScene(scene.afterEndCard);
+  const character = activeCharacterStory && characterStories[activeCharacterStory.id];
+  const next = character ? undefined : scene.afterEndCard;
+  endingTitle.textContent = character ? `Сюжет ${character.name} пройден` : scene.endCard ?? 'Soon ...';
+  endingTitle.lang = character ? 'ru' : scene.endCardLang ?? 'en';
+  endingNote.textContent = character ? '' : scene.endCardNote ?? '';
+  endingNote.hidden = !endingNote.textContent;
+  endingContinue.hidden = !next;
+  endingContinue.dataset.next = next ?? '';
+  endingMapLink.href = character ? characterStoryHash(activeCharacterStory.id) : '#story-map';
+  endingMapLink.textContent = character ? 'К карте персонажа' : 'Карта сюжета';
+  if (next) preloadScene(next);
   showScreen('ending');
   endingTitle.focus();
 }
@@ -1131,6 +1224,7 @@ window.addEventListener('storage', (event) => {
     if (event.newValue === '1') discoveredCharacters.add(id);
     else discoveredCharacters.delete(id);
     if (!charactersPanel.hidden) renderCharacters();
+    if (event.newValue !== '1' && !characterStoryPanel.hidden && window.location.hash === characterStoryHash(id)) syncRoute(true);
   }
   const rewardChanged = event.key === endingsStorageKey || achievements.some(({ id }) => event.key === achievementStoragePrefix + id);
   if (rewardChanged) {

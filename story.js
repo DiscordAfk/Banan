@@ -1370,3 +1370,63 @@ for (const chapter of [blenderDawn, nightAfterEnding]) {
     scenes[id] = { ...scene, next: scene.options ? undefined : chapter[index + 1]?.id };
   }
 }
+
+// Each episode replays an inclusive span of the existing story.
+const characterStories = {
+  seryozha: { name: 'Серёжи', episodes: [
+    ['Дорога на пары', 'school-door', 'school-guap'],
+    ['Возвращение в школу', 'history-wake', 'history-classroom'],
+    ['Карты в коморке', 'history-card-felt', 'history-poker-walk-away'],
+  ] },
+  diana: { name: 'Дианы', episodes: [
+    ['Встреча у окна', 'guap-diana', 'guap-diana-smile'],
+    ['Прогулка после пары', 'diana-next-day', 'diana-smiles'],
+    ['Вечернее сообщение', 'night-diana-put-down', 'night-diana-focus'],
+  ] },
+  kirill: { name: 'Кирилла', episodes: [
+    ['Встреча в ГУАП', 'kirill-shadow', 'kirill-release'],
+    ['Раскат грома', 'kirill-turnstile', 'kirill-empty'],
+    ['Кирилл на троне', 'guap-approach', 'guap-faint'],
+  ] },
+  dima: { name: 'Димы', episodes: [
+    ['Работа в Blender', 'blender-dima-ready', 'blender-disbelief'],
+    ['Что на экране Димы', 'blender-dima-reply', 'blender-double-twitch'],
+    ['Последняя рука', 'history-poker-dima-spirit', 'history-poker-walk-away'],
+  ] },
+  nikita: { name: 'Никиты', episodes: [
+    ['Раздача в коморке', 'history-card-shuffle', 'history-card-shock'],
+    ['Одна синяя фишка', 'history-poker-turn', 'history-poker-nikita-shock'],
+    ['Две полочки', 'blender-city-switch', 'blender-neva-sunrise'],
+  ] },
+  maxim: { name: 'Максима', episodes: [
+    ['Предложение Максима', 'night-voice-maxim', 'night-voice-maxim', 'night-friends-smile'],
+    ['Игровой вечер', 'night-friends-smile', 'night-goodnight'],
+  ] },
+  denis: { name: 'Дениса', episodes: [
+    ['Ночной звонок', 'night-letter-d', 'night-denis-answers'],
+    ['В голосовом канале', 'night-go-to-pc', 'night-voice-denis'],
+    ['До утра', 'night-games-montage', 'night-voice-leave'],
+  ] },
+  vova: { name: 'Вовы', episodes: [
+    ['Встреча на перемене', 'history-six-friends', 'history-vova-cards'],
+    ['Шутка за партой', 'history-poker-vova-joke', 'history-poker-chip-case'],
+  ] },
+  matvey: { name: 'Матвея', episodes: [
+    ['Приглашение на партию', 'history-six-friends', 'history-matvey-cards'],
+    ['Ход Матвея', 'history-card-think', 'history-card-cover'],
+    ['Пора на урок', 'history-poker-chip-case', 'history-poker-chip-case'],
+  ] },
+  anya: { name: 'Ани', episodes: [
+    ['Можно с вами?', 'history-poker-questions', 'history-poker-finish-durak'],
+    ['За спинкой стула', 'history-poker-behind-chair', 'history-poker-back-to-game'],
+    ['Одна рука на двоих', 'history-poker-girls-fold', 'history-poker-two-folds'],
+  ] },
+  schoolDiana: { name: 'Дианы', qualifier: 'Школа', episodes: [
+    ['Девочки в коморке', 'history-card-arrival', 'history-poker-join'],
+    ['Карты на двоих', 'history-poker-deal', 'history-poker-two-folds'],
+  ] },
+  yana: { name: 'Яны', episodes: [
+    ['Встреча в коморке', 'history-card-arrival', 'history-poker-join'],
+    ['Игра Яны', 'history-poker-yana-calls', 'history-poker-beginners-luck'],
+  ] },
+};

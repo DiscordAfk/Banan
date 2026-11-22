@@ -776,6 +776,84 @@ h1, h2, h3, p { margin: 0; }
   transform: rotate(-4deg);
 }
 .character-card .character-keyword { margin-top: .6em; color: var(--muted); }
+.character-story-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .4rem 1rem;
+  margin-top: 1rem;
+}
+.character-story-actions .pixel-button { white-space: normal; text-align: start; }
+.character-story-back { display: inline-block; margin-bottom: 1rem; }
+.character-story-header {
+  display: grid;
+  grid-template-columns: clamp(3.6rem, 14vw, 6rem) minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+  padding: clamp(.8rem, 2.6vw, 1.3rem);
+  border: 1px solid #6a5087;
+  background: #211730;
+}
+.character-story-header img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border: 1px solid #ac84d5;
+}
+.character-story-header h2 { margin: 0 0 .7rem; font: 400 clamp(.83rem, 2.3vw, 1.15rem)/1.55 var(--pixel); }
+.character-story-header p { margin: -.3rem 0 .7rem; color: var(--muted); }
+.character-story-episodes {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 1.35rem;
+  margin: 1.4rem 0 0;
+  padding: 0;
+  counter-reset: character-episode;
+  list-style: none;
+}
+.character-story-episodes li {
+  position: relative;
+  min-width: 0;
+  counter-increment: character-episode;
+}
+.character-story-episodes li::before {
+  position: absolute;
+  z-index: 1;
+  top: .55rem;
+  left: .55rem;
+  padding: .35rem;
+  border: 1px solid #aa7ad1;
+  background: #20152e;
+  color: #f3dcff;
+  content: counter(character-episode, decimal-leading-zero);
+  font: .65rem/1 var(--pixel);
+  pointer-events: none;
+}
+.character-story-episodes li:not(:last-child)::after {
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: 1.35rem;
+  border-top: 1px solid #aa7ad1;
+  content: '';
+  pointer-events: none;
+}
+.character-story-point.story-point { height: 100%; text-align: start; }
+.character-story-point.story-point-art img { height: auto; aspect-ratio: 16 / 9; }
+.character-story-point.story-point-art strong { padding: .75rem; overflow-wrap: anywhere; }
+@media (max-width: 560px) {
+  .character-story-episodes { grid-auto-flow: row; grid-auto-columns: auto; gap: 1rem; }
+  .character-story-episodes li:not(:last-child)::after {
+    inset: 100% auto auto 50%;
+    width: 1px;
+    height: 1rem;
+    border-top: 0;
+    border-left: 1px solid #aa7ad1;
+  }
+  .character-story-point.story-point-art img { height: 7.5rem; }
+}
 .character-keyword strong {
   display: inline-block;
   margin-left: .25em;

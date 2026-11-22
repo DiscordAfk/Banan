@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=storeroom-holdem">
-  <script src="story.js?v=storeroom-holdem" defer></script>
+  <link rel="stylesheet" href="style.css?v=character-stories">
+  <script src="story.js?v=character-stories" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=storeroom-holdem" defer></script>
+  <script src="game.js?v=character-stories" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -73,6 +73,19 @@
         <button id="reset-characters" class="choice" type="button">Сбросить открытых персонажей</button>
         <p id="character-reset-status" role="status"></p>
       </div>
+    </section>
+
+    <section class="collection" id="character-story-panel" aria-labelledby="character-story-title" hidden>
+      <a class="nav-link character-story-back" href="#characters">← К персонажам</a>
+      <div class="character-story-header">
+        <img id="character-story-portrait" width="96" height="96" alt="">
+        <div>
+          <h2 id="character-story-title" tabindex="-1"></h2>
+          <p id="character-story-qualifier" hidden></p>
+          <button id="character-story-play" class="pixel-button" type="button">Пройти сюжет</button>
+        </div>
+      </div>
+      <ol id="character-story-episodes" class="character-story-episodes" aria-label="Карта эпизодов"></ol>
     </section>
 
     <section class="collection" id="story-map-panel" aria-labelledby="story-map-title" hidden>
@@ -463,7 +476,7 @@
           <button id="ending-continue" class="pixel-button" type="button" hidden>Дальше</button>
           <button class="choice" type="button" data-scene-back>Назад</button>
           <a class="nav-link" href="#seryozha">В меню игры</a>
-          <a class="nav-link" href="#story-map">Карта сюжета</a>
+          <a id="ending-map-link" class="nav-link" href="#story-map">Карта сюжета</a>
         </div>
       </section>
     </div>
