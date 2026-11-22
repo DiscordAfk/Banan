@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=kirill-finale">
+  <link rel="stylesheet" href="style.css?v=game-access">
   <script src="story.js?v=character-bios" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=kirill-finale" defer></script>
+  <script src="game.js?v=game-access" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -72,7 +72,13 @@
         <div class="menu-content">
           <p class="genre">Визуальная новелла</p>
           <h1 id="menu-title" tabindex="-1">День Серёжи</h1>
-          <button id="play" class="pixel-button" type="button"><span class="play-icon" aria-hidden="true"></span> Play</button>
+          <form id="game-access-form" class="game-access-form">
+            <label for="game-access-code">Код доступа</label>
+            <input id="game-access-code" name="code" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="64" aria-describedby="game-access-status" required>
+            <button class="pixel-button" type="submit">Открыть доступ</button>
+            <p id="game-access-status" class="code-status" role="status"></p>
+          </form>
+          <button id="play" class="pixel-button" type="button" hidden><span class="play-icon" aria-hidden="true"></span> Играть</button>
         </div>
       </section>
 
@@ -247,7 +253,7 @@
                   <input name="code" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="64" required>
                 </label>
                 <button class="pixel-button" type="submit">Активировать</button>
-                <p class="dlc-code-status" role="status"></p>
+                <p class="code-status" role="status"></p>
               </form>
               <a class="pixel-button dlc-play" hidden>Открыть дополнение</a>
               <details class="dlc-details" hidden>
