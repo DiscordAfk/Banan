@@ -105,6 +105,7 @@ const nightReaction = document.querySelector('#night-reaction');
 const historyClassroomPlates = document.querySelector('#history-classroom-plates');
 const historyInformaticsPlate = document.querySelector('#history-informatics-plate');
 const historyLockscreen = document.querySelector('#history-lockscreen');
+const historyDoorSlam = document.querySelector('#history-door-slam');
 const endingContinue = document.querySelector('#ending-continue');
 const storyNightStart = document.querySelector('#story-night-start');
 
@@ -510,7 +511,7 @@ function lockedCharacterCard(popup = false) {
 }
 
 function characterCard(id, { popup = false, reveal = false } = {}) {
-  const { name, art, description, keyword } = characters[id];
+  const { name, art, description, keyword, quote, quoteBy, afterQuote } = characters[id];
   const card = document.createElement(popup ? 'div' : 'article');
   card.className = 'character-card';
   const portrait = document.createElement('img');
@@ -525,11 +526,36 @@ function characterCard(id, { popup = false, reveal = false } = {}) {
   const bio = document.createElement('p');
   bio.textContent = description;
   info.append(title, bio);
+  if (quote) {
+    const thought = document.createElement('figure');
+    thought.className = 'character-thought';
+    const quotation = document.createElement('blockquote');
+    quotation.textContent = quote;
+    const attribution = document.createElement('figcaption');
+    attribution.textContent = quoteBy;
+    thought.append(quotation, attribution);
+    const outsideOpinion = document.createElement('p');
+    outsideOpinion.textContent = afterQuote;
+    info.append(thought, outsideOpinion);
+  }
   if (id === 'seryozha') {
     const favorite = document.createElement('p');
     favorite.className = 'character-favorite';
     favorite.textContent = 'Фаворит среди девушек на данный момент — ';
-    if (reveal) {
+    if (discoveredCharacters.has('yana')) {
+      const correction = document.createElement('span');
+      correction.className = 'favorite-correction';
+      correction.classList.toggle('is-writing', reveal);
+      const former = document.createElement('s');
+      former.textContent = characters.diana.name;
+      const arrow = document.createElement('span');
+      arrow.textContent = ' → ';
+      arrow.setAttribute('aria-hidden', 'true');
+      const current = document.createElement('strong');
+      current.textContent = characters.yana.name;
+      correction.append(former, arrow, current);
+      favorite.append(correction, '.');
+    } else if (reveal) {
       const revealName = document.createElement('span');
       revealName.className = 'favorite-reveal';
       const questions = document.createElement('span');
@@ -814,6 +840,7 @@ function renderScene(key, { phone, remember = true } = {}) {
   historyInformaticsPlate.hidden = !seesInformaticsPlaque && scene.prop !== 'history-informatics-door';
   historyInformaticsPlate.classList.toggle('is-closeup', seesInformaticsPlaque);
   historyLockscreen.hidden = scene.prop !== 'history-date';
+  historyDoorSlam.hidden = scene.prop !== 'card-door-slam';
   scenePicture.hidden = Boolean(scene.intertitle) || !workCall.hidden || !nightVoice.hidden;
   thoughtBubble.hidden = !scene.thought;
   thoughtBubble.classList.toggle('thought-angry', Boolean(scene.thought?.angry));
@@ -1030,7 +1057,7 @@ characterProfileBody.addEventListener('animationstart', (event) => {
 });
 characterProfile.addEventListener('close', () => {
   characterRevealAudio.pause();
-  if (activeProfile === 'diana' && discoveredCharacters.has('diana')) {
+  if (activeProfile === 'yana' || (activeProfile === 'diana' && !discoveredCharacters.has('yana'))) {
     profileQueue.unshift({ id: 'seryozha', reveal: true });
   }
   activeProfile = undefined;
