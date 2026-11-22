@@ -31,7 +31,7 @@ const characters = {
   yana: { name: 'Яна', art: 'profile-yana', keyword: 'Формы', description: 'Одноклассница Серёжи с 5-го по 11-й класс. Серёже нравится её фигура. Яна заинтересовалась покером благодаря ему. Парня у неё, кажется, нет.' },
   liza: { name: 'Лиза', art: 'profile-liza-refined', keyword: 'Неизвестная', description: 'Одноклассница Серёжи с 10-го по 11-й класс. Они почти не пересекались и не общались. Лиза редко бывает в школе, и больше Серёжа о ней ничего не знает.' },
   nastya: { name: 'Настя', art: 'profile-nastya', keyword: 'Нормальная (пока что)', description: 'Одноклассница Серёжи с 10-го по 11-й класс. Пока кажется обычной отличницей, которая помогает с учёбой. Но вскоре она раскроется совсем иначе. А именно… ???????' },
-  dasha: { name: 'Даша', art: 'profile-dasha-refined', catalogPreview: true },
+  dasha: { name: 'Даша', art: 'profile-dasha-original-style', catalogPreview: true },
 };
 
 const holdemBoard = ['Qs', 'Js', 'Ts', '8d', 'Qh'];
