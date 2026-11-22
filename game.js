@@ -95,6 +95,7 @@ const developerCode = document.querySelector('#developer-code');
 const developerCodeStatus = document.querySelector('#developer-code-status');
 const developerActions = document.querySelector('#developer-actions');
 const developerUnlock = document.querySelector('#developer-unlock');
+const developerUnlockCharacters = document.querySelector('#developer-unlock-characters');
 const developerSceneMap = document.querySelector('#developer-scene-map');
 const developerSceneForm = document.querySelector('#developer-scene-form');
 const developerSceneFilter = document.querySelector('#developer-scene-filter');
@@ -1023,8 +1024,9 @@ function characterCard(id, { popup = false, reveal = false } = {}) {
 }
 
 function renderCharacters() {
-  characterList.replaceChildren(...Object.entries(characters).map(([id, character]) => {
-    const visible = id === 'seryozha' || character.catalogPreview || discoveredCharacters.has(id);
+  const showAll = developerMode && developerUnlockCharacters.checked;
+  characterList.replaceChildren(...Object.keys(characters).map((id) => {
+    const visible = showAll || id === 'seryozha' || discoveredCharacters.has(id);
     return visible ? characterCard(id) : lockedCharacterCard();
   }));
 }
@@ -1684,6 +1686,7 @@ function setDeveloperMode(enabled) {
   developerActions.hidden = !enabled;
   developerSceneMap.hidden = !enabled;
   developerUnlock.checked = false;
+  developerUnlockCharacters.checked = false;
   developerSceneMap.open = false;
   developerSceneFilter.value = '';
   if (enabled) renderDeveloperScenes();
@@ -1723,6 +1726,9 @@ developerAccessForm.addEventListener('submit', async (event) => {
 
 developerUnlock.addEventListener('change', () => {
   if (developerMode && story.hidden && ending.hidden) syncRoute();
+});
+developerUnlockCharacters.addEventListener('change', () => {
+  if (developerMode && !charactersPanel.hidden) renderCharacters();
 });
 document.querySelector('#developer-exit').addEventListener('click', () => {
   setDeveloperMode(false);

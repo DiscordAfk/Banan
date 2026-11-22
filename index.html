@@ -7,10 +7,10 @@
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
   <link rel="stylesheet" href="style.css?v=developer-tools">
-  <script src="story.js?v=character-bios" defer></script>
+  <script src="story.js?v=character-keywords" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=developer-tools" defer></script>
+  <script src="game.js?v=character-unlocks" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -621,6 +621,10 @@
         <label class="settings-sound">
           <input id="developer-unlock" type="checkbox">
           Открыть все ветки и DLC
+        </label>
+        <label class="settings-sound">
+          <input id="developer-unlock-characters" type="checkbox">
+          Разблокировать все карточки персонажей
         </label>
         <div class="settings-actions">
           <button id="developer-open-map" type="button" class="choice">Перейти к любой сцене</button>
