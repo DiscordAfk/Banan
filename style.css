@@ -804,13 +804,14 @@ h1, h2, h3, p { margin: 0; }
 }
 .dlc-card { grid-template-columns: min(28%, 9rem) minmax(0, 1fr); }
 .dlc-character { color: var(--muted); }
-.dlc-form {
+:is(.dlc-form, .game-access-form) {
   display: grid;
   gap: .6rem;
   margin-top: .85rem;
 }
 .dlc-form label { display: grid; gap: .3rem; }
-.dlc-form input {
+.game-access-form { width: min(100%, 20rem); }
+:is(.dlc-form, .game-access-form) input {
   width: 100%;
   min-height: 44px;
   padding: .5rem .65rem;
@@ -819,13 +820,14 @@ h1, h2, h3, p { margin: 0; }
   color: var(--text);
   font: inherit;
 }
-.dlc-form input:focus-visible, .dlc-details summary:focus-visible {
+:is(.dlc-form, .game-access-form) input:focus-visible, .dlc-details summary:focus-visible {
   outline: 3px solid #74f3e6;
   outline-offset: 3px;
 }
-.dlc-form input[aria-invalid="true"] { border-color: #ff9ba8; }
+:is(.dlc-form, .game-access-form) input[aria-invalid="true"] { border-color: #ff9ba8; }
 .dlc-form .pixel-button { justify-self: start; min-height: 44px; padding: .45rem .7rem; }
-.dlc-code-status { color: #ffb5c0; font-size: .9rem; }
+.code-status { color: #ffb5c0; font-size: .9rem; }
+.code-status:empty { display: none; }
 .dlc-details, .dlc-play { margin-top: .85rem; }
 .dlc-details summary { color: var(--accent); font-weight: 750; cursor: pointer; }
 .dlc-details[open] p { margin-top: .4rem; }

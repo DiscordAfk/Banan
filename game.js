@@ -1,6 +1,11 @@
 const catalog = document.querySelector('#catalog');
 const novel = document.querySelector('#novel');
 const menu = document.querySelector('#game-menu');
+const gameAccessForm = document.querySelector('#game-access-form');
+const gameAccessInput = document.querySelector('#game-access-code');
+const gameAccessStatus = document.querySelector('#game-access-status');
+const gameAccessSubmit = gameAccessForm.querySelector('button');
+const playButton = document.querySelector('#play');
 const story = document.querySelector('#story');
 const ending = document.querySelector('#ending');
 const endingArt = document.querySelector('#ending-art');
@@ -176,6 +181,8 @@ const lectureFrames = [
 ];
 
 const gameStoragePrefix = 'minigames.seryozha.';
+const gameAccessHash = '0184f0b4a19a10ce2677bb58b7ad872e316b1a2eccc99736284ea0b4ab529382';
+const gameAccessKey = `${gameStoragePrefix}access.${gameAccessHash}`;
 const endingsStorageKey = `${gameStoragePrefix}endings`;
 const decisionStorageKey = `${gameStoragePrefix}last-decision`;
 const storyStartStoragePrefix = `${gameStoragePrefix}story-start.`;
@@ -198,6 +205,12 @@ let phoneQuiz;
 let lastDecision;
 let pendingStoryStart;
 let activeCharacterStory;
+let gameAccessGranted = false;
+try {
+  gameAccessGranted = sessionStorage.getItem(gameAccessKey) === '1';
+} catch {
+  // The game can still be unlocked until the page reloads.
+}
 
 function applySoundSetting(muted) {
   muteSound.checked = muted;
@@ -297,11 +310,49 @@ function hasDlcAccess(character) {
   }
 }
 
-async function matchesDlcCode(code, hash) {
+async function matchesAccessCode(code, hash) {
   const bytes = new TextEncoder().encode(code.trim().toUpperCase());
   const digest = await crypto.subtle.digest('SHA-256', bytes);
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('') === hash;
 }
+
+gameAccessInput.addEventListener('input', () => {
+  gameAccessInput.removeAttribute('aria-invalid');
+  gameAccessStatus.textContent = '';
+});
+
+gameAccessForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (gameAccessSubmit.disabled) return;
+  gameAccessSubmit.disabled = true;
+  gameAccessInput.readOnly = true;
+  try {
+    if (!await matchesAccessCode(gameAccessInput.value, gameAccessHash)) {
+      gameAccessInput.setAttribute('aria-invalid', 'true');
+      gameAccessStatus.textContent = 'Неверный код доступа.';
+      gameAccessInput.focus();
+      return;
+    }
+  } catch {
+    gameAccessStatus.textContent = 'Проверка кода недоступна. Открой сайт через HTTPS или localhost.';
+    return;
+  } finally {
+    gameAccessSubmit.disabled = false;
+    gameAccessInput.readOnly = false;
+  }
+
+  gameAccessGranted = true;
+  try {
+    sessionStorage.setItem(gameAccessKey, '1');
+  } catch {
+    // Access remains enabled until the page reloads.
+  }
+  gameAccessForm.reset();
+  if (window.location.hash === '#seryozha') {
+    syncRoute();
+    playButton.focus();
+  }
+});
 
 function dlcMenuHash(character, section) {
   return section ? `#dlc/${character}/${section}` : `#dlc/${character}`;
@@ -335,7 +386,7 @@ function renderDlc() {
       event.preventDefault();
       submit.disabled = true;
       try {
-        if (!await matchesDlcCode(input.value, codeHash)) {
+        if (!await matchesAccessCode(input.value, codeHash)) {
           input.setAttribute('aria-invalid', 'true');
           feedback.textContent = 'Неверный код доступа.';
           input.focus();
@@ -480,6 +531,7 @@ function renderLastDecision() {
 }
 
 function openStoryAt(start) {
+  if (!gameAccessGranted) return;
   pendingStoryStart = start;
   window.location.hash = '#seryozha';
 }
@@ -739,7 +791,9 @@ function showScreen(screen, dlc, dlcSection) {
   }
   catalog.hidden = screen !== 'catalog';
   novel.hidden = screen === 'catalog';
-  novelTabs.hidden = screen !== 'menu' && screen !== 'details';
+  novelTabs.hidden = !gameAccessGranted || (screen !== 'menu' && screen !== 'details');
+  gameAccessForm.hidden = gameAccessGranted;
+  playButton.hidden = !gameAccessGranted;
   const playingDlc = activeCharacterStory?.dlc;
   gameLabel.textContent = playingDlc ?? dlc?.title ?? 'День Серёжи';
   gameMapLink.href = playingDlc ? dlcMenuHash(activeCharacterStory.id, 'story-map') : '#story-map';
@@ -1396,6 +1450,10 @@ function renderScene(key, { phone, remember = true } = {}) {
 
 function syncRoute(moveFocus = false) {
   let hash = window.location.hash;
+  if (!gameAccessGranted && /^#(?:achievements|characters|story-map|character-story(?:\/.*)?|dlc(?:\/.*)?)$/.test(hash)) {
+    hash = '#seryozha';
+    window.history.replaceState(null, '', hash);
+  }
   readCharacters();
   if (hash === '#character-story/seryozha') {
     hash = characterStoryHash('seryozha');
@@ -1469,7 +1527,9 @@ resumeButton.addEventListener('click', () => {
 
 for (const button of sceneBackButtons) button.addEventListener('click', goBackScene);
 
-document.querySelector('#play').addEventListener('click', () => startStory('morning'));
+playButton.addEventListener('click', () => {
+  if (gameAccessGranted) startStory('morning');
+});
 document.querySelector('#launch-blender').addEventListener('click', () => goToScene(activeScene.next));
 document.querySelector('#blender-notification').addEventListener('click', () => goToScene(activeScene.next));
 function showEndCard(scene) {
