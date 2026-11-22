@@ -324,8 +324,13 @@ function renderCharacterStoryMap(id) {
   }));
 }
 
+function canActivateDlc(character) {
+  return allBranchesOpen() || discoveredCharacters.has(character);
+}
+
 function hasDlcAccess(character) {
   if (allBranchesOpen()) return true;
+  if (!canActivateDlc(character)) return false;
   if (unlockedDlc.has(character)) return true;
   try {
     return localStorage.getItem(dlcStoragePrefix + character) === '1';
@@ -396,11 +401,15 @@ function renderDlc() {
     const feedback = form.querySelector('[role="status"]');
     const play = card.querySelector('.dlc-play');
     const details = card.querySelector('details');
+    const lockedNotice = card.querySelector('.dlc-locked');
+    const canActivate = canActivateDlc(character);
     const hasAccess = hasDlcAccess(character);
-    form.hidden = hasAccess;
+    lockedNotice.hidden = canActivate;
+    form.hidden = !canActivate || hasAccess;
     play.hidden = !hasAccess || !firstScene;
     details.hidden = !hasAccess || Boolean(firstScene);
     if (firstScene) play.href = dlcMenuHash(character);
+    if (!canActivate || hasAccess) return card;
 
     input.addEventListener('input', () => {
       input.removeAttribute('aria-invalid');
@@ -408,6 +417,7 @@ function renderDlc() {
     });
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
+      if (submit.disabled || !canActivateDlc(character)) return;
       submit.disabled = true;
       try {
         if (!await matchesAccessCode(input.value, codeHash)) {
@@ -423,6 +433,7 @@ function renderDlc() {
         submit.disabled = false;
       }
 
+      if (!canActivateDlc(character)) return;
       unlockedDlc.add(character);
       try {
         localStorage.setItem(dlcStoragePrefix + character, '1');
@@ -475,22 +486,58 @@ function renderDlcMenu(dlc, section) {
     dlcAchievementProgress.hidden = !results.length;
     dlcAchievementsEmpty.hidden = Boolean(results.length);
   }
-  if (section !== 'story-map') return;
-  dlcRoadmap.replaceChildren(...dlc.roadmap.map(({ number, scene }, index) => {
+  if (section === 'story-map') renderDlcRoadmap(dlc);
+}
+
+function renderDlcRoadmap(dlc) {
+  readAchievements(dlc.achievements ?? []);
+  const root = dlc.roadmap.reduceRight((next, { scene, reward, reachedBy }, index) => {
     const item = document.createElement('li');
-    item.value = number;
+    const node = document.createElement('div');
+    node.className = 'story-tree-node';
     const button = document.createElement('button');
     button.className = 'story-point';
+    button.classList.toggle('story-point-fork', index === 0);
     button.type = 'button';
-    button.disabled = !scene || (index > 0 && !isStoryStartUnlocked(scene));
-    if (scene && index > 0) button.dataset.dlcCheckpoint = scene;
+    const data = scenes[scene];
+    if (data?.art) {
+      button.classList.add('story-point-art');
+      const illustration = document.createElement('img');
+      illustration.src = artPath(data.art);
+      illustration.alt = '';
+      illustration.loading = 'lazy';
+      button.append(illustration);
+    }
     const title = document.createElement('strong');
-    title.textContent = scene ? scenes[scene].title : 'В разработке';
+    title.textContent = data?.title ?? 'В разработке';
     button.append(title);
+    button.disabled = !data || (index > 0 && !isDlcCheckpointUnlocked(scene, reachedBy));
+    if (data && index > 0) button.dataset.dlcCheckpoint = scene;
+    if (reachedBy) button.dataset.reachedBy = reachedBy;
     button.addEventListener('click', () => playDlc(dlc, scene));
-    item.append(button);
+    node.append(button);
+    item.append(node);
+    if (next || reward) {
+      const branches = document.createElement('ol');
+      branches.className = 'story-branches';
+      if (next) branches.append(next);
+      if (reward) {
+        const leaf = document.createElement('li');
+        leaf.className = 'story-endings';
+        const card = rewardCard(reward, allBranchesOpen() || unlockedAchievements.has(reward.id), 'h4', true);
+        card.classList.add('story-tree-node');
+        leaf.append(card);
+        branches.append(leaf);
+      }
+      item.append(branches);
+    }
     return item;
-  }));
+  }, null);
+  dlcRoadmap.replaceChildren(...(root ? [root] : []));
+}
+
+function isDlcCheckpointUnlocked(scene, reachedBy) {
+  return isStoryStartUnlocked(scene) || unlockedAchievements.has(reachedBy);
 }
 
 function rememberStoryStart(scene) {
@@ -518,7 +565,7 @@ function isStoryStartUnlocked(scene) {
 function renderStoryStarts() {
   for (const [scene, button] of storyStarts) button.disabled = !isStoryStartUnlocked(scene);
   for (const button of dlcRoadmap.querySelectorAll('[data-dlc-checkpoint]')) {
-    button.disabled = !isStoryStartUnlocked(button.dataset.dlcCheckpoint);
+    button.disabled = !isDlcCheckpointUnlocked(button.dataset.dlcCheckpoint, button.dataset.reachedBy);
   }
 }
 
@@ -1542,7 +1589,7 @@ function syncRoute(moveFocus = false) {
   if (inStoryMap) {
     renderLastDecision();
     renderStoryRewards();
-  } else if (endingPreview.open) {
+  } else if (endingPreview.open && !(dlc && dlcSection === 'story-map')) {
     endingPreview.close();
   }
 
@@ -1809,14 +1856,17 @@ window.addEventListener('storage', (event) => {
     if (event.newValue === '1') discoveredCharacters.add(id);
     else discoveredCharacters.delete(id);
     if (!charactersPanel.hidden) renderCharacters();
-    if (event.newValue !== '1' && !characterStoryPanel.hidden && window.location.hash === characterStoryHash(id)) syncRoute(true);
+    const openDlc = !dlcMenuPanel.hidden && window.location.hash.split('/')[1] === id;
+    if (openDlc && !hasDlcAccess(id)) syncRoute(true);
+    else if (!dlcPanel.hidden) renderDlc();
+    else if (event.newValue !== '1' && !characterStoryPanel.hidden && window.location.hash === characterStoryHash(id)) syncRoute(true);
   }
   const rewardChanged = event.key === endingsStorageKey || achievements.some(({ id }) => event.key === gameStoragePrefix + id);
   if (rewardChanged) {
     if (window.location.hash === '#achievements') renderAchievements();
     if (window.location.hash === '#story-map' && !endingPreview.open) renderStoryRewards();
   }
-  if (!dlcMenuPanel.hidden && !dlcSections.achievements.panel.hidden && downloadableStories.some(({ achievements: results = [] }) =>
+  if (!dlcMenuPanel.hidden && dlcOverview.hidden && downloadableStories.some(({ achievements: results = [] }) =>
     results.some(({ id }) => event.key === gameStoragePrefix + id))) {
     syncRoute();
   }
