@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=character-stories">
-  <script src="story.js?v=character-stories" defer></script>
+  <link rel="stylesheet" href="style.css?v=character-story-slots">
+  <script src="story.js?v=character-story-slots" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=character-stories" defer></script>
+  <script src="game.js?v=character-story-slots" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -82,10 +82,11 @@
         <div>
           <h2 id="character-story-title" tabindex="-1"></h2>
           <p id="character-story-qualifier" hidden></p>
-          <button id="character-story-play" class="pixel-button" type="button">Пройти сюжет</button>
+          <button id="character-story-play" class="pixel-button" type="button" hidden>Пройти сюжет</button>
         </div>
       </div>
-      <ol id="character-story-episodes" class="character-story-episodes" aria-label="Карта эпизодов"></ol>
+      <p id="character-story-empty" class="character-story-empty" hidden>Сюжет пока не добавлен.</p>
+      <ol id="character-story-episodes" class="character-story-episodes" aria-label="Карта эпизодов" hidden></ol>
     </section>
 
     <section class="collection" id="story-map-panel" aria-labelledby="story-map-title" hidden>

@@ -43,6 +43,7 @@ const characterStoryTitle = document.querySelector('#character-story-title');
 const characterStoryPortrait = document.querySelector('#character-story-portrait');
 const characterStoryQualifier = document.querySelector('#character-story-qualifier');
 const characterStoryEpisodes = document.querySelector('#character-story-episodes');
+const characterStoryEmpty = document.querySelector('#character-story-empty');
 const characterStoryPlay = document.querySelector('#character-story-play');
 const endingMapLink = document.querySelector('#ending-map-link');
 const characterProfile = document.querySelector('#character-profile');
@@ -151,15 +152,23 @@ let lastDecision;
 let pendingStoryStart;
 let activeCharacterStory;
 
-const characterStoryHash = (id) => `#character-story/${id}`;
+const characterStoryHash = (id) => id === 'seryozha' ? '#story-map' : `#character-story/${id}`;
 
-function canPlayCharacterStory(id) {
+function canOpenCharacterStory(id) {
   return Object.hasOwn(characterStories, id) && (id === 'seryozha' || discoveredCharacters.has(id));
 }
 
 function playCharacterStory(id, chapter = 0) {
-  if (!canPlayCharacterStory(id)) return;
+  if (!canOpenCharacterStory(id)) return;
+  if (id === 'seryozha') {
+    window.location.hash = '#seryozha';
+    return;
+  }
   const { episodes } = characterStories[id];
+  if (!episodes.length) {
+    window.location.hash = characterStoryHash(id);
+    return;
+  }
   if (!episodes[chapter]) return;
 
   const nextByScene = new Map();
@@ -180,6 +189,10 @@ function renderCharacterStoryMap(id) {
   characterStoryQualifier.hidden = !route.qualifier;
   characterStoryQualifier.textContent = route.qualifier ?? '';
   characterStoryPortrait.src = artPath(characters[id].art);
+  const hasEpisodes = route.episodes.length > 0;
+  characterStoryPlay.hidden = !hasEpisodes;
+  characterStoryEpisodes.hidden = !hasEpisodes;
+  characterStoryEmpty.hidden = hasEpisodes;
   characterStoryPlay.onclick = () => playCharacterStory(id);
   characterStoryEpisodes.replaceChildren(...route.episodes.map(([title, first, , artwork], index) => {
     const episode = document.createElement('li');
@@ -647,7 +660,7 @@ function characterCard(id, { popup = false, reveal = false } = {}) {
   word.textContent = keyword;
   trait.append('В одном слове ', word);
   info.append(trait);
-  if (!popup && canPlayCharacterStory(id)) {
+  if (!popup && canOpenCharacterStory(id)) {
     const actions = document.createElement('div');
     actions.className = 'character-story-actions';
     const play = document.createElement('button');
@@ -1080,8 +1093,12 @@ function renderScene(key, { phone, remember = true } = {}) {
 function syncRoute(moveFocus = false) {
   let hash = window.location.hash;
   readCharacters();
+  if (hash === '#character-story/seryozha') {
+    hash = characterStoryHash('seryozha');
+    window.history.replaceState(null, '', hash);
+  }
   const characterStoryId = hash.startsWith('#character-story/') ? hash.slice('#character-story/'.length) : undefined;
-  const inCharacterStory = characterStoryId !== undefined && canPlayCharacterStory(characterStoryId);
+  const inCharacterStory = characterStoryId !== undefined && canOpenCharacterStory(characterStoryId);
   if (characterStoryId !== undefined && !inCharacterStory) {
     hash = '#characters';
     window.history.replaceState(null, '', hash);

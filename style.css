@@ -803,6 +803,7 @@ h1, h2, h3, p { margin: 0; }
 }
 .character-story-header h2 { margin: 0 0 .7rem; font: 400 clamp(.83rem, 2.3vw, 1.15rem)/1.55 var(--pixel); }
 .character-story-header p { margin: -.3rem 0 .7rem; color: var(--muted); }
+.character-story-empty { margin: 1.25rem 0 0; color: var(--muted); }
 .character-story-episodes {
   display: grid;
   grid-auto-flow: column;
