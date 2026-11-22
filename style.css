@@ -269,6 +269,14 @@ h1, h2, h3, p { margin: 0; }
 .is-ending .game-nav { visibility: hidden; }
 .ending { min-height: calc(100svh - 100px); position: relative; display: grid; place-items: center; color: #fff; }
 .ending-message { max-width: 100%; text-align: center; }
+#ending-art { display: block; width: min(100%, 1120px); height: auto; margin-inline: auto; }
+.ending-title-over-art {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
 .ending h1 { font: 400 clamp(1.35rem, 6vw, 3rem)/1.6 var(--pixel); }
 .ending-note {
   margin: 1rem 0 0;
@@ -2008,7 +2016,8 @@ h1, h2, h3, p { margin: 0; }
 .holdem-panel[data-layout]:not([data-layout='']) { padding-block: clamp(1.45rem, 5vw, 3.8rem); }
 .holdem-panel[data-layout='royal'] { background: radial-gradient(ellipse at 27% 20%, #3e5849, #102c2a 72%); }
 .holdem-panel[data-layout='manga'] { background: repeating-conic-gradient(from 20deg, #251d2c 0 8deg, #1a1620 9deg 19deg); }
-.holdem-panel h2 { margin: 0 0 .65rem; color: #ffecae; font: 400 clamp(.75rem, 2.9vw, 1.15rem)/1.5 var(--pixel); }
+.holdem-panel > h2 { margin: 0 0 .65rem; color: #ffecae; font: 400 clamp(.75rem, 2.9vw, 1.15rem)/1.5 var(--pixel); }
+.holdem-panel > .achievement-award { position: static; width: min(22rem, 100%); margin-top: 1rem; }
 .holdem-table { display: flex; flex-wrap: wrap; gap: .8rem; align-items: flex-start; }
 .holdem-group { display: grid; gap: .35rem; color: #e3efe2; font-size: .85rem; }
 .holdem-cards { display: flex; gap: clamp(.2rem, 1cqi, .5rem); }
@@ -2041,6 +2050,34 @@ h1, h2, h3, p { margin: 0; }
   .history-door-slam:not([hidden]) { animation: history-door-pop .33s cubic-bezier(.2, .85, .32, 1.22) both; }
   [data-night-effect='card-quick-move'] > #scene-art { animation: history-card-cut .4s ease-out both; }
   [data-night-effect='chemistry-focus'] > #scene-art { animation: chemistry-focus .75s ease-out both; }
+  [data-night-effect='chemistry-footsteps'] > #scene-art { animation: chemistry-footsteps 2.65s linear both; }
+  [data-night-effect='chemistry-impact'] > #scene-art { animation: chemistry-impact .45s ease-out both; }
+  [data-night-effect='chemistry-window-impact'] > #scene-art { animation: chemistry-impact .45s .65s ease-out both; }
+  [data-night-effect='chemistry-fight-cut'] > #scene-art { animation: chemistry-fight-cut .35s ease-out both; }
+  [data-night-effect='chemistry-combo'] > #scene-art { animation: history-card-cut .18s ease-out 4 alternate; }
+  [data-night-effect='chemistry-roar'] > #scene-art { animation: chemistry-impact .32s ease-out 3; }
+  [data-night-effect='chemistry-kirill-reveal'] > #scene-art { animation: chemistry-kirill-reveal .8s ease-out both; }
+}
+@keyframes chemistry-footsteps {
+  0%, 6%, 28%, 35%, 56%, 64%, 81%, 93%, 100% { transform: translate(0) scale(1); }
+  2%, 30%, 58%, 83% { transform: translate(-3px, 3px) scale(1.025); }
+  4%, 32%, 60%, 86% { transform: translate(4px, -3px) scale(1.025); }
+}
+@keyframes chemistry-impact {
+  0% { transform: translate(-5px, 5px) scale(1.045); }
+  18% { transform: translate(6px, -5px) scale(1.045); }
+  34% { transform: translate(-4px, 3px) scale(1.03); }
+  55% { transform: translate(2px, -2px) scale(1.02); }
+}
+@keyframes chemistry-fight-cut {
+  from { filter: brightness(.25); transform: scale(1.1); }
+}
+@keyframes chemistry-kirill-reveal {
+  from { filter: brightness(.4); transform: scale(1.035); }
+}
+.silhouette-poker-beginner::before {
+  inset: 15% 32%;
+  clip-path: polygon(50% 0, 96% 43%, 100% 64%, 85% 76%, 57% 67%, 67% 100%, 33% 100%, 43% 67%, 15% 76%, 0 64%, 4% 43%);
 }
 @keyframes chemistry-focus {
   from { filter: blur(6px); transform: scale(1.02); }
