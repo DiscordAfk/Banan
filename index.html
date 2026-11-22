@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=game-access">
+  <link rel="stylesheet" href="style.css?v=developer-tools">
   <script src="story.js?v=character-bios" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=game-access" defer></script>
+  <script src="game.js?v=developer-tools" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -135,6 +135,17 @@
             <p id="resume-detail"></p>
           </div>
         </div>
+        <details id="developer-scene-map" class="developer-scene-map" hidden>
+          <summary>Все сцены</summary>
+          <form id="developer-scene-form" class="developer-form">
+            <label for="developer-scene-filter">Найти по названию или ID</label>
+            <input id="developer-scene-filter" type="search" autocomplete="off">
+            <label for="developer-scene-list">Сцена</label>
+            <select id="developer-scene-list" size="8" required></select>
+            <p id="developer-scene-status" class="code-status" role="status"></p>
+            <button class="pixel-button" type="submit">Перейти к сцене</button>
+          </form>
+        </details>
         <div class="story-board">
           <ul class="story-tree" aria-label="Ветки Дня Серёжи">
             <li>
@@ -598,6 +609,25 @@
         <button id="confirm-progress-reset" class="choice settings-reset" type="button">Сбросить</button>
       </div>
     </div>
+    <details id="developer-tools" class="developer-tools">
+      <summary>Инструменты разработчика</summary>
+      <form id="developer-access-form" class="developer-form">
+        <label for="developer-code">Код администратора</label>
+        <input id="developer-code" type="password" name="code" minlength="64" maxlength="64" pattern="[A-Fa-f0-9]{64}" title="Код из 64 шестнадцатеричных символов" autocomplete="off" spellcheck="false" aria-describedby="developer-code-status" required>
+        <button class="pixel-button" type="submit">Войти</button>
+        <p id="developer-code-status" class="code-status" role="status"></p>
+      </form>
+      <div id="developer-actions" hidden>
+        <label class="settings-sound">
+          <input id="developer-unlock" type="checkbox">
+          Открыть все ветки и DLC
+        </label>
+        <div class="settings-actions">
+          <button id="developer-open-map" type="button" class="choice">Перейти к любой сцене</button>
+          <button id="developer-exit" type="button" class="choice">Выйти из режима</button>
+        </div>
+      </div>
+    </details>
   </dialog>
 </body>
 </html>

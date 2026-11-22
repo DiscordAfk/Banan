@@ -89,6 +89,17 @@ const endingPreview = document.querySelector('#ending-preview');
 const endingPreviewTitle = document.querySelector('#ending-preview-title');
 const endingPreviewArt = document.querySelector('#ending-preview-art');
 const settingsDialog = document.querySelector('#settings');
+const developerTools = document.querySelector('#developer-tools');
+const developerAccessForm = document.querySelector('#developer-access-form');
+const developerCode = document.querySelector('#developer-code');
+const developerCodeStatus = document.querySelector('#developer-code-status');
+const developerActions = document.querySelector('#developer-actions');
+const developerUnlock = document.querySelector('#developer-unlock');
+const developerSceneMap = document.querySelector('#developer-scene-map');
+const developerSceneForm = document.querySelector('#developer-scene-form');
+const developerSceneFilter = document.querySelector('#developer-scene-filter');
+const developerSceneList = document.querySelector('#developer-scene-list');
+const developerSceneStatus = document.querySelector('#developer-scene-status');
 const muteSound = document.querySelector('#mute-sound');
 const requestProgressReset = document.querySelector('#request-progress-reset');
 const progressResetConfirmation = document.querySelector('#progress-reset-confirmation');
@@ -182,6 +193,7 @@ const lectureFrames = [
 
 const gameStoragePrefix = 'minigames.seryozha.';
 const gameAccessHash = '0184f0b4a19a10ce2677bb58b7ad872e316b1a2eccc99736284ea0b4ab529382';
+const developerCodeHash = '4bcfec3e4eb774ccde4285b4ffbc126cf072f01c9dd64f0ca3e24de83816f868';
 const gameAccessKey = `${gameStoragePrefix}access.${gameAccessHash}`;
 const endingsStorageKey = `${gameStoragePrefix}endings`;
 const decisionStorageKey = `${gameStoragePrefix}last-decision`;
@@ -206,6 +218,7 @@ let lastDecision;
 let pendingStoryStart;
 let activeCharacterStory;
 let gameAccessGranted = false;
+let developerMode = false;
 try {
   gameAccessGranted = sessionStorage.getItem(gameAccessKey) === '1';
 } catch {
@@ -239,6 +252,14 @@ function resetProgress() {
     // Reloading still clears in-memory progress when storage is unavailable.
   }
   restartAtCatalog();
+}
+
+function hasGameAccess() {
+  return gameAccessGranted || developerMode;
+}
+
+function allBranchesOpen() {
+  return developerMode && developerUnlock.checked;
 }
 
 const characterStoryHash = (id) => id === 'seryozha' ? '#story-map' : `#character-story/${id}`;
@@ -302,6 +323,7 @@ function renderCharacterStoryMap(id) {
 }
 
 function hasDlcAccess(character) {
+  if (allBranchesOpen()) return true;
   if (unlockedDlc.has(character)) return true;
   try {
     return localStorage.getItem(dlcStoragePrefix + character) === '1';
@@ -422,9 +444,13 @@ function renderDlc() {
 
 function playDlc(dlc, scene) {
   if (!scene || !hasDlcAccess(dlc.character)) return;
-  openStoryAt({
+  openStoryAt(dlcStoryStart(dlc, scene));
+}
+
+function dlcStoryStart(dlc, scene) {
+  return {
     scene, characterStory: { id: dlc.character, dlc: dlc.title, achievements: dlc.achievements ?? [] },
-  });
+  };
 }
 
 function renderDlcMenu(dlc, section) {
@@ -466,6 +492,7 @@ function renderDlcMenu(dlc, section) {
 }
 
 function rememberStoryStart(scene) {
+  if (developerMode) return;
   if (scene === 'morning' || visitedStoryStarts.has(scene)) return;
   if (!storyStarts.has(scene) && !dlcCheckpoints.has(scene)) return;
   visitedStoryStarts.add(scene);
@@ -477,7 +504,7 @@ function rememberStoryStart(scene) {
 }
 
 function isStoryStartUnlocked(scene) {
-  if (scene === 'morning' || visitedStoryStarts.has(scene)) return true;
+  if (allBranchesOpen() || scene === 'morning' || visitedStoryStarts.has(scene)) return true;
   if (scene === 'night-choice' && unlockedEndings.has('first-step')) return true;
   try {
     return localStorage.getItem(storyStartStoragePrefix + scene) === '1';
@@ -494,6 +521,7 @@ function renderStoryStarts() {
 }
 
 function rememberDecision(scene, phone) {
+  if (developerMode) return;
   lastDecision = phone ? { scene, phone: { index: phone.index, correct: phone.correct } } : { scene };
   try {
     localStorage.setItem(decisionStorageKey, JSON.stringify(lastDecision));
@@ -531,9 +559,10 @@ function renderLastDecision() {
 }
 
 function openStoryAt(start) {
-  if (!gameAccessGranted) return;
+  if (!hasGameAccess()) return;
   pendingStoryStart = start;
-  window.location.hash = '#seryozha';
+  if (window.location.hash === '#seryozha') syncRoute();
+  else window.location.hash = '#seryozha';
 }
 
 function readEndings() {
@@ -549,6 +578,7 @@ function readEndings() {
 }
 
 function unlockEnding(id) {
+  if (developerMode) return;
   readEndings();
   unlockedEndings.add(id);
   try {
@@ -559,6 +589,7 @@ function unlockEnding(id) {
 }
 
 function unlockAchievement(id) {
+  if (developerMode) return false;
   if (unlockedAchievements.has(id)) return false;
   unlockedAchievements.add(id);
   try {
@@ -665,7 +696,7 @@ function showEndingPreview(result) {
 function renderStoryRewards() {
   readEndings();
   readAchievements();
-  storyNightStart.hidden = !unlockedEndings.has('first-step');
+  storyNightStart.hidden = !allBranchesOpen() && !unlockedEndings.has('first-step');
   renderStoryStarts();
   for (const branch of [...storyEndingBranches, ...storyAchievementBranches]) {
     const achievementScenes = branch.dataset.storyAchievements?.split(' ');
@@ -675,7 +706,7 @@ function renderStoryRewards() {
     const unlocked = achievementScenes ? unlockedAchievements : unlockedEndings;
     branch.replaceChildren(...leaves.map((result) => {
       const leaf = document.createElement('li');
-      const card = rewardCard(result, unlocked.has(result.id), 'h4', true);
+      const card = rewardCard(result, allBranchesOpen() || unlocked.has(result.id), 'h4', true);
       card.classList.add('story-tree-node');
       leaf.append(card);
       return leaf;
@@ -791,9 +822,9 @@ function showScreen(screen, dlc, dlcSection) {
   }
   catalog.hidden = screen !== 'catalog';
   novel.hidden = screen === 'catalog';
-  novelTabs.hidden = !gameAccessGranted || (screen !== 'menu' && screen !== 'details');
-  gameAccessForm.hidden = gameAccessGranted;
-  playButton.hidden = !gameAccessGranted;
+  novelTabs.hidden = !hasGameAccess() || (screen !== 'menu' && screen !== 'details');
+  gameAccessForm.hidden = hasGameAccess();
+  playButton.hidden = !hasGameAccess();
   const playingDlc = activeCharacterStory?.dlc;
   gameLabel.textContent = playingDlc ?? dlc?.title ?? 'День Серёжи';
   gameMapLink.href = playingDlc ? dlcMenuHash(activeCharacterStory.id, 'story-map') : '#story-map';
@@ -827,7 +858,9 @@ function updateSceneBack() {
 function startStory(key, { characterStory, ...options } = {}) {
   sceneHistory.length = 0;
   activeCharacterStory = characterStory;
-  renderScene(key, options);
+  phoneQuiz = undefined;
+  if (scenes[key].onlyEndCard) showEndCard(scenes[key]);
+  else renderScene(key, options);
 }
 
 function goToScene(key, options) {
@@ -867,7 +900,7 @@ function dianaContactName() {
 }
 
 function rememberDianaAlias(context) {
-  if (activeCharacterStory) return;
+  if (activeCharacterStory || developerMode) return;
   if (discoveredCharacters.has('diana') || dianaAlias === 'chat' || dianaAlias === context) return;
   dianaAlias = context;
   try {
@@ -1013,7 +1046,7 @@ function resetCharacters() {
 }
 
 function showNextCharacterProfile() {
-  if (story.hidden || characterProfile.open) return;
+  if (developerMode || story.hidden || characterProfile.open) return;
   let entry;
   do {
     entry = profileQueue.shift();
@@ -1355,6 +1388,10 @@ function renderScene(key, { phone, remember = true } = {}) {
   phoneScoreboard.hidden = !showScore;
   phoneRoundLabel.hidden = !scene.quiz;
   if (showScore) {
+    phoneQuiz ??= {
+      index: phoneRounds.length - 1,
+      correct: scene.prop === 'chat' ? phoneRounds.length : Number(scene.ending === 'time-loop'),
+    };
     activePosition.phone = { index: phoneQuiz.index, correct: phoneQuiz.correct };
     updatePhoneScore();
   }
@@ -1445,12 +1482,12 @@ function renderScene(key, { phone, remember = true } = {}) {
   }
   (scene.intertitle ? intertitleNext : sceneTitle).focus({ preventScroll: true });
   window.scrollTo(0, 0);
-  if (!activeCharacterStory) showCharacterEncounters(key, scene.meet);
+  if (!activeCharacterStory && !developerMode) showCharacterEncounters(key, scene.meet);
 }
 
 function syncRoute(moveFocus = false) {
   let hash = window.location.hash;
-  if (!gameAccessGranted && /^#(?:achievements|characters|story-map|character-story(?:\/.*)?|dlc(?:\/.*)?)$/.test(hash)) {
+  if (!hasGameAccess() && /^#(?:achievements|characters|story-map|character-story(?:\/.*)?|dlc(?:\/.*)?)$/.test(hash)) {
     hash = '#seryozha';
     window.history.replaceState(null, '', hash);
   }
@@ -1512,7 +1549,9 @@ function syncRoute(moveFocus = false) {
   activeCharacterStory = undefined;
   showScreen(dlc ? 'dlc-menu' : inGame ? 'menu' : highlightedTab ? 'details' : 'catalog', dlc, dlcSection);
   if (moveFocus) {
-    const focusTarget = dlc ? `#dlc-${dlcSection ?? 'menu'}-title` : inGame ? '#menu-title' : inCharacterStory ? '#character-story-title' : highlightedTab ? `${highlightedTab.hash}-title` : '#collection-title';
+    const focusTarget = inStoryMap && developerMode && developerSceneMap.open
+      ? '#developer-scene-filter'
+      : dlc ? `#dlc-${dlcSection ?? 'menu'}-title` : inGame ? '#menu-title' : inCharacterStory ? '#character-story-title' : highlightedTab ? `${highlightedTab.hash}-title` : '#collection-title';
     document.querySelector(focusTarget).focus({ preventScroll: true });
     window.scrollTo(0, 0);
   }
@@ -1528,7 +1567,7 @@ resumeButton.addEventListener('click', () => {
 for (const button of sceneBackButtons) button.addEventListener('click', goBackScene);
 
 playButton.addEventListener('click', () => {
-  if (gameAccessGranted) startStory('morning');
+  if (hasGameAccess()) startStory('morning');
 });
 document.querySelector('#launch-blender').addEventListener('click', () => goToScene(activeScene.next));
 document.querySelector('#blender-notification').addEventListener('click', () => goToScene(activeScene.next));
@@ -1623,6 +1662,102 @@ endingPreview.addEventListener('click', (event) => {
 for (const trigger of document.querySelectorAll('[data-open-settings]')) {
   trigger.addEventListener('click', () => settingsDialog.showModal());
 }
+
+function renderDeveloperScenes() {
+  const query = developerSceneFilter.value.trim().toLowerCase();
+  const previousSelection = developerSceneList.value;
+  const matches = Object.entries(scenes).filter(([key, scene]) => {
+    const title = scene.title ?? scene.endCard ?? '';
+    return `${key} ${title}`.toLowerCase().includes(query);
+  });
+  developerSceneList.replaceChildren(...matches.map(([key, scene]) =>
+    new Option(`${scene.title ?? scene.endCard ?? key} · ${key}`, key)));
+  if (matches.some(([key]) => key === previousSelection)) developerSceneList.value = previousSelection;
+  else developerSceneList.selectedIndex = matches.length ? 0 : -1;
+  developerSceneForm.querySelector('button').disabled = !matches.length;
+  developerSceneStatus.textContent = matches.length ? '' : 'Сцены не найдены.';
+}
+
+function setDeveloperMode(enabled) {
+  developerMode = enabled;
+  developerAccessForm.hidden = enabled;
+  developerActions.hidden = !enabled;
+  developerSceneMap.hidden = !enabled;
+  developerUnlock.checked = false;
+  developerSceneMap.open = false;
+  developerSceneFilter.value = '';
+  if (enabled) renderDeveloperScenes();
+  else developerSceneList.replaceChildren();
+  if (!enabled || (story.hidden && ending.hidden)) syncRoute();
+}
+
+developerCode.addEventListener('input', () => {
+  developerCode.removeAttribute('aria-invalid');
+  developerCodeStatus.textContent = '';
+});
+
+developerAccessForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const submit = developerAccessForm.querySelector('button');
+  if (submit.disabled) return;
+  submit.disabled = true;
+  developerCode.readOnly = true;
+  try {
+    if (!/^[A-Fa-f0-9]{64}$/.test(developerCode.value) || !await matchesAccessCode(developerCode.value, developerCodeHash)) {
+      developerCode.setAttribute('aria-invalid', 'true');
+      developerCodeStatus.textContent = 'Неверный код администратора.';
+      developerCode.focus();
+      return;
+    }
+    developerAccessForm.reset();
+    developerCodeStatus.textContent = '';
+    setDeveloperMode(true);
+    if (settingsDialog.open) developerUnlock.focus();
+  } catch {
+    developerCodeStatus.textContent = 'Проверка кода недоступна. Открой сайт через HTTPS или localhost.';
+  } finally {
+    submit.disabled = false;
+    developerCode.readOnly = false;
+  }
+});
+
+developerUnlock.addEventListener('change', () => {
+  if (developerMode && story.hidden && ending.hidden) syncRoute();
+});
+document.querySelector('#developer-exit').addEventListener('click', () => {
+  setDeveloperMode(false);
+  developerTools.querySelector('summary').focus();
+});
+document.querySelector('#developer-open-map').addEventListener('click', () => {
+  if (!developerMode) return;
+  settingsDialog.close();
+  developerSceneMap.open = true;
+  if (window.location.hash === '#story-map') developerSceneFilter.focus();
+  else window.location.hash = '#story-map';
+});
+
+developerSceneFilter.addEventListener('input', renderDeveloperScenes);
+developerSceneForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const key = developerSceneList.value;
+  if (!developerMode || !Object.hasOwn(scenes, key)) return;
+
+  const dlc = downloadableStories.find(({ roadmap }) => {
+    const visited = new Set();
+    const pending = [roadmap?.[0]?.scene];
+    while (pending.length) {
+      const sceneKey = pending.pop();
+      if (sceneKey === key) return true;
+      if (!sceneKey || visited.has(sceneKey) || !Object.hasOwn(scenes, sceneKey)) continue;
+      visited.add(sceneKey);
+      const { next, options = [] } = scenes[sceneKey];
+      pending.push(next, ...options.map(([, target]) => target));
+    }
+    return false;
+  });
+  openStoryAt(dlc ? dlcStoryStart(dlc, key) : { scene: key });
+});
+
 document.querySelector('#close-settings').addEventListener('click', () => settingsDialog.close());
 settingsDialog.addEventListener('close', () => showProgressResetConfirmation(false));
 muteSound.addEventListener('change', () => {

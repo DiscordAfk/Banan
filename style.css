@@ -811,7 +811,8 @@ h1, h2, h3, p { margin: 0; }
 }
 .dlc-form label { display: grid; gap: .3rem; }
 .game-access-form { width: min(100%, 20rem); }
-:is(.dlc-form, .game-access-form) input {
+:is(.dlc-form, .game-access-form, .developer-form) input,
+.developer-form select {
   width: 100%;
   min-height: 44px;
   padding: .5rem .65rem;
@@ -820,11 +821,12 @@ h1, h2, h3, p { margin: 0; }
   color: var(--text);
   font: inherit;
 }
-:is(.dlc-form, .game-access-form) input:focus-visible, .dlc-details summary:focus-visible {
+:is(.dlc-form, .game-access-form, .developer-form) :is(input, select):focus-visible,
+.dlc-details summary:focus-visible {
   outline: 3px solid #74f3e6;
   outline-offset: 3px;
 }
-:is(.dlc-form, .game-access-form) input[aria-invalid="true"] { border-color: #ff9ba8; }
+:is(.dlc-form, .game-access-form, .developer-form) input[aria-invalid="true"] { border-color: #ff9ba8; }
 .dlc-form .pixel-button { justify-self: start; min-height: 44px; padding: .45rem .7rem; }
 .code-status { color: #ffb5c0; font-size: .9rem; }
 .code-status:empty { display: none; }
@@ -1409,6 +1411,21 @@ h1, h2, h3, p { margin: 0; }
 .settings-reset { color: #ffbcc6; }
 .progress-reset-confirmation { margin-top: 1rem; }
 .progress-reset-confirmation .settings-actions { margin-top: .7rem; }
+.developer-tools, .developer-scene-map {
+  margin-block: 1rem;
+  padding: .75rem;
+  border: 1px solid var(--edge);
+  background: var(--panel);
+}
+.developer-tools > summary, .developer-scene-map > summary {
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+.developer-form { display: grid; gap: .55rem; margin-top: .75rem; }
+.developer-form select { min-width: 0; }
+.developer-form option { padding: .25rem .4rem; }
+.developer-form .pixel-button { justify-self: start; }
 
 .story-chapter-points { display: grid; gap: .55rem; }
 
