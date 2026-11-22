@@ -10,7 +10,7 @@
   <script src="story.js?v=character-story-slots" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=character-story-slots" defer></script>
+  <script src="game.js?v=novel-sections" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -22,16 +22,9 @@
       <p class="subtitle">Коллекция мини-игр</p>
     </header>
 
-    <nav class="collection collection-tabs" aria-label="Разделы Minigames">
-      <a id="games-tab" href="#" aria-current="page">Игры</a>
-      <a id="achievements-tab" href="#achievements">Достижения</a>
-      <a id="characters-tab" href="#characters">Персонажи</a>
-      <a id="story-map-tab" href="#story-map">Карта сюжета</a>
-    </nav>
-
     <section class="collection" id="games-panel" aria-labelledby="collection-title">
       <div class="section-heading">
-        <h2 id="collection-title"><span class="grid-icon" aria-hidden="true"></span> Игры</h2>
+        <h2 id="collection-title" tabindex="-1"><span class="grid-icon" aria-hidden="true"></span> Игры</h2>
         <span class="section-rule" aria-hidden="true"></span>
       </div>
       <div class="game-list">
@@ -51,166 +44,23 @@
       </div>
     </section>
 
-    <section class="collection" id="achievements-panel" aria-labelledby="achievements-title" hidden>
-      <div class="section-heading">
-        <h2 id="achievements-title" tabindex="-1">Достижения</h2>
-        <span class="section-rule" aria-hidden="true"></span>
-      </div>
-      <div class="achievement-heading">
-        <h3>День Серёжи</h3>
-        <p id="achievement-progress"></p>
-      </div>
-      <div id="achievement-list" class="achievement-list"></div>
-    </section>
-
-    <section class="collection" id="characters-panel" aria-labelledby="characters-title" hidden>
-      <div class="section-heading">
-        <h2 id="characters-title" tabindex="-1">Персонажи</h2>
-        <span class="section-rule" aria-hidden="true"></span>
-      </div>
-      <div id="character-list" class="character-list"></div>
-      <div class="character-tools">
-        <button id="reset-characters" class="choice" type="button">Сбросить открытых персонажей</button>
-        <p id="character-reset-status" role="status"></p>
-      </div>
-    </section>
-
-    <section class="collection" id="character-story-panel" aria-labelledby="character-story-title" hidden>
-      <a class="nav-link character-story-back" href="#characters">← К персонажам</a>
-      <div class="character-story-header">
-        <img id="character-story-portrait" width="96" height="96" alt="">
-        <div>
-          <h2 id="character-story-title" tabindex="-1"></h2>
-          <p id="character-story-qualifier" hidden></p>
-          <button id="character-story-play" class="pixel-button" type="button" hidden>Пройти сюжет</button>
-        </div>
-      </div>
-      <p id="character-story-empty" class="character-story-empty" hidden>Сюжет пока не добавлен.</p>
-      <ol id="character-story-episodes" class="character-story-episodes" aria-label="Карта эпизодов" hidden></ol>
-    </section>
-
-    <section class="collection" id="story-map-panel" aria-labelledby="story-map-title" hidden>
-      <div class="section-heading">
-        <h2 id="story-map-title" tabindex="-1">Карта сюжета</h2>
-        <span class="section-rule" aria-hidden="true"></span>
-      </div>
-      <div class="story-map-heading">
-        <div>
-          <h3>День Серёжи</h3>
-          <p>Выбери, с какой ветки или развилки продолжить.</p>
-        </div>
-        <div class="story-map-resume">
-          <button id="resume-decision" class="pixel-button" type="button" aria-describedby="resume-detail" disabled>Последняя развилка</button>
-          <p id="resume-detail"></p>
-        </div>
-      </div>
-      <div class="story-board">
-        <ul class="story-tree" aria-label="Ветки Дня Серёжи">
-          <li>
-            <div class="story-tree-node">
-              <button class="story-point story-point-fork" type="button" data-story-start="morning">
-                <span class="story-point-type">Начало игры</span>
-                <strong>Утро</strong>
-              </button>
-              <div class="story-morning-options" aria-label="Утренние ветки">
-                <button class="story-point story-point-small" type="button" data-story-start="coffee">Кофе</button>
-                <button class="story-point story-point-small" type="button" data-story-start="tea">Чай</button>
-              </div>
-            </div>
-            <ul class="story-branches">
-              <li>
-                <div class="story-tree-node">
-                  <button class="story-point story-point-fork" type="button" data-story-start="plans">
-                    <span class="story-point-type">Развилка</span><strong>Что делать дальше?</strong>
-                  </button>
-                </div>
-                <ul class="story-branches">
-                  <li>
-                    <div class="story-tree-node">
-                      <button class="story-point story-point-art" type="button" data-story-start="school-door">
-                        <img src="assets/route/school-snow.webp" alt="" loading="lazy">
-                        <strong>На пары</strong>
-                      </button>
-                    </div>
-                    <ul class="story-branches">
-                      <li>
-                        <div class="story-tree-node story-chapter-points">
-                          <button class="story-point" type="button" data-story-start="kirill-shadow"><strong>Внутри ГУАП</strong></button>
-                          <button class="story-point" type="button" data-story-start="guap-classmates"><strong>После грома</strong></button>
-                          <button class="story-point" type="button" data-story-start="history-card-felt"><strong>Карты в коморке</strong></button>
-                        </div>
-                        <ul class="story-branches story-endings" data-story-achievements="history-school" aria-label="Достижения университетской ветки"></ul>
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    <div class="story-tree-node">
-                      <button class="story-point story-point-art" type="button" data-story-start="work-catamaran">
-                        <img src="assets/route/work-catamaran.webp" alt="" loading="lazy">
-                        <strong>На работу</strong>
-                      </button>
-                    </div>
-                    <ul class="story-branches">
-                      <li>
-                        <div class="story-tree-node story-chapter-points">
-                          <button class="story-point" type="button" data-story-start="shift-money">
-                            <span class="story-point-type">После дороги</span><strong>В мастерской</strong>
-                          </button>
-                          <button class="story-point" type="button" data-story-start="shift-rise"><strong>После смены</strong></button>
-                        </div>
-                        <ul class="story-branches story-endings" data-story-endings="shift-rise" aria-label="Концовки рабочей ветки"></ul>
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    <div class="story-tree-node">
-                      <button class="story-point story-point-art story-point-fork" type="button" data-story-start="home">
-                        <img src="assets/route/home-desk.webp" alt="" loading="lazy">
-                        <strong>Остаться дома</strong>
-                      </button>
-                    </div>
-                    <ul class="story-branches story-home-options">
-                      <li>
-                        <div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-blender"><strong>Blender</strong></button></div>
-                        <ul class="story-branches story-endings" data-story-achievements="blender-neva-sunrise" aria-label="Достижение ветки Blender"></ul>
-                      </li>
-                      <li>
-                        <div class="story-tree-node story-chapter-points">
-                          <button class="story-point" type="button" data-story-start="home-phone"><strong>?????????</strong></button>
-                          <button id="story-night-start" class="story-point story-point-fork" type="button" data-story-start="night-choice" hidden><strong>Перед сном</strong></button>
-                        </div>
-                        <ul class="story-branches story-endings" data-story-endings="home-phone" aria-label="Концовки этой ветки"></ul>
-                      </li>
-                      <li>
-                        <div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-shopping"><strong>Ozon</strong></button></div>
-                        <ul class="story-branches">
-                          <li>
-                            <div class="story-tree-node"><button class="story-point story-point-fork" type="button" data-story-start="ozon-decide"><strong>Ангел или демон</strong></button></div>
-                            <ul class="story-branches story-endings" data-story-achievements="ozon-decide ozon-pin ozon-demon-grin" aria-label="Достижения ветки Ozon"></ul>
-                          </li>
-                        </ul>
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </section>
-
     <footer class="footer"><span class="footer-mark" aria-hidden="true"><i></i><i></i><i></i></span> Minigames</footer>
   </main>
 
   <main id="novel" class="novel" hidden>
     <nav class="game-nav" aria-label="Управление игрой">
       <a class="nav-link" id="game-back" href="#">К играм</a>
-      <a class="nav-link game-map-link" href="#story-map">Карта сюжета</a>
+      <a class="nav-link game-map-link" href="#story-map" hidden>Карта сюжета</a>
       <span id="game-label">День Серёжи</span>
     </nav>
 
     <div class="stage">
+      <nav id="novel-tabs" class="collection-tabs" aria-label="Разделы игры «День Серёжи»">
+        <a id="achievements-tab" href="#achievements">Достижения</a>
+        <a id="characters-tab" href="#characters">Персонажи</a>
+        <a id="story-map-tab" href="#story-map">Карта сюжета</a>
+      </nav>
+
       <section id="game-menu" class="game-menu">
         <div class="cover">
           <img src="assets/cover.webp" alt="Два возможных вечера Серёжи — прогулка с девушкой по Петербургу и игра за компьютером в одиночестве">
@@ -220,6 +70,155 @@
           <p class="genre">Визуальная новелла</p>
           <h1 id="menu-title" tabindex="-1">День Серёжи</h1>
           <button id="play" class="pixel-button" type="button"><span class="play-icon" aria-hidden="true"></span> Play</button>
+        </div>
+      </section>
+
+      <section id="achievements-panel" aria-labelledby="achievements-title" hidden>
+        <div class="section-heading">
+          <h2 id="achievements-title" tabindex="-1">Достижения</h2>
+          <span class="section-rule" aria-hidden="true"></span>
+        </div>
+        <div class="achievement-heading">
+          <h3>День Серёжи</h3>
+          <p id="achievement-progress"></p>
+        </div>
+        <div id="achievement-list" class="achievement-list"></div>
+      </section>
+
+      <section id="characters-panel" aria-labelledby="characters-title" hidden>
+        <div class="section-heading">
+          <h2 id="characters-title" tabindex="-1">Персонажи</h2>
+          <span class="section-rule" aria-hidden="true"></span>
+        </div>
+        <div id="character-list" class="character-list"></div>
+        <div class="character-tools">
+          <button id="reset-characters" class="choice" type="button">Сбросить открытых персонажей</button>
+          <p id="character-reset-status" role="status"></p>
+        </div>
+      </section>
+
+      <section id="character-story-panel" aria-labelledby="character-story-title" hidden>
+        <a class="nav-link character-story-back" href="#characters">← К персонажам</a>
+        <div class="character-story-header">
+          <img id="character-story-portrait" width="96" height="96" alt="">
+          <div>
+            <h2 id="character-story-title" tabindex="-1"></h2>
+            <p id="character-story-qualifier" hidden></p>
+            <button id="character-story-play" class="pixel-button" type="button" hidden>Пройти сюжет</button>
+          </div>
+        </div>
+        <p id="character-story-empty" class="character-story-empty" hidden>Сюжет пока не добавлен.</p>
+        <ol id="character-story-episodes" class="character-story-episodes" aria-label="Карта эпизодов" hidden></ol>
+      </section>
+
+      <section id="story-map-panel" aria-labelledby="story-map-title" hidden>
+        <div class="section-heading">
+          <h2 id="story-map-title" tabindex="-1">Карта сюжета</h2>
+          <span class="section-rule" aria-hidden="true"></span>
+        </div>
+        <div class="story-map-heading">
+          <div>
+            <h3>День Серёжи</h3>
+            <p>Выбери, с какой ветки или развилки продолжить.</p>
+          </div>
+          <div class="story-map-resume">
+            <button id="resume-decision" class="pixel-button" type="button" aria-describedby="resume-detail" disabled>Последняя развилка</button>
+            <p id="resume-detail"></p>
+          </div>
+        </div>
+        <div class="story-board">
+          <ul class="story-tree" aria-label="Ветки Дня Серёжи">
+            <li>
+              <div class="story-tree-node">
+                <button class="story-point story-point-fork" type="button" data-story-start="morning">
+                  <span class="story-point-type">Начало игры</span>
+                  <strong>Утро</strong>
+                </button>
+                <div class="story-morning-options" aria-label="Утренние ветки">
+                  <button class="story-point story-point-small" type="button" data-story-start="coffee">Кофе</button>
+                  <button class="story-point story-point-small" type="button" data-story-start="tea">Чай</button>
+                </div>
+              </div>
+              <ul class="story-branches">
+                <li>
+                  <div class="story-tree-node">
+                    <button class="story-point story-point-fork" type="button" data-story-start="plans">
+                      <span class="story-point-type">Развилка</span><strong>Что делать дальше?</strong>
+                    </button>
+                  </div>
+                  <ul class="story-branches">
+                    <li>
+                      <div class="story-tree-node">
+                        <button class="story-point story-point-art" type="button" data-story-start="school-door">
+                          <img src="assets/route/school-snow.webp" alt="" loading="lazy">
+                          <strong>На пары</strong>
+                        </button>
+                      </div>
+                      <ul class="story-branches">
+                        <li>
+                          <div class="story-tree-node story-chapter-points">
+                            <button class="story-point" type="button" data-story-start="kirill-shadow"><strong>Внутри ГУАП</strong></button>
+                            <button class="story-point" type="button" data-story-start="guap-classmates"><strong>После грома</strong></button>
+                            <button class="story-point" type="button" data-story-start="history-card-felt"><strong>Карты в коморке</strong></button>
+                          </div>
+                          <ul class="story-branches story-endings" data-story-achievements="history-school" aria-label="Достижения университетской ветки"></ul>
+                        </li>
+                      </ul>
+                    </li>
+                    <li>
+                      <div class="story-tree-node">
+                        <button class="story-point story-point-art" type="button" data-story-start="work-catamaran">
+                          <img src="assets/route/work-catamaran.webp" alt="" loading="lazy">
+                          <strong>На работу</strong>
+                        </button>
+                      </div>
+                      <ul class="story-branches">
+                        <li>
+                          <div class="story-tree-node story-chapter-points">
+                            <button class="story-point" type="button" data-story-start="shift-money">
+                              <span class="story-point-type">После дороги</span><strong>В мастерской</strong>
+                            </button>
+                            <button class="story-point" type="button" data-story-start="shift-rise"><strong>После смены</strong></button>
+                          </div>
+                          <ul class="story-branches story-endings" data-story-endings="shift-rise" aria-label="Концовки рабочей ветки"></ul>
+                        </li>
+                      </ul>
+                    </li>
+                    <li>
+                      <div class="story-tree-node">
+                        <button class="story-point story-point-art story-point-fork" type="button" data-story-start="home">
+                          <img src="assets/route/home-desk.webp" alt="" loading="lazy">
+                          <strong>Остаться дома</strong>
+                        </button>
+                      </div>
+                      <ul class="story-branches story-home-options">
+                        <li>
+                          <div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-blender"><strong>Blender</strong></button></div>
+                          <ul class="story-branches story-endings" data-story-achievements="blender-neva-sunrise" aria-label="Достижение ветки Blender"></ul>
+                        </li>
+                        <li>
+                          <div class="story-tree-node story-chapter-points">
+                            <button class="story-point" type="button" data-story-start="home-phone"><strong>?????????</strong></button>
+                            <button id="story-night-start" class="story-point story-point-fork" type="button" data-story-start="night-choice" hidden><strong>Перед сном</strong></button>
+                          </div>
+                          <ul class="story-branches story-endings" data-story-endings="home-phone" aria-label="Концовки этой ветки"></ul>
+                        </li>
+                        <li>
+                          <div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-shopping"><strong>Ozon</strong></button></div>
+                          <ul class="story-branches">
+                            <li>
+                              <div class="story-tree-node"><button class="story-point story-point-fork" type="button" data-story-start="ozon-decide"><strong>Ангел или демон</strong></button></div>
+                              <ul class="story-branches story-endings" data-story-achievements="ozon-decide ozon-pin ozon-demon-grin" aria-label="Достижения ветки Ozon"></ul>
+                            </li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
         </div>
       </section>
 

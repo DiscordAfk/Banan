@@ -31,9 +31,9 @@ const choices = document.querySelector('#choices');
 const continueButton = document.querySelector('#continue');
 const sceneBackButtons = document.querySelectorAll('[data-scene-back]');
 const backLink = document.querySelector('#game-back');
-const gamesPanel = document.querySelector('#games-panel');
+const gameMapLink = novel.querySelector('.game-map-link');
+const novelTabs = novel.querySelector('#novel-tabs');
 const achievementsPanel = document.querySelector('#achievements-panel');
-const gamesTab = document.querySelector('#games-tab');
 const achievementsTab = document.querySelector('#achievements-tab');
 const charactersPanel = document.querySelector('#characters-panel');
 const charactersTab = document.querySelector('#characters-tab');
@@ -484,7 +484,7 @@ function advancePhoneRound() {
 }
 
 function showScreen(screen) {
-  if (screen === 'catalog' || screen === 'menu') rewardAudio.pause();
+  if (screen !== 'story' && screen !== 'ending') rewardAudio.pause();
   if (screen !== 'story') {
     clearSceneTimers();
     clearTimeout(morningProfileTimer);
@@ -498,6 +498,8 @@ function showScreen(screen) {
   }
   catalog.hidden = screen !== 'catalog';
   novel.hidden = screen === 'catalog';
+  novelTabs.hidden = screen !== 'menu' && screen !== 'details';
+  gameMapLink.hidden = screen !== 'story';
   menu.hidden = screen !== 'menu';
   story.hidden = screen !== 'story';
   ending.hidden = screen !== 'ending';
@@ -1107,10 +1109,11 @@ function syncRoute(moveFocus = false) {
   const inAchievements = hash === '#achievements';
   const inCharacters = hash === '#characters';
   const inStoryMap = hash === '#story-map';
-  const highlightedTab = inStoryMap ? storyMapTab : inAchievements ? achievementsTab : inCharacters || inCharacterStory ? charactersTab : gamesTab;
-  for (const tab of [gamesTab, achievementsTab, charactersTab, storyMapTab]) tab.removeAttribute('aria-current');
-  highlightedTab.setAttribute('aria-current', 'page');
-  gamesPanel.hidden = inAchievements || inCharacters || inStoryMap || inCharacterStory;
+  const highlightedTab = inStoryMap ? storyMapTab : inAchievements ? achievementsTab : inCharacters || inCharacterStory ? charactersTab : null;
+  for (const tab of [achievementsTab, charactersTab, storyMapTab]) {
+    if (tab === highlightedTab) tab.setAttribute('aria-current', 'page');
+    else tab.removeAttribute('aria-current');
+  }
   achievementsPanel.hidden = !inAchievements;
   charactersPanel.hidden = !inCharacters;
   storyMapPanel.hidden = !inStoryMap;
@@ -1125,8 +1128,8 @@ function syncRoute(moveFocus = false) {
     endingPreview.close();
   }
 
-  const pageTitle = inGame ? 'День Серёжи' : inCharacterStory ? characterStoryTitle.textContent : highlightedTab === gamesTab ? '' : highlightedTab.textContent;
-  document.title = pageTitle ? `${pageTitle} — Minigames` : 'Minigames';
+  const sectionTitle = inCharacterStory ? characterStoryTitle.textContent : highlightedTab?.textContent;
+  document.title = sectionTitle ? `${sectionTitle} — День Серёжи — Minigames` : inGame ? 'День Серёжи — Minigames' : 'Minigames';
   const start = pendingStoryStart;
   pendingStoryStart = undefined;
   if (inGame && start) {
@@ -1135,9 +1138,9 @@ function syncRoute(moveFocus = false) {
   }
 
   activeCharacterStory = undefined;
-  showScreen(inGame ? 'menu' : 'catalog');
+  showScreen(inGame ? 'menu' : highlightedTab ? 'details' : 'catalog');
   if (moveFocus) {
-    const focusTarget = inGame ? '#menu-title' : inStoryMap ? '#story-map-title' : inAchievements ? '#achievements-title' : inCharacterStory ? '#character-story-title' : inCharacters ? '#characters-title' : '#games-tab';
+    const focusTarget = inGame ? '#menu-title' : inStoryMap ? '#story-map-title' : inAchievements ? '#achievements-title' : inCharacterStory ? '#character-story-title' : inCharacters ? '#characters-title' : '#collection-title';
     document.querySelector(focusTarget).focus({ preventScroll: true });
     window.scrollTo(0, 0);
   }
