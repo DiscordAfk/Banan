@@ -1105,7 +1105,7 @@ function characterCard(id, { popup = false, reveal = false } = {}) {
 function renderCharacters() {
   const showAll = developerMode && developerUnlockCharacters.checked;
   characterList.replaceChildren(...Object.keys(characters).map((id) => {
-    const visible = showAll || id === 'seryozha' || discoveredCharacters.has(id);
+    const visible = showAll || id === 'seryozha' || characters[id].visibleFromStart || discoveredCharacters.has(id);
     return visible ? characterCard(id) : lockedCharacterCard();
   }));
 }
