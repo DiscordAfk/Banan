@@ -388,8 +388,9 @@ function dlcMenuHash(character, section) {
   return section ? `#dlc/${character}/${section}` : `#dlc/${character}`;
 }
 
-function renderDlc() {
-  dlcList.replaceChildren(...downloadableStories.map(({ character, title, codeHash, roadmap }) => {
+function renderDlc(selectedDlc) {
+  const entries = selectedDlc ? [selectedDlc] : downloadableStories;
+  dlcList.replaceChildren(...entries.map(({ character, title, codeHash, roadmap }) => {
     const firstScene = roadmap?.[0]?.scene;
     const card = dlcCardTemplate.content.firstElementChild.cloneNode(true);
     card.querySelector('img').src = artPath(characters[character].art);
@@ -440,6 +441,10 @@ function renderDlc() {
         localStorage.setItem(dlcStoragePrefix + character, '1');
       } catch {
         // Access lasts for this visit if storage is unavailable.
+      }
+      if (window.location.hash === dlcMenuHash(character)) {
+        syncRoute(true);
+        return;
       }
       form.reset();
       form.hidden = true;
@@ -1071,7 +1076,14 @@ function characterCard(id, { popup = false, reveal = false } = {}) {
   if (!popup && canOpenCharacterStory(id)) {
     const actions = document.createElement('div');
     actions.className = 'character-story-actions';
-    if (id === 'seryozha' || characterStories[id].episodes.length) {
+    const dlc = downloadableStories.find(({ character, roadmap }) => character === id && roadmap?.[0]?.scene);
+    if (dlc) {
+      const play = document.createElement('a');
+      play.className = 'pixel-button';
+      play.href = dlcMenuHash(id);
+      play.textContent = `Пройти сюжет ${characterStories[id].name}`;
+      actions.append(play);
+    } else if (id === 'seryozha' || characterStories[id].episodes.length) {
       const play = document.createElement('button');
       play.type = 'button';
       play.className = 'pixel-button';
@@ -1580,9 +1592,11 @@ function syncRoute(moveFocus = false) {
     window.history.replaceState(null, '', hash);
   }
   const [, dlcCharacter, dlcSection] = hash.match(/^#dlc\/([^/]+)(?:\/(achievements|story-map|all-scenes))?$/) ?? [];
-  const dlc = downloadableStories.find(({ character, roadmap }) =>
-    character === dlcCharacter && roadmap?.[0]?.scene && hasDlcAccess(character));
-  if (hash.startsWith('#dlc/') && !dlc) {
+  const dlcEntry = downloadableStories.find(({ character, roadmap }) =>
+    character === dlcCharacter && roadmap?.[0]?.scene);
+  const dlc = dlcEntry && hasDlcAccess(dlcCharacter) ? dlcEntry : undefined;
+  const dlcToActivate = dlcEntry && !dlc && !dlcSection && canActivateDlc(dlcCharacter) ? dlcEntry : undefined;
+  if (hash.startsWith('#dlc/') && !dlc && !dlcToActivate) {
     hash = '#dlc';
     window.history.replaceState(null, '', hash);
   }
@@ -1590,7 +1604,7 @@ function syncRoute(moveFocus = false) {
   const inAchievements = hash === '#achievements';
   const inCharacters = hash === '#characters';
   const inStoryMap = hash === '#story-map';
-  const inDlc = hash === '#dlc';
+  const inDlc = hash === '#dlc' || Boolean(dlcToActivate);
   const inAllScenes = developerMode && hash === '#all-scenes';
   const highlightedTab = inAllScenes ? allScenesTab : inStoryMap ? storyMapTab : inAchievements ? achievementsTab : inCharacters || inCharacterStory ? charactersTab : inDlc ? dlcTab : null;
   for (const tab of [achievementsTab, charactersTab, storyMapTab, allScenesTab, dlcTab]) {
@@ -1614,7 +1628,7 @@ function syncRoute(moveFocus = false) {
   if (inAllScenes) renderSceneGallery(allScenesPanel);
   if (inAchievements) renderAchievements();
   if (inCharacters) renderCharacters();
-  if (inDlc) renderDlc();
+  if (inDlc) renderDlc(dlcToActivate);
   if (dlc) renderDlcMenu(dlc, dlcSection);
   if (inCharacterStory) renderCharacterStoryMap(characterStoryId);
   if (inStoryMap) {
@@ -1624,7 +1638,7 @@ function syncRoute(moveFocus = false) {
     endingPreview.close();
   }
 
-  const sectionTitle = dlc?.title ?? (inCharacterStory ? characterStoryTitle.textContent : highlightedTab?.textContent);
+  const sectionTitle = (dlc ?? dlcToActivate)?.title ?? (inCharacterStory ? characterStoryTitle.textContent : highlightedTab?.textContent);
   document.title = sectionTitle ? `${sectionTitle} — День Серёжи — Minigames` : inGame ? 'День Серёжи — Minigames' : 'Minigames';
   const start = pendingStoryStart;
   pendingStoryStart = undefined;
@@ -1636,7 +1650,8 @@ function syncRoute(moveFocus = false) {
   activeCharacterStory = undefined;
   showScreen(dlc ? 'dlc-menu' : inGame ? 'menu' : highlightedTab ? 'details' : 'catalog', dlc, dlcSection);
   if (moveFocus) {
-    const focusTarget = dlc ? `#dlc-${dlcSection ?? 'menu'}-title` : inGame ? '#menu-title' : inCharacterStory ? '#character-story-title' : highlightedTab ? `${highlightedTab.hash}-title` : '#collection-title';
+    const focusTarget = dlcToActivate ? '#dlc-list input[name="code"]'
+      : dlc ? `#dlc-${dlcSection ?? 'menu'}-title` : inGame ? '#menu-title' : inCharacterStory ? '#character-story-title' : highlightedTab ? `${highlightedTab.hash}-title` : '#collection-title';
     document.querySelector(focusTarget).focus({ preventScroll: true });
     window.scrollTo(0, 0);
   }
@@ -1922,8 +1937,14 @@ window.addEventListener('storage', (event) => {
     if (!charactersPanel.hidden) renderCharacters();
     const openDlc = !dlcMenuPanel.hidden && window.location.hash.split('/')[1] === id;
     if (openDlc && !hasDlcAccess(id)) syncRoute(true);
-    else if (!dlcPanel.hidden) renderDlc();
+    else if (!dlcPanel.hidden) {
+      if (window.location.hash === '#dlc') renderDlc();
+      else if (window.location.hash === dlcMenuHash(id)) syncRoute(true);
+    }
     else if (event.newValue !== '1' && !characterStoryPanel.hidden && window.location.hash === characterStoryHash(id)) syncRoute(true);
+  }
+  if (event.newValue === '1' && event.key === dlcStoragePrefix + window.location.hash.split('/')[1] && !dlcPanel.hidden) {
+    syncRoute();
   }
   const rewardChanged = event.key === endingsStorageKey || achievements.some(({ id }) => event.key === gameStoragePrefix + id);
   const dlcRewardChanged = downloadableStories.some(({ achievements: results = [] }) =>
