@@ -207,6 +207,7 @@ const dianaAliasStorageKey = `${characterStoragePrefix}diana-alias`;
 const mutedSoundStorageKey = 'minigames.settings.mute-sound';
 const progressResetStorageKey = 'minigames.settings.progress-reset';
 const discoveredCharacters = new Set();
+const previewedCharacters = new Set();
 let dianaAlias;
 const profileQueue = [];
 let activeProfile;
@@ -928,6 +929,7 @@ function updateSceneBack() {
 
 function startStory(key, { characterStory, ...options } = {}) {
   sceneHistory.length = 0;
+  previewedCharacters.clear();
   activeCharacterStory = characterStory;
   phoneQuiz = undefined;
   if (scenes[key].onlyEndCard) showEndCard(scenes[key]);
@@ -1032,7 +1034,8 @@ function characterCard(id, { popup = false, reveal = false } = {}) {
     const favorite = document.createElement('p');
     favorite.className = 'character-favorite';
     favorite.textContent = 'Фаворит среди девушек на данный момент — ';
-    if (discoveredCharacters.has('yana')) {
+    const encountered = popup ? encounteredCharacters() : discoveredCharacters;
+    if (encountered.has('yana')) {
       const correction = document.createElement('span');
       correction.className = 'favorite-correction';
       correction.classList.toggle('is-writing', reveal);
@@ -1056,7 +1059,7 @@ function characterCard(id, { popup = false, reveal = false } = {}) {
       revealName.append(questions, answer);
       favorite.append(revealName, '.');
     } else {
-      favorite.append(discoveredCharacters.has('diana') ? characters.diana.name : '?????', '.');
+      favorite.append(encountered.has('diana') ? characters.diana.name : '?????', '.');
     }
     info.append(favorite);
   }
@@ -1127,19 +1130,25 @@ function resetCharacters() {
   renderCharacters();
 }
 
+function encounteredCharacters() {
+  return developerMode ? previewedCharacters : discoveredCharacters;
+}
+
 function showNextCharacterProfile() {
-  if (developerMode || story.hidden || characterProfile.open) return;
+  if (story.hidden || characterProfile.open) return;
+  const encountered = encounteredCharacters();
   let entry;
   do {
     entry = profileQueue.shift();
-  } while (entry && !entry.reveal && discoveredCharacters.has(entry.id));
+  } while (entry && !entry.reveal && encountered.has(entry.id));
   if (!entry) return;
   activeProfile = entry.id;
   const card = characterCard(entry.id, { popup: true, reveal: entry.reveal });
   characterProfileBody.classList.toggle('character-unlock', !entry.reveal);
   characterProfileBody.replaceChildren(...(entry.reveal ? [card] : [lockedCharacterCard(true), card]));
   characterProfile.showModal();
-  discoveredCharacters.add(entry.id);
+  encountered.add(entry.id);
+  if (developerMode) return;
   try {
     localStorage.setItem(characterStoragePrefix + entry.id, '1');
   } catch {
@@ -1148,7 +1157,7 @@ function showNextCharacterProfile() {
 }
 
 function showCharacterEncounters(key, meet = []) {
-  if (key === 'morning' && !discoveredCharacters.has('seryozha') && morningProfileTimer === undefined) {
+  if (key === 'morning' && !encounteredCharacters().has('seryozha') && morningProfileTimer === undefined) {
     morningProfileTimer = setTimeout(() => {
       morningProfileTimer = undefined;
       profileQueue.push({ id: 'seryozha' });
@@ -1583,7 +1592,7 @@ function renderScene(key, { phone, remember = true } = {}) {
   const focusTarget = scene.intertitle ? intertitleNext : scene.silentFrame ? continueButton : sceneTitle;
   focusTarget.focus({ preventScroll: true });
   window.scrollTo(0, 0);
-  if (!activeCharacterStory && !developerMode) showCharacterEncounters(key, scene.meet);
+  if (!activeCharacterStory || developerMode) showCharacterEncounters(key, scene.meet);
 }
 
 function syncRoute(moveFocus = false) {
@@ -1775,7 +1784,7 @@ characterProfileBody.addEventListener('animationstart', (event) => {
 });
 characterProfile.addEventListener('close', () => {
   characterRevealAudio.pause();
-  if (activeProfile === 'yana' || (activeProfile === 'diana' && !discoveredCharacters.has('yana'))) {
+  if (activeProfile === 'yana' || (activeProfile === 'diana' && !encounteredCharacters().has('yana'))) {
     profileQueue.unshift({ id: 'seryozha', reveal: true });
   }
   activeProfile = undefined;
@@ -1870,6 +1879,7 @@ function setDeveloperMode(enabled) {
   developerUnlockCharacters.checked = false;
   developerSaveAchievements.checked = false;
   if (!enabled || (story.hidden && ending.hidden)) syncRoute();
+  else if (!story.hidden) showCharacterEncounters(activePosition.key, activeScene.meet);
 }
 
 developerCode.addEventListener('input', () => {
