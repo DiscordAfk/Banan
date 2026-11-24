@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=scene-gallery">
-  <script src="story.js?v=nika-card" defer></script>
+  <link rel="stylesheet" href="style.css?v=museum-outing">
+  <script src="story.js?v=museum-outing" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=nika-card" defer></script>
+  <script src="game.js?v=museum-outing" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -243,6 +243,12 @@
                             <button id="story-night-start" class="story-point story-point-fork" type="button" data-story-start="night-choice" disabled hidden><strong>Перед сном</strong></button>
                           </div>
                           <ul class="story-branches story-endings" data-story-endings="home-phone" aria-label="Концовки этой ветки"></ul>
+                          <ul class="story-branches">
+                            <li>
+                              <div class="story-tree-node"><button class="story-point story-point-fork" type="button" data-story-start="night-outing-glances" disabled><strong>Идти вместе?</strong></button></div>
+                              <ul class="story-branches story-endings" data-story-achievements="night-museum-space" aria-label="Достижение в музее"></ul>
+                            </li>
+                          </ul>
                         </li>
                         <li>
                           <div class="story-tree-node"><button class="story-point" type="button" data-story-start="home-shopping" disabled><strong>Ozon</strong></button></div>

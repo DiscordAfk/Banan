@@ -1348,6 +1348,18 @@ function renderNightProps(scene) {
       sceneArt.alt = alt;
     });
   }
+  if (prop === 'museum-timelapse') {
+    const frames = [
+      ['night-museum-point', 'Подруга Дианы показывает остальным детали большого макета.'],
+      ['night-museum-recover', 'Дима и Кирилл приходят в себя и с интересом разглядывают экспонат.'],
+    ];
+    for (const [art] of frames) preloadArt(artPath(art));
+    runSceneSequence([1050, 2100], (index) => {
+      const [art, alt] = frames[index];
+      sceneArt.src = artPath(art);
+      sceneArt.alt = alt;
+    });
+  }
   nightGameName.hidden = prop !== 'night-games';
   if (!nightGameName.hidden) {
     nightGameName.textContent = nightGames[0][0];
@@ -1521,6 +1533,10 @@ function renderScene(key, { phone, remember = true } = {}) {
     : scene.speaker ?? 'Серёжа';
   sceneLine.hidden = !scene.line || scene.callStage > 0 || scene.holdem?.layout === 'manga';
   sceneLine.textContent = (!discoveredCharacters.has('diana') ? scene.unknownLine : undefined) ?? scene.line ?? '';
+  dialogue.classList.toggle('has-framed-line', Boolean(scene.framedLine));
+  choices.classList.toggle('choices-overlay', Boolean(scene.choiceOverlay));
+  if (scene.choiceOverlay) scenePicture.append(choices);
+  else if (choices.parentElement !== dialogue) dialogue.insertBefore(choices, answerFeedback);
   choices.replaceChildren();
   for (const [label, next] of scene.options ?? []) {
     addChoice(label, () => goToScene(next));

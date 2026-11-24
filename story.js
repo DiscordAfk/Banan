@@ -15,11 +15,14 @@ const ozonDeltarune = { id: 'ozon-deltarune', title: 'На#!$ Deltarune!!!', art
 const ozonCrossroads = { id: 'ozon-crossroads', title: 'Ад или Рай', art: 'ozon-crossroads-award', fullArt: true, showOnScene: true };
 const ozonDoubt = { id: 'ozon-doubt', title: 'Правильный выбор или нет...?', art: 'ozon-demon-grin-kirill', fullArt: true, showOnScene: true };
 const newDay = { id: 'new-day', title: 'Новый день', art: 'blender-neva-sunrise', fullArt: true, showOnScene: true };
-const achievements = [backInTime, pokerBeginner, ozonDeltarune, ozonCrossroads, ozonDoubt, newDay];
+const secondSpaceTrip = { id: 'second-space-trip', title: 'Отправлен в космос второй раз', art: 'night-museum-space', fullArt: true, showOnScene: true };
+const achievements = [backInTime, pokerBeginner, ozonDeltarune, ozonCrossroads, ozonDoubt, newDay, secondSpaceTrip];
 
 const characters = {
   seryozha: { name: 'Серёжа', art: 'profile-seryozha', keyword: 'Экспонат', description: 'Главный герой, студент ГУАП. Любит компьютерные игры, среди которых War Thunder, Hearts of Iron IV (HOI4), Hollow Knight, Hollow Knight: Silksong, Rain World и Factorio. Интересуется 3D-моделированием в Blender. Пока сам не понимает, ищет ли девушку. Подрабатывает установкой дверей.' },
   diana: { name: 'Диана', art: 'profile-diana', keyword: 'Жопа', description: 'Одногруппница Серёжи в ГУАП. Отлично сдала ЕГЭ и особенно хорошо разбирается в точных науках. Играла в Phasmophobia, любит браузерные игры. В разработке игр ей нравится придумывать сюжет и продумывать персонажей. Серёже нравится Диана, а что она чувствует к нему, пока непонятно.' },
+  yuliana: { name: 'Юлиана', art: 'profile-yuliana', keyword: '??????', description: 'Одногруппницы Серёжи и Дианы. Подруга Дианы #1.' },
+  dianaFriend: { name: 'Имя пока что', art: 'profile-diana-friend', keyword: '??????', description: 'Одногруппницы Серёжи и Дианы. Подруга Дианы #2.' },
   kirill: { name: 'Кирилл', art: 'profile-kirill', keyword: 'Душнила', description: 'Лысый школьный друг Серёжи. Вместе учились со 2-го по 11-й класс. Под конец 11-го класса играли в школе в карты и покер. Кирилл обожает Deltarune, у него есть девушка. С тех пор как началась учёба в ГУАП, он почти перестал играть с Серёжей и Димой в компьютерные игры.' },
   dima: { name: 'Дима', art: 'profile-dima', keyword: 'Лень', description: 'Школьный друг Серёжи с 1-го по 11-й класс. Ленивый, любит компьютерные игры и пересмотрел кучу аниме. Серёжа научил его прогуливать, и теперь Дима пропускает занятия даже чаще своего наставника. Однажды Серёжа одним ударом в живот отправил его в космос.' },
   nikita: { name: 'Никита', art: 'profile-nikita-gigachad', keyword: 'Scrap', description: 'Школьный друг Серёжи с 10-го по 11-й класс. Увлекается физикой и всем, что с ней связано. Сам собрал радиоуправляемый самолёт. Его любимая игра — Scrap Mechanic. В компании он главный пропагандист Scrap Mechanic и Vintage Story. В школе они с Серёжей играли в карты и покер. Никита поступил в ЛЭТИ, и с начала учёбы о нём почти ничего не слышно.' },
@@ -1649,7 +1652,7 @@ const sleepBranch = [
     line: `Сегодня на предмете «${lectureSubject}» даже скучно не было. Скорее весело.`,
   },
   {
-    id: 'night-sleep-friends', art: 'night-sleep-friends', title: 'Две компании',
+    id: 'night-sleep-friends', art: 'night-sleep-friends', title: 'Две компании', meet: ['yuliana', 'dianaFriend'],
     alt: 'В коридоре Диану встречают две подруги, а к Серёже подходят Дима и Кирилл.',
     line: 'Выходим в коридор. Две подруги Дианы тут же засыпают её вопросами и зовут с собой. Дима и Кирилл подхватывают меня и тянут в другую сторону.',
   },
@@ -1663,9 +1666,195 @@ const sleepBranch = [
     alt: 'Серёжа и Диана в разных компаниях опускают головы, затем снова обращаются к друзьям.',
     line: 'Мы оба опускаем головы. Тут друзья снова тормошат нас и предлагают повеселиться вместе. Мы тяжело вздыхаем каждый в своей компании и одновременно отвечаем: «Ладно, давайте».',
   },
+  {
+    id: 'night-outing-together', art: 'night-outing-together', title: 'Одновременно', speaker: 'Серёжа и Диана', framedLine: true,
+    alt: 'Серёжа и Диана разом поднимают головы и отвечают друзьям.',
+    line: 'Но только вместе!',
+  },
+  {
+    id: 'night-outing-spark', art: 'night-outing-spark', title: 'Искра',
+    alt: 'Между Серёжей и Дианой вспыхивает золотистая искра.',
+    line: 'Диана ловит мой взгляд. На секунду кажется, что в коридоре только мы вдвоём.',
+  },
+  {
+    id: 'night-outing-glances', art: 'night-outing-glances', title: 'Идти вместе?',
+    alt: 'Друзья Серёжи и подруги Дианы удивлённо и неприязненно косятся друг на друга.',
+    line: 'Обе компании замолкают и смотрят друг на друга так, словно им предложили заключить перемирие.',
+    choiceOverlay: true,
+    options: [['Идти вместе', 'night-museum-girls'], ['Не идти', 'night-church-refuse']],
+  },
 ];
 
-for (const chapter of [blenderDawn, nightAfterEnding, sleepBranch]) {
+const museumOuting = [
+  {
+    id: 'night-museum-girls', art: 'night-museum-girls', title: 'Только ради тебя', speaker: 'Подруги Дианы', framedLine: true,
+    alt: 'Подруги Дианы скрещивают руки и отворачиваются, надув щёки.',
+    line: 'Ну только если ради тебя, Диана…',
+  },
+  {
+    id: 'night-museum-boys', art: 'night-museum-boys', title: 'Должен будешь', speaker: 'Дима и Кирилл', framedLine: true,
+    alt: 'Дима и Кирилл соглашаются сквозь зубы.',
+    line: 'Ладно, Серёжа, должен нам будешь.',
+  },
+  {
+    id: 'night-museum-arrival', art: 'night-museum-arrival', title: 'У музея',
+    alt: 'Шестеро студентов стоят во дворе Военно-исторического музея артиллерии, инженерных войск и войск связи.',
+    line: 'Через некоторое время мы уже во дворе музея. Вдоль стен стоят старинные пушки.',
+  },
+  {
+    id: 'night-museum-complaint', art: 'night-museum-complaint', title: 'Куда вы нас притащили?', speaker: 'Друзья',
+    alt: 'Друзья косятся друг на друга, одна из подруг Дианы раздражённо цокает языком.',
+    line: '— Ну и куда вы нас притащили? — подруги в конце раздражённо цокают.',
+  },
+  {
+    id: 'night-museum-taunt', art: 'night-museum-taunt', title: 'Великий музей', speaker: 'Дима и Кирилл', framedLine: true,
+    alt: 'Дима и Кирилл прищуриваются и ухмыляются, нарочно поддевая девушек.',
+    line: 'Неужели девочки не знают такой ВЕЛИКИЙ музей, как Военно-исторический музей артиллерии, инженерных войск и войск связи? Ну и позор.',
+  },
+  {
+    id: 'night-museum-retort', art: 'night-museum-retort', title: 'Мы-то знаем', speaker: 'Подруги Дианы', framedLine: true,
+    alt: 'Подруги Дианы смотрят на Диму и Кирилла с прищуром, задрав носы.',
+    line: 'Мы-то всё знаем. Для вас, дебилов, спросили.',
+  },
+  {
+    id: 'night-museum-standoff', art: 'night-museum-standoff', title: 'Перепалка',
+    alt: 'Между взглядами двух компаний проскальзывает розовая молния.',
+    line: 'Они сверлят друг друга взглядами. Ещё чуть-чуть, и между ними ударит молния.',
+  },
+  {
+    id: 'night-museum-diana', art: 'night-museum-diana', title: 'Пойдём', speaker: 'Диана', framedLine: true,
+    alt: 'Диана жестом зовёт всех за собой. Серёжа улыбается ей и кивает.',
+    line: 'Ладно вам, ребята, пойдём повеселимся.',
+  },
+  {
+    id: 'night-museum-glare', art: 'night-museum-glare', title: 'Один взгляд',
+    alt: 'Едва Диана уходит вперёд, Серёжа бросает на Диму и Кирилла испепеляющий взгляд.',
+    line: 'Стоит Диане сделать шаг вперёд, как я оборачиваюсь. Дима и Кирилл всё понимают без слов.',
+  },
+  {
+    id: 'night-museum-catchup', art: 'night-museum-catchup', title: 'За Дианой',
+    alt: 'Серёжа тут же снова улыбается и вприпрыжку догоняет Диану.',
+    line: 'Улыбаюсь и догоняю Диану.',
+  },
+  {
+    id: 'night-museum-fright', art: 'night-museum-fright', title: 'Холодный пот',
+    alt: 'Дима и Кирилл бледнеют и дрожат, глаза широко распахнуты.',
+  },
+  {
+    id: 'night-museum-crouch', art: 'night-museum-crouch', title: 'На корточках',
+    alt: 'У самой брусчатки видны Дима и Кирилл, обнимающие колени. Позади стоят побледневшие девушки.',
+  },
+  {
+    id: 'night-museum-collars', art: 'night-museum-collars', title: 'Берём с собой',
+    alt: 'Подруги сглатывают, приходят в себя и хватают парней за воротники.',
+  },
+  {
+    id: 'night-museum-drag', art: 'night-museum-drag', title: 'Догоняем',
+    alt: 'Подруги тащат за воротники перепуганных Диму и Кирилла. Изо ртов парней вылетают розовые призрачные облачка.',
+  },
+  {
+    id: 'night-museum-tour', art: 'night-museum-tour', title: 'По залам музея', prop: 'museum-timelapse',
+    alt: 'Шестеро друзей гуляют среди пушек, витрин и макетов.',
+    line: 'В залах мы то замираем у витрин, то зовём друг друга посмотреть что-нибудь интересное. Дима с Кириллом постепенно приходят в себя и тоже увлекаются экспонатами.',
+  },
+  {
+    id: 'night-museum-model', art: 'night-museum-model', title: 'У витрины', speaker: 'Автор',
+    alt: 'Дима идёт вдоль стекла, почти прижавшись к нему лицом, и рассматривает модель военного грузовика.',
+    line: 'Дима так увлёкся моделью военного грузовика, что идёт вдоль витрины, едва не касаясь стекла носом.',
+  },
+  {
+    id: 'night-museum-bump', art: 'night-museum-bump', title: 'Столкновение', speaker: 'Юлиана', framedLine: true,
+    alt: 'Не глядя под ноги, Дима задевает Юлиану плечом. Она взвизгивает, и он резко оборачивается.',
+    line: 'Ай!',
+  },
+  {
+    id: 'night-museum-face', art: 'night-museum-face', title: 'Нос к носу',
+    alt: 'Дима и Юлиана оказываются лицом к лицу, между ними всего несколько сантиметров.',
+  },
+  {
+    id: 'night-museum-blink', art: 'night-museum-blink', title: 'Как ни в чём не бывало',
+    alt: 'Дима спокойно смотрит на Юлиану и медленно моргает.',
+  },
+  {
+    id: 'night-museum-steam', art: 'night-museum-steam', title: 'Пар',
+    alt: 'Юлиана краснеет, и у неё над головой поднимается облачко пара.',
+  },
+  {
+    id: 'night-museum-blush', art: 'night-museum-blush', title: 'До самых ушей',
+    alt: 'Юлиана краснеет до самых ушей и сжимает кулаки от смущения.',
+  },
+  {
+    id: 'night-museum-windup', art: 'night-museum-windup', title: 'Замах',
+    alt: 'Юлиана резко отводит руку для пощёчины, а Дима всё ещё невозмутим.',
+  },
+  {
+    id: 'night-museum-slap', art: 'night-museum-slap', title: 'Пощёчина',
+    alt: 'Юлиана даёт Диме пощёчину. Он комично отлетает в сторону.',
+  },
+  {
+    id: 'night-museum-space', art: 'night-museum-space', title: 'Второй полёт', achievement: secondSpaceTrip.id,
+    alt: 'Дима лежит на полу, испустив розовое призрачное облачко. На заднем плане красная Юлиана задирает нос.',
+  },
+];
+
+const churchDetour = [
+  {
+    id: 'night-church-refuse', art: 'night-church-refuse', title: 'Отказ', speaker: 'Друзья и подруги', framedLine: true,
+    alt: 'Четверо друзей надувают щёки. Девушки отворачиваются влево, парни вправо. Серёжа и Диана расстроенно смотрят на них.',
+    line: 'Ни за что!',
+  },
+  {
+    id: 'night-church-departure', art: 'night-church-departure', title: 'В разные стороны',
+    alt: 'Серёжа и Диана смотрят вслед уходящим друзьям.',
+    line: 'Обе компании расходятся. Мы с Дианой остаёмся в коридоре и молча смотрим им вслед.',
+  },
+  {
+    id: 'night-church-class', art: 'night-church-class', title: 'Следующая пара', speaker: 'Диана', framedLine: true,
+    alt: 'Диана опускает взгляд и прижимает к груди тетради.',
+    line: 'Я пойду на следующую пару.',
+  },
+  {
+    id: 'night-church-errand', art: 'night-church-errand', title: 'Одно дело', framedLine: true,
+    alt: 'Серёжа говорит Диане, что перед парой ему нужно кое-куда заглянуть.',
+    line: 'Мне надо кое-куда заглянуть перед парой.',
+  },
+  {
+    id: 'night-church-walk', art: 'night-church-walk', title: 'Из ГУАПа', timeBadge: 'Десять минут спустя',
+    alt: 'Серёжа выходит из ГУАПа и идёт по улице.',
+    line: 'Выхожу из ГУАПа. Примерно через десять минут дохожу до церкви.',
+  },
+  {
+    id: 'night-church-entrance', art: 'night-church-entrance', title: 'У церкви',
+    alt: 'Серёжа стоит перед тяжёлыми деревянными дверями церкви. Рядом табличка «Вход только тряпкам».',
+    line: 'На табличке у входа написано: «Вход только тряпкам».',
+  },
+  {
+    id: 'night-church-doors', art: 'night-church-doors', title: 'Тяжёлые двери', framedLine: true,
+    alt: 'Серёжа без колебаний распахивает тяжёлые деревянные двери.',
+    line: 'Я же тряпка.',
+  },
+  {
+    id: 'night-church-statue', art: 'night-church-statue', title: 'Божество Хорнетизма',
+    alt: 'Крошечная фигура Серёжи у трона огромной каменной статуи в бордовом плаще, с бледной маской и закрытыми глазами.',
+    line: 'Посреди храма на троне восседает Хорнет, божество Хорнетизма. Каменная маска обращена ко мне. Глаза закрыты.',
+  },
+  {
+    id: 'night-church-plea', art: 'night-church-plea', title: 'Просьба', framedLine: true,
+    alt: 'Серёжа поднимает голову и обращается к статуе.',
+    line: 'О великая Хорнет, помоги мне.',
+  },
+  {
+    id: 'night-church-silence', art: 'night-church-silence', title: 'Тишина',
+    alt: 'Крупный план каменной маски. Глаза статуи ещё закрыты.',
+  },
+  {
+    id: 'night-church-eyes', art: 'night-church-eyes', title: 'Глаза',
+    alt: 'Глаза неподвижной статуи раскрываются и вспыхивают жутким голубым светом.',
+  },
+  { id: 'night-church-soon', title: 'soon...', onlyEndCard: true, endCard: 'soon...', endCardArt: 'night-church-soon' },
+];
+
+for (const chapter of [blenderDawn, nightAfterEnding, sleepBranch, museumOuting, churchDetour]) {
   for (const [index, { id, ...scene }] of chapter.entries()) {
     scenes[id] = { ...scene, next: scene.options ? undefined : chapter[index + 1]?.id };
   }
