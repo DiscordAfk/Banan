@@ -10,7 +10,7 @@
   <script src="story.js?v=outing-review" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=outing-review" defer></script>
+  <script src="game.js?v=night-map" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -242,8 +242,9 @@
                             <div class="story-tree-node story-chapter-points">
                               <button class="story-point" type="button" data-story-start="home-phone" disabled><strong>?????????</strong></button>
                             </div>
-                            <ul class="story-branches story-endings" data-story-endings="home-phone" aria-label="Концовки и продолжение ветки телефона">
-                              <li hidden>
+                            <ul class="story-branches story-endings" data-story-endings="home-phone" aria-label="Концовки ветки телефона"></ul>
+                            <ul id="story-night-branch" class="story-branches" aria-label="Продолжение после концовки №4" hidden>
+                              <li>
                                 <div class="story-tree-node"><button id="story-night-start" class="story-point story-point-fork" type="button" data-story-start="night-choice" disabled><strong>Перед сном</strong></button></div>
                                 <ul class="story-branches">
                                   <li>

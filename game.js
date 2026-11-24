@@ -170,7 +170,7 @@ const historyInformaticsPlate = document.querySelector('#history-informatics-pla
 const historyLockscreen = document.querySelector('#history-lockscreen');
 const historyDoorSlam = document.querySelector('#history-door-slam');
 const endingContinue = document.querySelector('#ending-continue');
-const storyNightStart = document.querySelector('#story-night-start');
+const storyNightBranch = document.querySelector('#story-night-branch');
 
 const sceneTimers = [];
 let voiceSequence;
@@ -766,7 +766,7 @@ function showEndingPreview(result) {
 function renderStoryRewards() {
   readEndings();
   readAchievements();
-  storyNightStart.closest('li').hidden = !allBranchesOpen() && !unlockedEndings.has('first-step');
+  storyNightBranch.hidden = !allBranchesOpen() && !unlockedEndings.has('first-step');
   renderStoryStarts();
   for (const branch of [...storyEndingBranches, ...storyAchievementBranches]) {
     const achievementScenes = branch.dataset.storyAchievements?.split(' ');
@@ -774,13 +774,12 @@ function renderStoryRewards() {
       ? achievementScenes.map((key) => achievements.find(({ id }) => id === scenes[key]?.achievement)).filter(Boolean)
       : endings.filter((result) => result.branch === branch.dataset.storyEndings);
     const unlocked = achievementScenes ? unlockedAchievements : unlockedEndings;
-    for (const leaf of branch.querySelectorAll(':scope > [data-story-reward]')) leaf.remove();
-    branch.prepend(...leaves.map((result) => {
+    branch.replaceChildren(...leaves.map((result) => {
       const leaf = document.createElement('li');
-      leaf.dataset.storyReward = '';
       const card = rewardCard(result, allBranchesOpen() || unlocked.has(result.id), 'h4', true);
       card.classList.add('story-tree-node');
       leaf.append(card);
+      if (result.id === 'first-step') leaf.append(storyNightBranch);
       return leaf;
     }));
   }
