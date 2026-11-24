@@ -766,7 +766,7 @@ function showEndingPreview(result) {
 function renderStoryRewards() {
   readEndings();
   readAchievements();
-  storyNightStart.hidden = !allBranchesOpen() && !unlockedEndings.has('first-step');
+  storyNightStart.closest('li').hidden = !allBranchesOpen() && !unlockedEndings.has('first-step');
   renderStoryStarts();
   for (const branch of [...storyEndingBranches, ...storyAchievementBranches]) {
     const achievementScenes = branch.dataset.storyAchievements?.split(' ');
@@ -774,8 +774,10 @@ function renderStoryRewards() {
       ? achievementScenes.map((key) => achievements.find(({ id }) => id === scenes[key]?.achievement)).filter(Boolean)
       : endings.filter((result) => result.branch === branch.dataset.storyEndings);
     const unlocked = achievementScenes ? unlockedAchievements : unlockedEndings;
-    branch.replaceChildren(...leaves.map((result) => {
+    for (const leaf of branch.querySelectorAll(':scope > [data-story-reward]')) leaf.remove();
+    branch.prepend(...leaves.map((result) => {
       const leaf = document.createElement('li');
+      leaf.dataset.storyReward = '';
       const card = rewardCard(result, allBranchesOpen() || unlocked.has(result.id), 'h4', true);
       card.classList.add('story-tree-node');
       leaf.append(card);
@@ -1533,7 +1535,8 @@ function renderScene(key, { phone, remember = true } = {}) {
     : scene.speaker ?? 'Серёжа';
   sceneLine.hidden = !scene.line || scene.callStage > 0 || scene.holdem?.layout === 'manga';
   sceneLine.textContent = (!discoveredCharacters.has('diana') ? scene.unknownLine : undefined) ?? scene.line ?? '';
-  dialogue.classList.toggle('has-framed-line', Boolean(scene.framedLine));
+  sceneSpeaker.hidden = Boolean(scene.silentFrame);
+  sceneTitle.hidden = Boolean(scene.silentFrame);
   choices.classList.toggle('choices-overlay', Boolean(scene.choiceOverlay));
   if (scene.choiceOverlay) scenePicture.append(choices);
   else if (choices.parentElement !== dialogue) dialogue.insertBefore(choices, answerFeedback);
@@ -1578,7 +1581,8 @@ function renderScene(key, { phone, remember = true } = {}) {
   } else {
     stopRouteAnimation();
   }
-  (scene.intertitle ? intertitleNext : sceneTitle).focus({ preventScroll: true });
+  const focusTarget = scene.intertitle ? intertitleNext : scene.silentFrame ? continueButton : sceneTitle;
+  focusTarget.focus({ preventScroll: true });
   window.scrollTo(0, 0);
   if (!activeCharacterStory && !developerMode) showCharacterEncounters(key, scene.meet);
 }
@@ -1693,6 +1697,7 @@ function showEndCard(scene) {
   const character = activeCharacterStory && !inDlc && characterStories[activeCharacterStory.id];
   const next = activeCharacterStory ? undefined : scene.afterEndCard;
   const artwork = character ? undefined : scene.endCardArt;
+  ending.classList.toggle('is-art-only', Boolean(scene.artOnlyEndCard && artwork));
   endingArt.hidden = !artwork;
   if (artwork) endingArt.src = artPath(artwork);
   endingTitle.classList.toggle('ending-title-over-art', Boolean(artwork));
@@ -1706,7 +1711,12 @@ function showEndCard(scene) {
   endingMapLink.textContent = inDlc ? 'К дополнениям' : character ? 'К карте персонажа' : 'Карта сюжета';
   if (next) preloadScene(next);
   showScreen('ending');
-  endingTitle.focus();
+  if (scene.artOnlyEndCard) {
+    endingTitle.focus({ preventScroll: true });
+    window.scrollTo(0, 0);
+  } else {
+    endingTitle.focus();
+  }
 }
 
 endingContinue.addEventListener('click', () => renderScene(endingContinue.dataset.next));
