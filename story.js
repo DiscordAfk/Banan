@@ -1718,6 +1718,7 @@ const museumOuting = [
   },
   {
     id: 'night-museum-standoff', art: 'night-museum-standoff', title: 'Перепалка',
+    sound: 'assets/route/night-museum-standoff.mp3',
     silentFrame: true,
     alt: 'Между взглядами двух компаний проскальзывает розовая молния.',
   },
@@ -1798,13 +1799,14 @@ const museumOuting = [
   },
   {
     id: 'night-museum-slap', art: 'night-museum-slap', title: 'Пощёчина', speaker: 'Юлиана',
+    sound: 'assets/route/night-museum-slap.mp3',
     line: 'Дурак! Зачем так близко?!',
     alt: 'Юлиана даёт Диме пощёчину. Он комично отлетает в сторону.',
   },
   {
     id: 'night-museum-space', art: 'night-museum-space', title: 'Второй полёт', achievement: secondSpaceTrip.id,
     silentFrame: true,
-    alt: 'Дима лежит на полу, испустив розовое призрачное облачко. На заднем плане красная Юлиана задирает нос.',
+    alt: 'Дима лежит на полу, испустив розовое призрачное облачко. На заднем плане Юлиана краснеет и смущённо отводит взгляд.',
   },
 ];
 
