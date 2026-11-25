@@ -15,7 +15,7 @@ const ozonDeltarune = { id: 'ozon-deltarune', title: 'На#!$ Deltarune!!!', art
 const ozonCrossroads = { id: 'ozon-crossroads', title: 'Ад или Рай', art: 'ozon-crossroads-award', fullArt: true, showOnScene: true };
 const ozonDoubt = { id: 'ozon-doubt', title: 'Правильный выбор или нет...?', art: 'ozon-demon-grin-kirill', fullArt: true, showOnScene: true };
 const newDay = { id: 'new-day', title: 'Новый день', art: 'blender-neva-sunrise', fullArt: true, showOnScene: true };
-const secondSpaceTrip = { id: 'second-space-trip', title: 'Отправлен в космос второй раз', art: 'night-museum-space', fullArt: true, showOnScene: true };
+const secondSpaceTrip = { id: 'second-space-trip', title: 'Отправлен в космос во второй раз', art: 'night-museum-space', fullArt: true, showOnScene: true };
 const achievements = [backInTime, pokerBeginner, ozonDeltarune, ozonCrossroads, ozonDoubt, newDay, secondSpaceTrip];
 
 const characters = {
@@ -1806,7 +1806,7 @@ const museumOuting = [
   {
     id: 'night-museum-space', art: 'night-museum-space', title: 'Второй полёт', achievement: secondSpaceTrip.id,
     silentFrame: true,
-    alt: 'Дима лежит на полу, испустив розовое призрачное облачко. На заднем плане Юлиана краснеет и смущённо отводит взгляд.',
+    alt: 'Дима лежит на полу, испустив розовое призрачное облачко. На заднем плане Юлиана смущённо краснеет, задрав нос.',
   },
 ];
 
