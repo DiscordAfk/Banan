@@ -1917,6 +1917,19 @@ h1, h2, h3, p { margin: 0; }
 }
 
 
+@media (prefers-reduced-motion: no-preference) {
+  [data-night-effect='church-candles'] #scene-art {
+    animation: church-candlelight 1.7s ease-out both;
+  }
+  @keyframes church-candlelight {
+    from { filter: brightness(.08); }
+    35% { filter: brightness(.3); }
+    to { filter: brightness(1); }
+  }
+}
+[data-night-effect='church-haze'] #scene-art {
+  filter: blur(1.65px) saturate(.68) contrast(.88);
+}
 .is-dull-view #scene-art { filter: saturate(.62) brightness(.92); }
 .is-rain-reveal::after {
   content: "";
@@ -1979,6 +1992,12 @@ h1, h2, h3, p { margin: 0; }
 }
 .night-phone-note[data-note='two-chats'] div:first-child { justify-self: start; }
 .night-phone-note[data-note='two-chats'] div:last-child { justify-self: end; }
+.night-phone-note[data-note='church-steam'] > div {
+  border-color: #39515d;
+  border-radius: .2rem;
+  background: #171e28f5;
+  color: #a4d878;
+}
 .night-phone-note[data-note='received'] { inset: auto auto .6rem .55rem; }
 .sleep-bubble {
   position: absolute;
@@ -2046,6 +2065,7 @@ h1, h2, h3, p { margin: 0; }
   padding: 0;
   list-style: none;
 }
+.night-voice-grid.is-church-call { grid-template-columns: repeat(auto-fit, minmax(min(6rem, 100%), 1fr)); }
 .night-voice-tile {
   min-height: clamp(5.5rem, 13vw, 8.5rem);
   display: grid;

@@ -187,6 +187,8 @@ const nightPhoneMessages = {
   denis: ['Вызов принят', 'Денис'],
   'sleep-call': ['Входящий звонок', 'Денис'],
   'sleep-missed': ['Пропущенный звонок', 'Денис'],
+  'church-telegram': ['Жорно', '1 участник · 3000 фотографий'],
+  'church-steam': ['долдол сейчас играет', 'Counter-Strike 2'],
   'sleep-warning': ['Староста', 'Если сегодня опять пропустишь, то тебя отчислят'],
 };
 const lectureFrames = [
@@ -1263,11 +1265,13 @@ function syncVoiceSequence(playback) {
   voiceSequenceFrame = requestAnimationFrame(update);
 }
 
-function renderNightVoice(mode) {
+function renderNightVoice(mode, roster = nightRoster) {
+  const usesCustomRoster = roster !== nightRoster;
   nightVoice.hidden = !mode;
+  nightVoiceGrid.classList.toggle('is-church-call', usesCustomRoster);
   if (!mode) return;
-  const focus = nightRoster.findIndex(({ id }) => id === mode);
-  const tiles = nightRoster.map(({ nick, avatar }, index) => {
+  const focus = roster.findIndex(({ id }) => id === mode);
+  const tiles = roster.map(({ nick, avatar }, index) => {
     const tile = document.createElement('li');
     tile.className = 'night-voice-tile';
     tile.classList.toggle('is-focused', focus === index);
@@ -1282,7 +1286,7 @@ function renderNightVoice(mode) {
     return tile;
   });
   nightVoiceGrid.replaceChildren(...tiles);
-  nightReaction.hidden = focus === -1 && mode !== 'joining';
+  nightReaction.hidden = usesCustomRoster || (focus === -1 && mode !== 'joining');
   if (!nightReaction.hidden) nightReaction.src = artPath(`night-reaction-${Math.max(focus, 0) + 1}`);
   const updateCount = () => { nightVoiceCount.textContent = `В канале ${tiles.filter((tile) => !tile.hidden).length}`; };
   updateCount();
@@ -1370,8 +1374,18 @@ function renderNightProps(scene) {
       sceneArt.alt = alt;
     });
   }
-  nightGameName.hidden = prop !== 'night-games';
-  if (!nightGameName.hidden) {
+  nightGameName.hidden = prop !== 'night-games' && !scene.montageCaption;
+  if (scene.montage) {
+    nightGameName.textContent = scene.montageCaption ?? '';
+    for (const { art } of scene.montage) preloadArt(artPath(art));
+    runSceneSequence(scene.montage.map(({ delay }) => delay), (index) => {
+      const { art, alt, caption } = scene.montage[index];
+      sceneArt.src = artPath(art);
+      sceneArt.alt = alt ?? '';
+      if (caption) nightGameName.textContent = caption;
+    });
+  }
+  if (prop === 'night-games') {
     nightGameName.textContent = nightGames[0][0];
     for (const [, art] of nightGames.slice(1)) preloadArt(artPath(art));
     runSceneSequence(nightGames.slice(1).map((_, index) => 720 * (index + 1)), (index) => {
@@ -1449,7 +1463,7 @@ function renderScene(key, { phone, remember = true } = {}) {
   renderIntertitle(scene);
   renderWorkCall(scene);
   renderNightProps(scene);
-  renderNightVoice(scene.nightVoice);
+  renderNightVoice(scene.nightVoice, scene.voiceRoster);
   const blenderStage = scene.blenderStage;
   blenderLaunch.hidden = blenderStage !== 'launch';
   blenderWorkspace.hidden = blenderStage !== 'workspace';

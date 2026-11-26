@@ -16,7 +16,8 @@ const ozonCrossroads = { id: 'ozon-crossroads', title: 'Ад или Рай', art
 const ozonDoubt = { id: 'ozon-doubt', title: 'Правильный выбор или нет...?', art: 'ozon-demon-grin-kirill', fullArt: true, showOnScene: true };
 const newDay = { id: 'new-day', title: 'Новый день', art: 'blender-neva-sunrise', fullArt: true, showOnScene: true };
 const secondSpaceTrip = { id: 'second-space-trip', title: 'Отправлен в космос во второй раз', art: 'night-museum-space', fullArt: true, showOnScene: true };
-const achievements = [backInTime, pokerBeginner, ozonDeltarune, ozonCrossroads, ozonDoubt, newDay, secondSpaceTrip];
+const firstPersonLegend = { id: 'first-person-legend', title: 'Легенда о первом человеке', art: 'church-seal', fullArt: true, showOnScene: true };
+const achievements = [backInTime, pokerBeginner, ozonDeltarune, ozonCrossroads, ozonDoubt, newDay, secondSpaceTrip, firstPersonLegend];
 
 const characters = {
   seryozha: { name: 'Серёжа', art: 'profile-seryozha', keyword: 'Экспонат', description: 'Главный герой, студент ГУАП. Любит компьютерные игры, среди которых War Thunder, Hearts of Iron IV (HOI4), Hollow Knight, Hollow Knight: Silksong, Rain World и Factorio. Интересуется 3D-моделированием в Blender. Пока сам не понимает, ищет ли девушку. Подрабатывает установкой дверей.' },
@@ -28,6 +29,7 @@ const characters = {
   nikita: { name: 'Никита', art: 'profile-nikita-gigachad', keyword: 'Scrap', description: 'Школьный друг Серёжи с 10-го по 11-й класс. Увлекается физикой и всем, что с ней связано. Сам собрал радиоуправляемый самолёт. Его любимая игра — Scrap Mechanic. В компании он главный пропагандист Scrap Mechanic и Vintage Story. В школе они с Серёжей играли в карты и покер. Никита поступил в ЛЭТИ, и с начала учёбы о нём почти ничего не слышно.' },
   maxim: { name: 'Максим', art: 'profile-maxim', keyword: 'Девушки', description: 'Школьный друг Серёжи со 2-го по 11-й класс. Виделись редко: оба часто пропускали школу, каждый по своим причинам. Максим вечно пропадает и никогда не отвечает на сообщения Серёжи. Сам позвал всех поиграть, а собраться не может уже целый год.' },
   denis: { name: 'Денис', art: 'profile-denis', keyword: 'палка', description: 'Рост 1,90 м и 60 кг чистой мощи. Денис — друг двоюродного брата Димы по линии отчима. Однажды познакомился с Серёжей, и у них сразу совпали вкусы в играх. Денис заставляет Серёжу строить Глебу, а Серёжа в ответ заставляет строить Глебу Дениса. Игр у Дениса даже больше, чем у Серёжи.' },
+  egor: { name: 'Егор', art: 'profile-egor', keyword: 'Не поместится', description: 'Неродной двоюродный брат Димы по линии отчима и лучший друг Дениса. В детстве они втроём проводили лето на даче и постоянно во что-то играли. По совместительству самый толстый человек в мире. Точный вес неизвестен: ни одни весы его не выдерживают. Встречается с девушкой ради приличия, а на самом деле любит своих парней и братьев.' },
   vova: { name: 'Вова', art: 'profile-vova', keyword: 'Ловелас', description: 'Худой парень из параллельного 11 «В» со специфическим чувством юмора. Любит рассказывать анекдоты и вставлять пословицы, стримит и боготворит консоли. Советует Серёже, как найти девушку, и пытается сосватать Кирилла. У самого Вовы на тот момент девушки нет.' },
   matvey: { name: 'Матвей', art: 'profile-matvey', keyword: 'Незнакомец', description: 'Учится с Вовой в 11 «В», носит очки и любит аниме. Вроде у него была девушка. Кушать умеет. День рождения отмечает в тот же день, что и Кирилл. Больше о нём почти ничего не известно.' },
   anya: { name: 'Аня', art: 'profile-anya', keyword: '2/10', description: 'Одноклассница Серёжи с 10-го по 11-й класс.', quote: '«Внешне, по мне, чудовище. Уеб#ть бы ей по лицу сковородкой».', quoteBy: 'Серёжа, про себя', afterQuote: 'Если послушать ребят, Аня добрая.' },
@@ -1438,6 +1440,11 @@ const nightRoster = [
   { id: 'kirill', nick: 'Пидорас', avatar: 'assets/route/night-avatar-kirill.webp' },
 ];
 
+const churchRoster = [
+  ...nightRoster.slice(0, 3),
+  { id: 'egor', nick: 'смерть в нищете', avatar: 'assets/route/church-avatar-egor.webp' },
+];
+
 const nightGames = [
   ['MIMESIS', 'night-game-mimesis'], ['Counter-Strike', 'night-game-cs'],
   ['Scrap Mechanic', 'night-game-scrap'], ['Deltarune', 'night-game-deltarune'],
@@ -1866,7 +1873,397 @@ const churchDetour = [
     silentFrame: true,
     alt: 'Глаза неподвижной статуи раскрываются и вспыхивают жутким голубым светом.',
   },
-  { id: 'night-church-soon', title: 'Конец ветки', onlyEndCard: true, artOnlyEndCard: true, endCard: 'Конец ветки', endCardLang: 'ru', endCardArt: 'night-church-soon' },
+  {
+    id: 'night-church-greeting', title: 'Голос богини', art: 'night-church-statue', speaker: 'Хорнет',
+    line: 'С чем ты пожаловал, сын мой?',
+  },
+  {
+    id: 'night-church-request', title: 'Две компании', art: 'night-church-plea',
+    line: 'Я не знаю, как заставить друзей проводить время с компанией Дианы. Все сразу разбегаются, стоит нам предложить что-нибудь вместе.',
+  },
+  {
+    id: 'night-church-price', title: 'Цена', art: 'night-church-eyes', speaker: 'Хорнет',
+    line: 'Я помогу тебе с этим. Но ты знаешь, какова цена за мои услуги.',
+  },
+  {
+    id: 'night-church-bite', title: 'Стиснув зубы', art: 'church-bite',
+    line: 'Прикусываю губу и с трудом выдавливаю: «Знаю я».',
+  },
+  {
+    id: 'night-church-three-days', title: 'Три дня', art: 'night-church-statue', speaker: 'Хорнет',
+    line: 'Вот и славно. Даю тебе три дня.',
+  },
+  {
+    id: 'night-church-return', title: 'Обратно в ГУАП', art: 'church-return', prop: 'church-haze',
+    line: 'На улице уже светло. Не помню, как вышел из храма. До ГУАПа дохожу как во сне, всё жуя изнутри прикушенную губу.',
+  },
+  {
+    id: 'night-church-late', title: 'Информатика в играх', art: 'church-late', speaker: 'Лаборантка', prop: 'church-haze',
+    line: 'Серёжа, опять опаздываешь! Мы уже начали лабораторную. Хоть раз можешь прийти вовремя?',
+  },
+  {
+    id: 'night-church-diana', title: 'С последнего ряда', art: 'church-diana', speaker: 'Диана', prop: 'church-haze',
+    line: 'С последнего ряда вижу, как его отчитывают. Обычно он хотя бы огрызается. Сейчас стоит с опущенными глазами, будто даже не слышит её.',
+  },
+  {
+    id: 'night-church-first-desk', title: 'Место спереди', art: 'church-late', prop: 'church-haze',
+    line: 'Свободен один стул за первой партой. Сажусь рядом с каким-то парнем с потока, даже не глянув ему в лицо.',
+  },
+  {
+    id: 'night-church-fragments', title: 'Обрывки', art: 'church-desk', prop: 'church-haze',
+    line: '3000… жорн… фотогр… новы… предан… Пытаюсь собрать слова Хорнет, и вдруг они разом исчезают. Кто-то трогает меня сбоку. Резко поворачиваюсь.',
+  },
+  {
+    id: 'night-church-genie', title: 'Сосед по парте', art: 'church-desk', speaker: 'Джин', prop: 'church-haze',
+    alt: 'У первой парты Серёжа видит Дениса, окружённого фиолетовым дымом.',
+    line: 'Здравствуй, Серёжа. Я исполню любые три твоих желания.',
+  },
+  {
+    id: 'night-church-first-wish', title: 'Отстань', art: 'church-desk', prop: 'church-haze',
+    line: 'Передо мной Денис. Только вместо ног у него клубится дым. Я всё ещё слышу голос Хорнет где-то на заднем плане. «Отстань от меня, Денис. Мне сейчас не до тебя».',
+  },
+  {
+    id: 'night-church-flask', title: 'Первое желание', art: 'church-flask', speaker: 'Джин', prop: 'church-haze',
+    line: 'Отстать? Хорошо, твоё первое желание исполнено. Я не буду к тебе приставать, пока ты сам ко мне не обратишься.',
+  },
+  {
+    id: 'night-church-blackout', title: 'Провал', art: 'church-flask', prop: 'fainting',
+    line: 'Его затягивает в гранёную флягу, и та падает прямо мне в руки. Глаза закрываются сами.',
+  },
+  {
+    id: 'night-church-wake', title: 'Толчок в плечо', art: 'church-wake', prop: 'opening-eyes',
+    line: 'Кто-то толкает меня плечом. Нехотя поворачиваюсь налево. Какой-то незнакомый студент тычет пальцем в сторону доски. Вижу, как шевелятся его губы, но звука почти нет. «Что?»',
+  },
+  {
+    id: 'night-church-board', title: 'К доске', art: 'church-wake', speaker: 'Сосед', prop: 'church-haze', sound: 'assets/route/church-board.mp3',
+    line: 'Иди к доске.',
+  },
+  {
+    id: 'night-church-automatic', title: 'Угроза автомату', art: 'church-wake', speaker: 'Лаборантка',
+    line: 'Ну что, выспался? Иди отвечай к доске. Или не будет тебе автомата.',
+  },
+  {
+    id: 'night-church-caught', title: 'Что у тебя в руке?', art: 'church-expulsion',
+    line: 'Еле поднимаюсь. В руке всё ещё фляга. Кажется, снилось что-то про джина и желания… «Это что у тебя такое?! Уснул на паре, ещё и выпить решил?»',
+  },
+  {
+    id: 'night-church-excuse', title: 'Это джин', art: 'church-expulsion',
+    line: 'Это не фляга со спиртным. Мне её дал джин. Он исполняет желания.',
+  },
+  {
+    id: 'night-church-expulsion', title: 'Алкодесант', art: 'church-expulsion', speaker: 'Лаборантка',
+    line: 'Вон отсюда! Чтоб я тебя на своих парах больше не видела, алкодесант!',
+  },
+  {
+    id: 'night-church-leaving', title: 'Выход под смех', art: 'church-leaving',
+    line: 'Весь поток хохочет. Пялюсь в пол и выхожу так быстро, как могу.',
+  },
+  {
+    id: 'night-church-diana-waits', title: 'До конца пары', art: 'church-diana', speaker: 'Диана',
+    line: 'Хочется догнать Серёжу, но с пары не выйти. Смотрю на часы и жду звонка.',
+  },
+  {
+    id: 'night-church-kirill-room', title: 'Любовники Кирилла', art: 'church-dark-door',
+    line: 'Сворачиваю к кабинету любовников Кирилла. Кто-то из них называл себя магом. Магой. Может, он знает, что это за штука. Обычно из-под двери бьёт цветной свет, а сейчас в щели черно.',
+  },
+  {
+    id: 'night-church-flashlight', title: 'Фонарик', art: 'church-flashlight',
+    line: 'Включаю фонарик на телефоне и переступаю порог.',
+  },
+  {
+    id: 'night-church-fall', title: 'Вниз', art: 'church-fall', sound: 'assets/route/church-fall.mp3',
+    line: 'Пол уходит из-под ног. Роняю телефон и кричу. Мой голос затихает где-то далеко внизу. Потом — удар о доски.',
+  },
+  {
+    id: 'night-church-floor', title: 'На досках', art: 'church-mouse',
+    line: 'Ай, как больно… Где это я? Хватаюсь за затылок. Сзади шорох. Резко поворачиваюсь и в темноте различаю мышь.',
+  },
+  {
+    id: 'night-church-sigh', title: 'Всего лишь мышь', art: 'church-sigh',
+    line: 'Закрываю глаза. Фух.',
+  },
+  {
+    id: 'night-church-scare', title: 'Впритык', art: 'church-scare', sound: 'assets/route/church-yelp.mp3', silentFrame: true,
+  },
+  {
+    id: 'night-church-candles', title: 'Фиолетовые свечи', art: 'church-candles', prop: 'church-candles',
+    line: 'Свечи вспыхивают одна за другой. Теперь его видно целиком: папаха, синяя мантия в звёздах, посох и бинты на кулаках. Где-то я его видел.',
+  },
+  {
+    id: 'night-church-follow', title: 'За мной', art: 'church-candles', speaker: 'Мага',
+    line: 'Ступай за мной. Я знаю, зачем ты пришёл, брат.',
+  },
+  {
+    id: 'night-church-corridor', title: 'Под ГУАПом', art: 'church-corridor',
+    line: 'Он уже уходит. Догоняю его и глазею по сторонам. Ого. Не думал, что под ГУАПом есть целый замок.',
+  },
+  {
+    id: 'night-church-bump', title: 'Пришли', art: 'church-look-up', speaker: 'Мага',
+    line: 'Пришли. Смотри под ноги, э.',
+  },
+  {
+    id: 'night-church-library-doors', title: 'Массивные двери', art: 'church-doors',
+    alt: 'Серёжа и Мага кажутся крошечными на фоне огромных дверей.',
+    line: 'Я врезался ему прямо в спину, а он даже не качнулся. Поднимаю глаза, задираю голову. Стоим вдвоём перед дверями, которые выше иного дома. Рот открывается сам собой.',
+  },
+  {
+    id: 'night-church-spell', title: 'Заклинание', art: 'church-glare', speaker: 'Мага (Исмаил)',
+    line: 'Астара, нур, откройся.',
+  },
+  {
+    id: 'night-church-glare', title: 'Белый свет', art: 'church-white', silentFrame: true,
+  },
+  {
+    id: 'night-church-library', title: 'Библиотека', art: 'church-library',
+    line: 'Свет слепит. Когда глаза привыкают, вижу полки, уходящие чуть ли не под облака. Посреди зала — стол с мерцающим шаром.',
+  },
+  {
+    id: 'night-church-curios', title: 'Диковины', art: 'church-curios',
+    line: 'Обхожу витрины с макетами существ, листаю книгу, где рисунки поворачивают головы вслед за мной. На одной полке у старой перчатки стоит крошечный боксёрский кубок. Поворачиваюсь к Маге: «Ты всё сам это смастерил?»',
+  },
+  {
+    id: 'night-church-heir', title: '146-е поколение', art: 'church-curios', speaker: 'Мага',
+    line: 'Нет, брат. Это владение из поколения в поколение передают. Я наследник в сто сорок шестом. Ладно, хватит ходить вокруг. Ты хочешь узнать, что за фляга у тебя и откуда взялась, верно?',
+  },
+  {
+    id: 'night-church-doubt', title: 'Откуда знаешь?', art: 'church-curios',
+    line: 'Да… а ты откуда знаешь? «Я всё знаю», — говорит он. Смотрю на него и не удерживаюсь: «Как-то не верится».',
+  },
+  {
+    id: 'night-church-boxing', title: 'В миллиметре', art: 'church-boxing',
+    line: 'Мага встаёт в стойку прямо в мантии. Короткая серия, и последний кулак замирает у моего носа. По виску ползёт холодный пот. «Ладно, ладно, больше не буду задавать глупых вопросов. Расскажи про флягу».',
+  },
+  {
+    id: 'night-church-dionysus', title: 'До всего', art: 'church-void', speaker: 'Мага',
+    line: 'Слушай сюда. Это история о первом человеке на свете — Дионисе. Вселенной ещё не было, а он уже ходил посреди ничего, подбородок рукой подпирал. Всё думал: «Кто же построит мне Глебу?»',
+  },
+  {
+    id: 'night-church-big-bang', title: 'Большой взрыв', art: 'church-bang', speaker: 'Мага',
+    montage: [
+      { delay: 1600, art: 'church-planets', alt: 'Космическая пыль собирается в звёзды и планеты.' },
+    ],
+    line: 'Однажды так задумался, что его собственная масса сжала его в одну точку, как звезду под конец жизни. И тут, брат, как рвануло! Из этой точки вылетело всё, что было, есть и будет.',
+  },
+  {
+    id: 'night-church-planets', title: 'Солнечная система', art: 'church-planets', speaker: 'Мага',
+    line: 'Сначала одна пыль летела во все стороны. Потом она стала собираться в звёзды и планеты. Так появилась Солнечная система, а в ней — Земля.',
+  },
+  {
+    id: 'night-church-primeval', title: 'Может, здесь', art: 'church-earth', speaker: 'Дионис',
+    line: 'Тринадцать целых три десятых миллиарда лет брожу по миру, который сам создал. Ни одного, кто смог бы построить Глебу. Может, хоть на этой «Планете» повезёт.',
+  },
+  {
+    id: 'night-church-millennium', title: 'Миллион лет', art: 'church-earth', speaker: 'Мага',
+    montage: [
+      { delay: 900, art: 'church-eras', alt: 'Дионис видит, как меняются леса и животные.' },
+      { delay: 1900, art: 'church-ancient', alt: 'После долгих скитаний Дионис встречает людей.' },
+    ],
+    line: 'Миллион лет ходил по Земле. Леса уходили под воду, на их месте вырастали новые, одни звери исчезали, другие выходили на сушу. И только потом, слышишь, он увидел первых, кто хоть немного на людей походил.',
+  },
+  {
+    id: 'night-church-civilizations', title: 'Люди древности', art: 'church-ancient', speaker: 'Мага',
+    line: 'Смотрел, как в Египте люди богам дары несут, как в других землях свои храмы строят. Думал: «Какие же они глупые. Сколько ещё ждать умнейшего экспоната, способного построить Глебу?»',
+  },
+  {
+    id: 'night-church-prophecy', title: 'Пророчество', art: 'church-oracle', speaker: 'Пророк',
+    line: 'Когда у твоего имени станет два голоса, ищи того, кто поднимется туда, куда остальные спускаются за хлебом. Он услышит тебя раньше, чем увидит.',
+  },
+  {
+    id: 'night-church-aura', title: 'Аура Диониса', art: 'church-oracle', speaker: 'Мага',
+    line: 'Поверил он, брат. А пророк тут же умер: столько силы было в одном взгляде Диониса. И Дионис понял: даже если встретит своего человека, тот помрёт от его ауры раньше, чем услышит просьбу.',
+  },
+  {
+    id: 'night-church-seal', title: 'Фляга из вселенных', art: 'church-seal', speaker: 'Мага',
+    line: 'Нужен был сосуд, чтоб выдержал такую силу. Он мыслью стянул несколько вселенных и спрессовал их в гранёную флягу. Внутри осталась чёрная дыра. Туда он и перелил почти всё своё могущество.',
+  },
+  {
+    id: 'night-church-fading', title: 'Всё труднее идти', art: 'church-frail', speaker: 'Мага',
+    line: 'Каждый день ему было хуже. Мог вернуть себе силу, но тогда опять никого бы к себе не подпустил. Он бессмертный, понимаешь? Так и жил, пока не забыл всё, кроме одной мысли.',
+  },
+  {
+    id: 'night-church-memory', title: 'Кто-то построит Глебу', art: 'church-frail', speaker: 'Дионис',
+    line: 'Кто-то должен построить Глебу. Однажды.',
+  },
+  {
+    id: 'night-church-denis-memory', title: 'Денис за компьютером', art: 'profile-denis',
+    line: 'В голове вспыхивает лицо Дениса. Вечно уставший, худой, ленивый, сидит за компом и опять просит строить Глебу. Трясу головой. Да не, такого точно не может быть.',
+  },
+  {
+    id: 'night-church-legend', title: 'Легенда о первом человеке', art: 'church-seal', speaker: 'Мага', achievement: firstPersonLegend.id,
+    line: 'К рождению ИИсуса про Диониса уже давным-давно ничего не слышали. А дальше, брат, никто тебе не скажет. Вот такая легенда о первом человеке.',
+  },
+  {
+    id: 'night-church-the-flask', title: 'Та самая', art: 'church-library',
+    line: 'То есть ЭТА фляга…',
+  },
+  {
+    id: 'night-church-the-legend', title: 'Повезло', art: 'church-inspect', speaker: 'Мага',
+    line: 'Верно. Та самая, из легенды. Что она умеет? Версий было много. Точно никто не знал, потому что никто её не находил. А тебе, видать, невероятно повезло.',
+  },
+  {
+    id: 'night-church-try', title: 'Джин, выходи', art: 'church-inspect',
+    line: 'Видимо… Вспоминаю, как ржал весь поток. А фляга у меня в руках будто светится. «Давай попробую кое-что. Джин, выходи!» Тишина. Трясу флягу. «Джиииннн!»',
+  },
+  {
+    id: 'night-church-gleba', title: 'Волшебное слово', art: 'church-inspect',
+    line: 'Вспоминаю, кого искал Дионис. Подношу флягу к губам: «Я построю тебе Гле…»',
+  },
+  {
+    id: 'night-church-genie-returns', title: 'Из фляги', art: 'church-genie', speaker: 'Джин',
+    line: 'Ты что-то сказал про Глебу?! Ты можешь её сделать, да? Вот же… Столько времени… Погоди. Я ведь не знаю, что это такое.',
+  },
+  {
+    id: 'night-church-split', title: 'Часть силы', art: 'church-genie', speaker: 'Джин',
+    line: 'Дионис оставил эти воспоминания в своём теле. Я — то, что он перелил во флягу. Его сила помнит, чего он хотел, а как выглядела Глеба, я понятия не имею.',
+  },
+  {
+    id: 'night-church-mage-faints', title: 'Предки бы гордились', art: 'church-genie', speaker: 'Мага',
+    line: 'Сто сорок шесть поколений… Никто живого джина не видел. Вот бы предки на меня сейчас посмотрели… От радости у Маги подкашиваются ноги. Он сползает на пол и отключается.',
+  },
+  {
+    id: 'night-church-two-wishes', title: 'Осталось два?', art: 'church-inspect',
+    line: 'У меня же осталось два желания, верно? Джин кивает. Рассказываю ему про друзей и компанию Дианы. «Хочу, чтобы они ладили».',
+  },
+  {
+    id: 'night-church-limits', title: 'Правила джина', art: 'church-genie', speaker: 'Джин',
+    line: 'Не смогу. Желания, которые меняют чужую личность, я не исполняю.',
+  },
+  {
+    id: 'night-church-second-wish', title: 'Три тысячи картинок', art: 'church-inspect',
+    line: 'Чуть сдуваюсь, и тут голос Хорнет в голове становится отчётливым: «Принеси мне Telegram-канал с тремя тысячами картинок жорно». Так это же раз плюнуть. «Хочу канал с тремя тысячами картинок жорно!»',
+  },
+  {
+    id: 'night-church-granted', title: 'Исполнено', art: 'church-genie', speaker: 'Джин',
+    line: 'Хорошо. Будет исполнено.',
+  },
+  {
+    id: 'night-church-group', title: 'Жорно', art: 'church-telegram', phoneNote: 'church-telegram',
+    line: 'Открываю Telegram. «Жорно». Три тысячи фотографий. Один участник — я. От счастья аж глаза защипало.',
+  },
+  {
+    id: 'night-church-two-people', title: 'Двое за три дня', art: 'church-telegram', phoneNote: 'church-telegram',
+    line: 'Вспоминаю остальное: «Найди двоих, кого заинтересует канал. На всё ровно три дня». Джин не может заставить их вступить. А где я за три дня найду двоих, которые сами на это подпишутся?',
+  },
+  {
+    id: 'night-church-last-wish', title: 'Оставь себе', art: 'church-inspect',
+    line: '«У тебя осталось третье желание. Что загадаешь?» — спрашивает джин. Отмахиваюсь: «Оставь себе».',
+  },
+  {
+    id: 'night-church-genie-wish', title: 'Желание джина', art: 'church-genie', speaker: 'Джин',
+    line: 'Мне? Ладно, тогда я загадаю. Хочу, чтобы ты нашёл моё живое воплощение и сделал ему Глебу.',
+  },
+  {
+    id: 'night-church-clues', title: 'Имя и рост', art: 'church-genie',
+    line: 'Ладно, исполню. А наводки есть? «Дионис. Метр девяносто по вашим меркам. Это всё».',
+  },
+  {
+    id: 'night-church-no-clue', title: 'Знакомое лицо', art: 'church-inspect',
+    line: 'Лицо как у Дениса, но мало ли совпадений. Мы с ним ни разу вживую не виделись. Я видел только его фотки. Откуда мне знать, какой у него рост и сильно ли он исхудал?',
+  },
+  {
+    id: 'night-church-smoke-hand', title: 'Сделаю всё возможное', art: 'church-smoke-hand',
+    line: 'Натягиваю улыбку и жму ему руку: «Сделаю всё возможное». Джин улыбается до ушей, а его пальцы рассеиваются прямо в моей ладони.',
+  },
+  {
+    id: 'night-church-hope', title: 'Надеюсь на тебя', art: 'church-smoke-hand', speaker: 'Джин',
+    line: 'Ой, точно, совсем забыл. Я же так не могу. Но я на тебя надеюсь.',
+  },
+  {
+    id: 'night-church-back-upstairs', title: 'Снова наверху', art: 'guap-door',
+    line: 'С Глебой разберусь позже. Сначала нужно найти двоих для Хорнет. Вылезаю из кабинета любовников Кирилла весь в пыли и начинаю отряхиваться прямо в коридоре.',
+  },
+  {
+    id: 'night-church-dima-hand', title: 'Настоящая рука', art: 'church-dima-hand', speaker: 'Дима',
+    line: 'Чья-то ладонь ложится на спину. Это Дима. Протягивает руку, жму — на этот раз рука не рассеивается. «Серёж, где ты так испачкался?»',
+  },
+  {
+    id: 'night-church-dionysus-question', title: 'Долгая история', art: 'church-dima-hand',
+    line: 'Долгая история… Дим, а ты случайно не слышал, кто такой Дионис?',
+  },
+  {
+    id: 'night-church-egor-memory', title: 'На даче', art: 'church-dima-hand', speaker: 'Дима',
+    line: 'Нууу… Помню, в детстве на даче мой старший брат Егор упоминал это имя. Про кого и к чему — уже не вспомню.',
+  },
+  {
+    id: 'night-church-lunch-plan', title: 'Живот ответил', art: 'church-dima-hand',
+    line: '«Эх, жаль». Дима пожимает плечами: «Ну что, пойдём в маке поедим?» Говорю: «Да не, я не хочу…» Живот оглушительно урчит. Дима ухмыляется. «Ладно, так уж и быть».',
+  },
+  {
+    id: 'night-church-lunch', title: 'Вкусно — и точка', art: 'church-lunch', speaker: 'Дима',
+    line: 'Я успел два раза откусить бургер. У Серёжи уже исчезли три бургера и две картошки. Смотрю на него и не могу решить, восхищаться или пересесть.',
+  },
+  {
+    id: 'night-church-after-lunch', title: '«В туалет»', art: 'church-after-lunch',
+    line: 'Сидим оба с круглыми животами. «Схожу в туалет, пожалуй». Дима говорит, что подождёт. Мне надо хотя бы попытаться найти двоих. При Диме я про канал и рта не открою.',
+  },
+  {
+    id: 'night-church-recruit', title: 'Поиски подписчиков', art: 'church-recruit',
+    line: 'Подхожу ко всем подряд: к студентам, пожилой паре, уборщице, даже к кассиру. Кто морщится, кто молча уходит. Слышу за спиной: «Не обращай внимания, это просто ненормальный». Никто даже не дослушал.',
+  },
+  {
+    id: 'night-church-blender-plan', title: 'Домой и в Blender?', art: 'church-after-lunch', speaker: 'Дима',
+    line: 'Ну что, домой и в Blender?',
+  },
+  {
+    id: 'night-church-home', title: 'Дома', art: 'church-pc',
+    line: 'Киваю. Сегодня я уже никого не найду. Дома звоню Диме в Discord, он сбрасывает. Пишу ему: «?»',
+  },
+  {
+    id: 'night-church-steam', title: 'Дима в игре', art: 'church-pc', phoneNote: 'church-steam',
+    line: 'Справа внизу выскакивает уведомление. Пишу: «Услышал тебя». Одному в Blender скучно.',
+  },
+  {
+    id: 'night-church-invite', title: 'Пошли с нами', art: 'church-pc',
+    line: 'Дима вдруг пишет: «Пошли с нами». Обычно я отказываюсь. Но сегодня почему-то отвечаю: «Ладно».',
+  },
+  {
+    id: 'night-church-egor', title: 'Смерть в нищете', nightVoice: 'egor', voiceRoster: churchRoster, meet: ['egor'],
+    line: 'Захожу в голосовой. Там Дима, Денис и Егор. Узнаю Егора по нику «смерть в нищете» и аватарке со львом.',
+  },
+  {
+    id: 'night-church-matches', title: 'Несколько каток', art: 'church-match', montageCaption: 'Матч 1',
+    montage: [
+      { delay: 850, art: 'night-game-cs', caption: 'Матч 2' },
+      { delay: 1700, art: 'church-match', caption: 'Матч 3' },
+    ],
+    line: 'Играем вчетвером. Одна катка, вторая, третья. Где-то между ними я впервые за день перестаю думать о том, сколько у меня осталось времени.',
+  },
+  {
+    id: 'night-church-clutch', title: 'Дионис, один остался', art: 'night-game-cs', speaker: 'Егор',
+    line: 'Дионис, один остался. Слева! Слева, говорю!',
+  },
+  {
+    id: 'night-church-nickname', title: 'Дионис?', art: 'night-game-cs',
+    line: 'Дима даже не реагирует. А я сразу вспоминаю разговор про дачу. Хочется спросить Дениса про Глебу, но я молчу до конца матча.',
+  },
+  {
+    id: 'night-church-address', title: 'Адрес Дениса', nightVoice: 'dima', voiceRoster: churchRoster.filter(({ id }) => id === 'seryozha' || id === 'dima'),
+    line: 'Денис с Егором отключаются. Остаёмся вдвоём. Спрашиваю у сонного Димы только адрес Дениса. Он диктует, не интересуясь зачем, и тоже выходит из звонка.',
+  },
+  {
+    id: 'night-church-next-day', title: 'На следующий день', clockCard: 'На следующий день',
+  },
+  {
+    id: 'night-church-mountain', title: 'Завод над облаками', art: 'church-mountain',
+    line: 'Прихожу по адресу. Денис работает сварщиком вон там, на огромном заводе. Поднимаю взгляд: ступеньки идут от подножия горы почти до облаков.',
+  },
+  {
+    id: 'night-church-eight-hours', title: 'Спустя 8 часов', clockCard: 'Спустя 8 часов сжигания жира Серёжи',
+  },
+  {
+    id: 'night-church-climb', title: 'Последние ступени', art: 'church-climb',
+    line: 'Последние ступени прохожу уже на четвереньках. Вход в завод в двух шагах, но встать я больше не могу.',
+  },
+  {
+    id: 'night-church-threshold', title: 'Не дотянуться', art: 'church-threshold', prop: 'fainting',
+    line: 'Тянусь к двери. Не хватает каких-то сантиметров. Рука падает. Всё темнеет.',
+  },
+  {
+    id: 'night-church-boot', title: 'За порогом', art: 'church-boot', speaker: 'Денис', sound: 'assets/route/church-denis-final.mp3',
+    alt: 'Дверь завода приоткрывается, и из-за порога выступает рабочий ботинок.',
+    line: 'Серёжа? Что ты тут забыл?',
+  },
+  { id: 'night-church-soon', title: 'Soon ...', onlyEndCard: true, endCard: 'Soon ...' },
 ];
 
 for (const chapter of [blenderDawn, nightAfterEnding, sleepBranch, museumOuting, churchDetour]) {
@@ -2319,6 +2716,7 @@ const characterStories = {
   nikita: { name: 'Никиты', episodes: [] },
   maxim: { name: 'Максима', episodes: [] },
   denis: { name: 'Дениса', episodes: [] },
+  egor: { name: 'Егора', episodes: [] },
   vova: { name: 'Вовы', episodes: [] },
   matvey: { name: 'Матвея', episodes: [] },
   anya: { name: 'Ани', episodes: [] },
