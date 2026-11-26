@@ -1930,6 +1930,24 @@ h1, h2, h3, p { margin: 0; }
 [data-night-effect='church-haze'] #scene-art {
   filter: blur(1.65px) saturate(.68) contrast(.88);
 }
+.church-fall-lettering {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  color: #fff6ff;
+  font: italic 900 clamp(1.3rem, 7vw, 4.7rem)/1 "Arial Black", Arial, sans-serif;
+  paint-order: stroke fill;
+  -webkit-text-stroke: .055em #24102d;
+  text-shadow: .035em .05em #ae60d2;
+  pointer-events: none;
+}
+.church-fall-lettering span { position: absolute; rotate: 18deg; }
+.church-fall-lettering span:nth-child(1) { inset: 12% auto auto 27%; }
+.church-fall-lettering span:nth-child(2) { inset: 27% auto auto 31%; font-size: .82em; }
+.church-fall-lettering span:nth-child(3) { inset: 40% auto auto 35%; font-size: .65em; }
+.church-fall-lettering span:nth-child(4) { inset: 51% auto auto 39%; font-size: .52em; }
+.church-fall-lettering span:nth-child(5) { inset: 61% auto auto 42%; font-size: .42em; }
+.church-fall-lettering span:nth-child(6) { inset: 70% auto auto 44%; font-size: .34em; opacity: .8; }
 .is-dull-view #scene-art { filter: saturate(.62) brightness(.92); }
 .is-rain-reveal::after {
   content: "";
@@ -1992,6 +2010,13 @@ h1, h2, h3, p { margin: 0; }
 }
 .night-phone-note[data-note='two-chats'] div:first-child { justify-self: start; }
 .night-phone-note[data-note='two-chats'] div:last-child { justify-self: end; }
+#church-telegram-examples {
+  width: min(13rem, 36vw);
+  height: auto;
+  aspect-ratio: 16 / 9;
+  margin-top: .22rem;
+  border-radius: .2rem;
+}
 .night-phone-note[data-note='church-steam'] > div {
   border-color: #39515d;
   border-radius: .2rem;

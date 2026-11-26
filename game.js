@@ -151,6 +151,8 @@ const dioramaNote = document.querySelector('#diorama-screen-note');
 const nightClockCard = document.querySelector('#night-clock-card');
 const nightTimeBadge = document.querySelector('#night-time-badge');
 const nightPhoneNote = document.querySelector('#night-phone-note');
+const churchTelegramExamples = document.querySelector('#church-telegram-examples');
+const churchFallLettering = document.querySelector('#church-fall-lettering');
 const nightPhoneSource = document.querySelector('#night-phone-source');
 const nightPhoneText = document.querySelector('#night-phone-text');
 const nightPhoneSecond = document.querySelector('#night-phone-second');
@@ -1310,6 +1312,11 @@ function renderNightProps(scene) {
   sceneArt.hidden = Boolean(clockCard);
   nightTimeBadge.hidden = !timeBadge;
   nightTimeBadge.textContent = timeBadge ?? '';
+  churchFallLettering.hidden = prop !== 'church-fall';
+  churchTelegramExamples.hidden = phoneNote !== 'church-telegram';
+  if (!churchTelegramExamples.hidden && !churchTelegramExamples.hasAttribute('src')) {
+    churchTelegramExamples.src = artPath('church-examples');
+  }
   nightPhoneNote.hidden = !phoneNote;
   if (phoneNote) {
     nightPhoneNote.dataset.note = phoneNote;

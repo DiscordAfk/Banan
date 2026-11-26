@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=church-detour">
-  <script src="story.js?v=church-detour" defer></script>
+  <link rel="stylesheet" href="style.css?v=church-frames">
+  <script src="story.js?v=church-frames" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=church-detour" defer></script>
+  <script src="game.js?v=church-frames" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -353,6 +353,9 @@
         <div class="story-picture" id="story-picture">
           <canvas id="route-map" width="960" height="540" role="img" hidden></canvas>
           <img id="scene-art" alt="">
+          <div id="church-fall-lettering" class="church-fall-lettering" aria-hidden="true" hidden>
+            <span>А</span><span>А</span><span>А</span><span>А</span><span>А</span><span>ффф</span>
+          </div>
           <div id="history-classroom-plates" hidden>
             <p class="history-plate history-plate-history"><strong>История</strong><span>Соколова Анна Игоревна</span></p>
             <p class="history-plate history-plate-math"><strong>Математика</strong><span>Лебедев Павел Викторович</span></p>
@@ -368,7 +371,11 @@
           <div id="night-clock-card" class="night-clock-card" hidden></div>
           <div id="night-time-badge" class="night-time-badge" hidden></div>
           <div id="night-phone-note" class="night-phone-note" hidden>
-            <div><small id="night-phone-source"></small><strong id="night-phone-text"></strong></div>
+            <div>
+              <small id="night-phone-source"></small>
+              <strong id="night-phone-text"></strong>
+              <img id="church-telegram-examples" alt="Три примера из канала: девушки с тёмно-синими и голубыми волосами и героиня в маске с бордовым плащом" width="480" height="270" hidden>
+            </div>
             <div id="night-phone-second" hidden><small>Telegram · Серёжа</small><strong>Открыт чат</strong></div>
           </div>
           <span id="sleep-bubble" class="sleep-bubble" aria-hidden="true" hidden></span>
