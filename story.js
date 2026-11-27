@@ -18,7 +18,9 @@ const newDay = { id: 'new-day', title: 'Новый день', art: 'blender-neva
 const secondSpaceTrip = { id: 'second-space-trip', title: 'Отправлен в космос во второй раз', art: 'night-museum-space', fullArt: true, showOnScene: true };
 const firstPersonLegend = { id: 'first-person-legend', title: 'Легенда о первом человеке', art: 'church-seal', fullArt: true, showOnScene: true };
 const hoiInfluence = { id: 'hoi-influence', title: 'Влияние хойки', art: 'history-cafeteria-hoi-award', fullArt: true, showOnScene: true };
-const achievements = [backInTime, pokerBeginner, ozonDeltarune, ozonCrossroads, ozonDoubt, newDay, secondSpaceTrip, firstPersonLegend, hoiInfluence];
+const secretSuccubi = { id: 'secret-succubi', title: 'Рядовые Сукубы', art: 'history-lunch-secret-light', fullArt: true, showOnScene: true };
+const secretHeavyArtillery = { id: 'secret-heavy-artillery', title: 'Сукубы:Тяжёлая артиллерия', art: 'history-lunch-secret-teachers', fullArt: true, showOnScene: true };
+const achievements = [backInTime, pokerBeginner, ozonDeltarune, ozonCrossroads, ozonDoubt, newDay, secondSpaceTrip, firstPersonLegend, hoiInfluence, secretSuccubi, secretHeavyArtillery];
 
 const characters = {
   seryozha: { name: 'Серёжа', art: 'profile-seryozha', keyword: 'Экспонат', description: 'Главный герой, студент ГУАП. Любит компьютерные игры, среди которых War Thunder, Hearts of Iron IV (HOI4), Hollow Knight, Hollow Knight: Silksong, Rain World и Factorio. Интересуется 3D-моделированием в Blender. Пока сам не понимает, ищет ли девушку. Подрабатывает установкой дверей.' },
@@ -1002,6 +1004,8 @@ const endings = [
   { id: 'time-loop', number: 2, title: 'Конец или нет?!...', art: 'phone-loop', branch: 'home-phone', audio: 'assets/rewards/ending-2.mp3' },
   { id: 'present', number: 3, title: 'Достигнуто настоящее', art: 'shift-present', branch: 'shift-rise', audio: 'assets/rewards/ending-3.mp3' },
   { id: 'first-step', number: 4, title: 'Начало положено...', art: 'diana-smiles', branch: 'home-phone', audio: 'assets/rewards/ending-4.mp3', intermediate: true },
+  { id: 'tier-list-closed', number: 5, title: 'Тир-лист закрыт', art: 'history-lunch-after-light', branch: 'history-cafeteria', audio: 'assets/rewards/ending-5.mp3' },
+  { id: 'debts-closed', number: 6, title: 'Долги закрыты', art: 'history-lunch-after-hard', branch: 'history-cafeteria', audio: 'assets/rewards/ending-6.mp3' },
 ];
 
 const phoneRounds = [
@@ -1467,6 +1471,12 @@ const cafeteriaGuests = {
   gagarinova: { joins: true, line: 'Лиза не сводит с меня глаз и улыбается. «Да, милый. С тобой хоть на край света».', aside: 'Говнюк. Даже не посмотрел в мою сторону.' },
 };
 
+const secretFinalBlackout = {
+  title: 'За занавесом', blackout: true,
+  line: 'В темноте за занавесом щёлкает сценический реквизит.',
+  sound: 'assets/route/whip-whip.mp3', waitForSound: true,
+};
+
 const schoolLunch = [
   { id: 'history-chemistry-practice', title: 'Урок с заменой', art: 'history-lunch-experiment', line: 'Дрочеслав спрашивает, какой раствор поменяет цвет первым. Полкласса сразу тянет руки. Ямополк раздаёт очки и зовёт ребят к столу, а Филипп рисует на доске схему опыта. Скоро даже с задних парт слышно, как спорят о результатах.' },
   { id: 'history-chemistry-bell', title: 'Звонок', art: 'history-lunch-chemistry-bell', sound: 'assets/route/history-school-bell.mp3', line: 'Звенит звонок. Мы высыпаем в коридор, и все наперебой обсуждают, как круто прошёл урок с заменой. Кто-то уже спрашивает, будут ли они вести следующий.' },
@@ -1504,13 +1514,15 @@ const schoolLunch = [
   {
     id: 'history-cafeteria-secret-teachers', title: 'Закрывать долги', art: 'history-lunch-secret-teachers',
     alt: 'Четыре учительницы в дверях. Чёрная плашка закрывает костюмы, видны лица, туфли и сценический реквизит.',
+    achievement: secretHeavyArtillery.id,
     meet: ['chemistryTeacher', 'mathTeacher', 'russianTeacher', 'biologyTeacher'],
     line: 'В дверях появляются Химичка, Математичка, Руссичка и Биологичка. У каждой по петле сценического шнура, а костюмы закрывает чёрная плашка. Они говорят хором: «Ну что, Серёжа, прогуливать любишь? Пришло время закрывать долги». Ника гасит свет.',
-    next: 'history-cafeteria-secret-final-audio',
+    next: 'history-cafeteria-secret-final-audio-hard',
   },
   {
     id: 'history-cafeteria-secret-without-anya', title: 'Тир-лист', art: 'history-lunch-secret-light',
     alt: 'Ника, Яна, Диана, Лиза Гагаринова и Вика стоят в дверях в разноцветных сценических костюмах с рогами и высокими сапогами.',
+    achievement: secretSuccubi.id,
     meet: ['yana', 'schoolDiana', 'gagarinova', 'vika'],
     line: 'Заходят Яна, Диана, Лиза Гагаринова и Вика. Ника встаёт рядом с ними. Костюмы одного фасона, у каждой свой цвет. В глазах у всех пятерых отражаются красные огни. «Ну что, Серёжа, тир-лист там составлял? Пришло время расплаты». В этот момент гаснет свет.',
     next: 'history-cafeteria-secret-final-audio',
@@ -1518,14 +1530,31 @@ const schoolLunch = [
   {
     id: 'history-cafeteria-secret-with-anya', title: 'Тир-лист', art: 'history-lunch-secret-light-anya',
     alt: 'Ника, Яна, Диана, Лиза Гагаринова, Вика и Аня стоят в дверях в разноцветных сценических костюмах с рогами и высокими сапогами.',
+    achievement: secretSuccubi.id,
     meet: ['yana', 'schoolDiana', 'gagarinova', 'vika', 'anya'],
     line: 'Заходят Яна, Диана, Лиза Гагаринова, Вика и Аня. Ника встаёт рядом с ними. Костюмы одного фасона, у каждой свой цвет. В глазах у всех шестерых отражаются красные огни. «Ну что, Серёжа, тир-лист там составлял? Пришло время расплаты». В этот момент гаснет свет.',
-    next: 'history-cafeteria-secret-final-audio',
+    next: 'history-cafeteria-secret-final-audio-anya',
+  },
+  { id: 'history-cafeteria-secret-final-audio', ...secretFinalBlackout, next: 'history-cafeteria-secret-ending-light' },
+  { id: 'history-cafeteria-secret-final-audio-anya', ...secretFinalBlackout, next: 'history-cafeteria-secret-ending-anya' },
+  { id: 'history-cafeteria-secret-final-audio-hard', ...secretFinalBlackout, next: 'history-cafeteria-secret-ending-hard' },
+  {
+    id: 'history-cafeteria-secret-ending-light', title: 'После представления', art: 'history-lunch-after-light',
+    alt: 'Серёжа вытирает слезу, сидя на стуле. Вика убирает реквизит, остальные стоят рядом.',
+    line: 'Свет включается. Я сажусь на стул и вытираю слёзы. Вика кладёт реквизит на стол. Яна спрашивает: «Ну что, пересмотришь тир-лист?» Я киваю, а потом не выдерживаю и смеюсь.',
+    ending: 'tier-list-closed', endCard: 'Тир-лист закрыт', endCardLang: 'ru',
   },
   {
-    id: 'history-cafeteria-secret-final-audio', title: 'За занавесом', blackout: true,
-    line: 'В темноте за занавесом щёлкает сценический реквизит.',
-    sound: 'assets/route/whip-whip.mp3', waitForSound: true, next: 'history-cafeteria-secret-soon',
+    id: 'history-cafeteria-secret-ending-anya', title: 'После представления', art: 'history-lunch-after-light-anya',
+    alt: 'Серёжа вытирает слезу, сидя на стуле. Аня протягивает ему стакан воды.',
+    line: 'Свет включается. Я сажусь на стул и вытираю слёзы. Аня протягивает стакан воды: «Держи. А тир-лист можешь переписать завтра». Остальные смеются. Через секунду я смеюсь вместе с ними.',
+    ending: 'tier-list-closed', endCard: 'Тир-лист закрыт', endCardLang: 'ru',
+  },
+  {
+    id: 'history-cafeteria-secret-ending-hard', title: 'После репетиции', art: 'history-lunch-after-hard',
+    alt: 'Учительницы успокаивают Серёжу. Он сидит на стуле и вытирает слёзы.',
+    line: 'Свет включается, а у меня всё ещё дрожат руки. Я сажусь. Руссичка протягивает мне салфетку. Остальные ждут, пока я приду в себя. «Всё, спектакль окончен. Долги закрыли», — говорит она. Я выдыхаю.',
+    ending: 'debts-closed', endCard: 'Долги закрыты', endCardLang: 'ru',
   },
   { id: 'history-cafeteria-secret-soon', title: 'Soon ...', onlyEndCard: true, endCard: 'Soon ...' },
   { id: 'history-cafeteria-dismiss', title: 'В другой раз', art: 'history-lunch-farewell', line: '', lunchDismissal: true, next: 'history-golf-plan' },
