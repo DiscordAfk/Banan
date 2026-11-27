@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c0b16">
   <meta name="description" content="Minigames — коллекция мини-игр. Первая игра — визуальная новелла «День Серёжи».">
   <title>Minigames</title>
-  <link rel="stylesheet" href="style.css?v=church-frames">
-  <script src="story.js?v=dima-citadel" defer></script>
+  <link rel="stylesheet" href="style.css?v=school-lunch">
+  <script src="story.js?v=school-lunch" defer></script>
   <script src="coastlines.js" defer></script>
   <script src="route-map.js" defer></script>
-  <script src="game.js?v=church-frames" defer></script>
+  <script src="game.js?v=school-lunch" defer></script>
 </head>
 <body>
   <main id="catalog" class="catalog">
@@ -198,9 +198,10 @@
                               <button class="story-point" type="button" data-story-start="kirill-shadow" disabled><strong>Внутри ГУАП</strong></button>
                               <button class="story-point" type="button" data-story-start="guap-classmates" disabled><strong>После грома</strong></button>
                               <button class="story-point" type="button" data-story-start="history-wake" disabled><strong>Пробуждение в школе</strong></button>
-                            <button class="story-point" type="button" data-story-start="history-poker-walk-away" disabled><strong>Со спины · по пути на химию</strong></button>
+                              <button class="story-point" type="button" data-story-start="history-poker-walk-away" disabled><strong>Со спины · по пути на химию</strong></button>
+                              <button class="story-point" type="button" data-story-start="history-cafeteria" disabled><strong>Перемена в столовой</strong></button>
                             </div>
-                            <ul class="story-branches story-endings" data-story-achievements="history-school history-poker-royal-flush" aria-label="Достижения университетской ветки"></ul>
+                            <ul class="story-branches story-endings" data-story-achievements="history-school history-poker-royal-flush history-cafeteria-hoi" aria-label="Достижения университетской ветки"></ul>
                           </li>
                         </ul>
                       </li>
@@ -350,9 +351,15 @@
           <span id="phone-round-label"></span>
           <strong id="phone-score" role="status"></strong>
         </header>
+        <aside id="lunch-score" class="lunch-score" aria-label="Участники покера" hidden>
+          <p>Участники покера <strong id="lunch-count"></strong></p>
+          <ul id="lunch-names"></ul>
+        </aside>
         <div class="story-picture" id="story-picture">
           <canvas id="route-map" width="960" height="540" role="img" hidden></canvas>
           <img id="scene-art" alt="">
+          <span id="lunch-glasses" class="lunch-glasses" aria-hidden="true" hidden><span>ПУТИН ПУТИН</span></span>
+          <div id="lunch-hotspots" class="lunch-hotspots" role="group" aria-label="Столы и собеседники" hidden></div>
           <div id="church-fall-lettering" class="church-fall-lettering" aria-hidden="true" hidden>
             <span>А</span><span>А</span><span>А</span><span>А</span><span>А</span><span>ффф</span>
           </div>

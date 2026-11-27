@@ -13,6 +13,11 @@ const endingTitle = document.querySelector('#ending-title');
 const endingNote = document.querySelector('#ending-note');
 const sceneArt = document.querySelector('#scene-art');
 const stormLight = document.querySelector('#storm-light');
+const lunchScore = document.querySelector('#lunch-score');
+const lunchCount = document.querySelector('#lunch-count');
+const lunchNames = document.querySelector('#lunch-names');
+const lunchHotspots = document.querySelector('#lunch-hotspots');
+const lunchGlasses = document.querySelector('#lunch-glasses');
 const sceneAudio = document.querySelector('#scene-audio');
 const rewardAudio = document.querySelector('#reward-audio');
 const doorNameplate = document.querySelector('#door-nameplate');
@@ -582,9 +587,10 @@ function renderStoryStarts() {
   }
 }
 
-function rememberDecision(scene, phone) {
+function rememberDecision(scene, phone, lunch) {
   if (developerMode) return;
   lastDecision = phone ? { scene, phone: { index: phone.index, correct: phone.correct } } : { scene };
+  if (lunch) lastDecision.lunch = lunch;
   try {
     localStorage.setItem(decisionStorageKey, JSON.stringify(lastDecision));
   } catch {
@@ -597,7 +603,9 @@ function renderLastDecision() {
     const saved = JSON.parse(localStorage.getItem(decisionStorageKey) ?? 'null');
     if (saved && Object.hasOwn(scenes, saved.scene)) {
       const { scene, phone } = saved;
-      if (scenes[scene].options) {
+      if (scenes[scene].cafeteria || scenes[scene].lunchScore) {
+        lastDecision = { scene, lunch: restoreLunchProgress(saved.lunch) };
+      } else if (scenes[scene].options) {
         lastDecision = { scene };
       } else if (scenes[scene].quiz && phone &&
         Number.isInteger(phone.index) && phone.index >= 0 && phone.index < phoneRounds.length &&
@@ -943,12 +951,12 @@ function startStory(key, { characterStory, ...options } = {}) {
 function goToScene(key, options) {
   sceneHistory.push(activePosition);
   if (scenes[key].onlyEndCard) showEndCard(scenes[key]);
-  else renderScene(key, options);
+  else renderScene(key, { lunch: activePosition?.lunch, ...options });
 }
 
 function goBackScene() {
   const previous = sceneHistory.pop();
-  if (previous) renderScene(previous.key, { phone: previous.phone });
+  if (previous) renderScene(previous.key, previous);
 }
 
 function artPath(art) {
@@ -1456,17 +1464,192 @@ function renderHoldem(scene) {
   }
 }
 
-function renderScene(key, { phone, remember = true } = {}) {
+const lunchRegulars = ['Дима', 'Серёжа', 'Никита'];
+const minimumPokerPlayers = 6;
+
+function lunchInvitees(progress) {
+  return progress.asked.filter((id) => cafeteriaGuests[id].joins).map((id) => characters[id].name);
+}
+
+function lunchPartyComplete(party, progress) {
+  return party.seats.every((id) => progress.asked.includes(id));
+}
+
+function lunchExitScene(progress) {
+  const count = lunchInvitees(progress).length;
+  if (lunchRegulars.length + count >= minimumPokerPlayers) return 'history-lunch-poker';
+  return count ? 'history-cafeteria-dismiss' : 'history-golf-plan';
+}
+
+function restoreLunchProgress(saved) {
+  const asked = Array.isArray(saved?.asked)
+    ? [...new Set(saved.asked.filter((id) => Object.hasOwn(cafeteriaGuests, id)))] : [];
+  return {
+    asked,
+    spoke: saved?.spoke === true,
+    door: asked.includes('apparition'),
+    aside: cafeteriaParties.some(({ id }) => id === saved?.aside) ? saved.aside : null,
+  };
+}
+
+function leaveLunchTable(party, progress) {
+  const atHall = { ...progress, spoke: false, aside: null };
+  if (progress.spoke && !lunchPartyComplete(party, progress)) {
+    const hasAside = party.seats.some((id) => !progress.asked.includes(id) && cafeteriaGuests[id].aside);
+    if (hasAside) {
+      goToScene('history-cafeteria-aside', { lunch: { ...atHall, aside: party.id } });
+      return;
+    }
+  }
+  const finished = cafeteriaParties.every((table) => lunchPartyComplete(table, progress));
+  goToScene(finished && !atHall.door ? lunchExitScene(atHall) : 'history-cafeteria', { lunch: atHall });
+}
+
+function lunchGuestName(id) {
+  return cafeteriaGuests[id].name ?? characters[id]?.name ?? '???';
+}
+
+function makeLunchButton(className, label, action) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = className;
+  button.setAttribute('aria-label', label);
+  button.addEventListener('click', action);
+  return button;
+}
+
+function lunchPortrait(id, known) {
+  const portrait = document.createElement('span');
+  portrait.className = 'lunch-portrait';
+  portrait.classList.toggle('is-unknown', !known);
+  portrait.classList.toggle('is-cake', id === 'cake');
+  if (characters[id]) {
+    const image = document.createElement('img');
+    image.src = artPath(characters[id].art);
+    image.alt = '';
+    portrait.append(image);
+  }
+  return portrait;
+}
+
+function renderLunch(scene, progress) {
+  lunchScore.hidden = !scene.lunchScore;
+  lunchGlasses.hidden = !scene.lunchGlasses;
+  lunchHotspots.hidden = !scene.cafeteria;
+  lunchHotspots.replaceChildren();
+  scenePicture.classList.toggle('is-lunch-hall', scene.cafeteria === 'hall');
+  scenePicture.classList.toggle('is-lunch-table', Boolean(scene.cafeteria && scene.cafeteria !== 'hall'));
+  scenePicture.classList.toggle('is-lunch-blackout', Boolean(scene.blackout));
+  sceneArt.hidden = Boolean(scene.blackout);
+  if (scene.lunchScore) {
+    const names = [...lunchRegulars, ...lunchInvitees(progress)];
+    lunchCount.textContent = names.length + '/' + minimumPokerPlayers;
+    lunchNames.replaceChildren(...names.map((name) => {
+      const item = document.createElement('li');
+      item.textContent = name;
+      return item;
+    }));
+  }
+  if (!scene.cafeteria) return;
+
+  const known = encounteredCharacters();
+  const visible = (id) => !(['cake', 'liza', 'apparition'].includes(id) && progress.asked.includes(id));
+  if (scene.cafeteria === 'hall') {
+    for (const party of cafeteriaParties) {
+      const remaining = party.seats.filter(visible);
+      const allUnknown = !remaining.some((id) => known.has(id));
+      const names = allUnknown ? '???' : remaining.map((id) => known.has(id) ? lunchGuestName(id) : '???').join(', ');
+      const label = party.title ? party.title + ' · ' + names : names;
+      const complete = lunchPartyComplete(party, progress);
+      const table = makeLunchButton('lunch-table', complete ? label + ' · Очарованы Серёжей' : label, () => {
+        goToScene('history-cafeteria-' + party.id, { lunch: { ...progress, spoke: false } });
+      });
+      table.disabled = complete;
+      table.classList.toggle('is-unknown', allUnknown);
+      table.style.setProperty('--table-x', party.position[0] + '%');
+      table.style.setProperty('--table-y', party.position[1] + '%');
+      const caption = document.createElement('span');
+      caption.className = 'lunch-table-caption';
+      caption.textContent = complete ? 'Очарованы Серёжей' : label;
+      const group = document.createElement('span');
+      group.className = 'lunch-table-group';
+      group.setAttribute('aria-hidden', 'true');
+      group.append(...remaining.map((id) => lunchPortrait(id, known.has(id))));
+      if (allUnknown && !complete) {
+        const mystery = document.createElement('span');
+        mystery.className = 'lunch-question';
+        mystery.textContent = '?';
+        group.append(mystery);
+      }
+      table.append(caption, group);
+      lunchHotspots.append(table);
+    }
+    if (progress.door) {
+      const door = makeLunchButton('lunch-door choice', 'Приоткрытая дверь', () => goToScene('history-cafeteria-secret'));
+      door.textContent = 'Приоткрытая дверь';
+      lunchHotspots.append(door);
+    }
+    return;
+  }
+
+  const party = cafeteriaParties.find(({ id }) => id === scene.cafeteria);
+  for (const id of party.seats) {
+    if (!visible(id)) {
+      const empty = document.createElement('span');
+      empty.className = 'lunch-empty-seat';
+      empty.textContent = 'Пустой стул';
+      lunchHotspots.append(empty);
+      continue;
+    }
+    const name = known.has(id) ? lunchGuestName(id) : '???';
+    const guest = cafeteriaGuests[id];
+    const button = makeLunchButton('lunch-seat', 'Позвать в покер · ' + name, () => {
+      const lunch = { ...progress, asked: [...progress.asked, id], spoke: true };
+      goToScene(guest.reply ?? 'history-cafeteria-' + party.id + '-' + id, { lunch });
+    });
+    button.disabled = progress.asked.includes(id);
+    const caption = document.createElement('span');
+    caption.textContent = name;
+    const hint = document.createElement('span');
+    hint.className = 'lunch-seat-hint';
+    hint.textContent = button.disabled ? 'Уже спросили' : 'Позвать в покер';
+    button.append(lunchPortrait(id, known.has(id)), caption, hint);
+    lunchHotspots.append(button);
+  }
+}
+
+function lunchSceneLine(scene, progress) {
+  if (scene.lunchDismissal) return lunchInvitees(progress).join(', ') + ' — в другой раз сыграем, извинитесь.';
+  if (scene.lunchPoker) {
+    return scene.line + ' За столом ' + [...lunchRegulars, ...lunchInvitees(progress)].join(', ') + '.';
+  }
+  if (scene.lunchAside) {
+    const party = cafeteriaParties.find(({ id }) => id === progress.aside);
+    const remarks = party?.seats.filter((id) => !progress.asked.includes(id) && cafeteriaGuests[id].aside)
+      .map((id) => (encounteredCharacters().has(id) ? lunchGuestName(id) : '???') + ': «' + cafeteriaGuests[id].aside + '»') ?? [];
+    const intro = party?.id === 'teachers'
+      ? 'Учителя шепчутся за спиной. Я слышу краем уха, но иду дальше.'
+      : 'Мы отходим от стола, и я слышу за спиной:';
+    return remarks.length ? intro + '\n' + remarks.join('\n') : 'Мы отходим от стола.';
+  }
+  return scene.line ?? '';
+}
+
+function renderScene(key, { phone, lunch, remember = true } = {}) {
   rewardAudio.pause();
   clearSceneTimers();
   const scene = activeCharacterStory?.nextByScene
     ? { ...scenes[key], next: activeCharacterStory.nextByScene.get(key) }
     : scenes[key];
   activeScene = scene;
-  activePosition = { key };
+  const lunchProgress = restoreLunchProgress(lunch);
+  activePosition = { key, lunch: lunchProgress };
   updateSceneBack();
   if (!activeCharacterStory || activeCharacterStory.dlc) rememberStoryStart(key);
-  if (!activeCharacterStory && remember && scene.options) rememberDecision(key);
+  if (!activeCharacterStory && remember) {
+    if (scene.cafeteria || scene.lunchScore) rememberDecision(key, undefined, lunchProgress);
+    else if (scene.options) rememberDecision(key);
+  }
   renderIntertitle(scene);
   renderWorkCall(scene);
   renderNightProps(scene);
@@ -1558,12 +1741,14 @@ function renderScene(key, { phone, remember = true } = {}) {
     sceneArt.src = artPath(scene.art);
     sceneArt.alt = scene.alt ?? '';
   }
+  renderLunch(scene, lunchProgress);
   renderSceneTitle(scene);
   sceneSpeaker.textContent = scene.prop === 'achievement' && developerMode && !developerSaveAchievements.checked
     ? 'Предпросмотр достижения'
     : scene.speaker ?? 'Серёжа';
-  sceneLine.hidden = !scene.line || scene.callStage > 0 || scene.holdem?.layout === 'manga';
-  sceneLine.textContent = (!discoveredCharacters.has('diana') ? scene.unknownLine : undefined) ?? scene.line ?? '';
+  sceneLine.textContent = (!discoveredCharacters.has('diana') ? scene.unknownLine : undefined) ?? lunchSceneLine(scene, lunchProgress);
+  sceneLine.hidden = !sceneLine.textContent || scene.callStage > 0 || scene.holdem?.layout === 'manga';
+  sceneLine.classList.toggle('has-lunch-aside', Boolean(scene.lunchAside));
   sceneSpeaker.hidden = Boolean(scene.silentFrame);
   sceneTitle.hidden = Boolean(scene.silentFrame);
   choices.classList.toggle('choices-overlay', Boolean(scene.choiceOverlay));
@@ -1577,7 +1762,8 @@ function renderScene(key, { phone, remember = true } = {}) {
   if (scene.next) preloadScene(scene.next);
   choices.hidden = !scene.options && !scene.quiz;
   continueButton.hidden = Boolean(scene.options) || blenderStage === 'launch' || blenderStage === 'workspace';
-  continueButton.textContent = scene.continueLabel ?? 'Дальше';
+  continueButton.textContent = scene.cafeteria === 'hall' ? 'Выйти из столовой' : scene.continueLabel ?? 'Дальше';
+  if (scene.waitForSound) continueButton.disabled = true;
   if (scene.quiz) renderPhoneRound();
   showScreen('story');
   if (scene.autoAdvance && scene.next) {
@@ -1594,7 +1780,9 @@ function renderScene(key, { phone, remember = true } = {}) {
     sceneAudio.currentTime = 0;
     const playback = sceneAudio.play();
     if (voiceSequence) syncVoiceSequence(playback);
-    else playback.catch(() => {});
+    else playback.catch(() => {
+      if (activeScene === scene && scene.waitForSound && !story.hidden) continueButton.disabled = false;
+    });
   }
   const rewardSound = endingResult?.audio ?? (earnedAchievement ? 'assets/rewards/achievement-fanfare.mp3' : null);
   if (rewardSound) {
@@ -1692,7 +1880,7 @@ function syncRoute(moveFocus = false) {
   const start = pendingStoryStart;
   pendingStoryStart = undefined;
   if (inGame && start) {
-    startStory(start.scene, { phone: start.phone, characterStory: start.characterStory });
+    startStory(start.scene, { phone: start.phone, lunch: start.lunch, characterStory: start.characterStory });
     return;
   }
 
@@ -1749,7 +1937,26 @@ function showEndCard(scene) {
 }
 
 endingContinue.addEventListener('click', () => renderScene(endingContinue.dataset.next));
+function finishSceneSound() {
+  if (activeScene?.waitForSound && !story.hidden) continueButton.disabled = false;
+}
+
+sceneAudio.addEventListener('ended', finishSceneSound);
+sceneAudio.addEventListener('error', finishSceneSound);
 continueButton.addEventListener('click', () => {
+  if (activeScene.cafeteria === 'hall') {
+    goToScene(lunchExitScene(activePosition.lunch));
+    return;
+  }
+  if (activeScene.lunchAside) {
+    goToScene(activeScene.next, { lunch: { ...activePosition.lunch, aside: null } });
+    return;
+  }
+  if (activeScene.cafeteria) {
+    const party = cafeteriaParties.find(({ id }) => id === activeScene.cafeteria);
+    leaveLunchTable(party, activePosition.lunch);
+    return;
+  }
   if (activeScene.quiz) {
     advancePhoneRound();
     return;

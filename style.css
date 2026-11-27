@@ -2402,3 +2402,158 @@ h1, h2, h3, p { margin: 0; }
 @keyframes history-card-cut {
   from { transform: scale(1.055) translateX(-.75%); }
 }
+
+.lunch-score {
+  display: grid;
+  gap: .35rem;
+  padding: .75rem clamp(1rem, 4vw, 2rem);
+  background: #1d162a;
+  border-bottom: 1px solid #684e84;
+}
+.lunch-score p, .lunch-score ul { margin: 0; }
+.lunch-score strong { margin-inline-start: .6rem; color: #e2c3ff; }
+.lunch-score ul { padding: 0; list-style: none; font-size: .9rem; }
+.story-picture.is-lunch-hall, .story-picture.is-lunch-table { isolation: isolate; }
+.story-picture.is-lunch-hall > #scene-art { object-fit: cover; min-height: 24rem; }
+.story-picture.is-lunch-table > #scene-art { filter: brightness(.47) blur(2px); }
+.story-picture.is-lunch-blackout { aspect-ratio: 16 / 9; background: #000; }
+.lunch-hotspots { position: absolute; inset: 0; display: flex; }
+.lunch-table, .lunch-seat {
+  color: #fff4ff;
+  border: 1px solid #a889cf;
+  background: #241a32ec;
+  cursor: pointer;
+  padding: .3rem;
+  font: inherit;
+}
+.lunch-table {
+  position: absolute;
+  left: var(--table-x);
+  top: var(--table-y);
+  transform: translate(-50%, -50%);
+  width: clamp(5rem, 27%, 14rem);
+  border-radius: .65rem;
+}
+.lunch-table:enabled:is(:hover, :focus-visible), .lunch-seat:enabled:is(:hover, :focus-visible), .lunch-door:is(:hover, :focus-visible) {
+  background: #51366c;
+  border-color: #f1daff;
+  outline: 2px solid #e5baff;
+  outline-offset: 2px;
+  box-shadow: 0 0 1.1rem #d0a1ffbb;
+  z-index: 1;
+}
+.lunch-table:disabled, .lunch-seat:disabled {
+  cursor: default;
+  border-color: #7f748d;
+  background: #191621ef;
+  color: #ddd0e8;
+}
+.lunch-table-caption { display: block; font-size: clamp(.7rem, 1.55vw, 1rem); }
+.lunch-table-group {
+  position: relative;
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: .1rem;
+  overflow: hidden;
+  padding: .15rem 0 .5rem;
+}
+.lunch-table-group::after {
+  content: '';
+  position: absolute;
+  inset: auto 3% .04rem;
+  height: .65rem;
+  border-radius: 62% 62% 30% 30%;
+  background: #805c4d;
+  border-bottom: .12rem solid #483037;
+}
+.lunch-table.is-unknown .lunch-table-group::after { background: #090810; border-color: #08070c; }
+.lunch-question {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  font-size: 1.55rem;
+  font-weight: bold;
+  text-shadow: 0 1px 4px #000;
+}
+.lunch-portrait {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  width: clamp(.9rem, 18%, 2.8rem);
+  aspect-ratio: 1;
+  border-radius: 42% 42% 25% 25%;
+}
+.story-picture .lunch-portrait img { height: 100%; aspect-ratio: 1; object-fit: cover; }
+.lunch-portrait.is-unknown img { filter: blur(5px) brightness(.72); transform: scale(1.15); }
+.lunch-table.is-unknown img { visibility: hidden; }
+.lunch-portrait:empty, .lunch-table.is-unknown .lunch-portrait {
+  background:
+    radial-gradient(circle at 50% 29%, #0b0910 0 25%, transparent 27%),
+    radial-gradient(ellipse at 50% 105%, #0b0910 0 60%, transparent 62%);
+}
+.lunch-portrait.is-cake:empty { filter: blur(3px); background: radial-gradient(ellipse at center, #4b3247 8%, #0b0910 42%, transparent 64%); }
+.lunch-door {
+  position: absolute;
+  left: 87%;
+  top: 29%;
+  transform: translate(-50%, -50%);
+  width: min(23%, 11rem);
+  min-height: 2.75rem;
+  padding: .3rem;
+  background: #29172aeb;
+  font-size: clamp(.7rem, 1.6vw, 1rem);
+}
+.is-lunch-table .lunch-hotspots {
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-content: center;
+  gap: clamp(.25rem, 2vw, 1rem);
+  padding: .5rem;
+}
+.lunch-seat, .lunch-empty-seat {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: .25rem;
+  width: min(17%, 10rem);
+  min-width: 3.25rem;
+  border-radius: .65rem;
+  font-size: clamp(.7rem, 1.7vw, 1rem);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.lunch-seat .lunch-portrait { width: min(100%, 7rem); }
+.lunch-seat-hint { visibility: hidden; font-size: .75em; }
+.lunch-seat:disabled .lunch-seat-hint, .lunch-seat:is(:hover, :focus-visible) .lunch-seat-hint { visibility: visible; }
+.lunch-empty-seat { min-height: 3.5rem; color: #dad2df; background: #16121dc9; }
+#scene-line.has-lunch-aside { white-space: pre-line; }
+
+@media (max-width: 42rem) {
+  .story-picture.is-lunch-hall > #scene-art { min-height: 20rem; object-position: right center; }
+  .story-picture.is-lunch-table > #scene-art { min-height: 13rem; object-fit: cover; }
+  .lunch-seat-hint { visibility: visible; }
+}
+
+.lunch-glasses {
+  position: absolute;
+  top: 33%;
+  left: 39%;
+  width: 21%;
+  overflow: hidden;
+  color: #e9bcff;
+  background: #160e29;
+  font: bold clamp(.5rem, 1.3vw, 1rem) monospace;
+  white-space: nowrap;
+}
+.lunch-glasses span { display: block; animation: lunch-led-scroll 3s linear infinite; }
+@keyframes lunch-led-scroll {
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lunch-glasses span { animation: none; }
+}
