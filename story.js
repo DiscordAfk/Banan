@@ -2816,6 +2816,30 @@ const dimaDlc = [
     alt: "Серёжа улыбается, отвечая Диме по телефону.",
   },
   {
+    id: "leave-home",
+    title: "Вышел из дома",
+    speaker: "Дима",
+    line: "Утром закидываю в рюкзак зарядку и выхожу. Серёжа сказал, что Юлианна учится в его группе. Значит, мне нужна 4626-я. В ГУАПе, наверное, есть список групп.",
+    alt: "Дима выходит из подъезда с коричневым рюкзаком.",
+    art: "leave-home",
+  },
+  {
+    id: "bus-to-guap",
+    title: "По дороге в ГУАП",
+    speaker: "Дима",
+    line: "В автобусе открываю переписку и ещё раз читаю ответ Серёжи. 4626. Номер я уже запомнил. А что скажу Юлианне, если встречу её раньше, чем найду фамилию?",
+    alt: "Дима смотрит в телефон у окна петербургского автобуса.",
+    art: "bus-to-guap",
+  },
+  {
+    id: "guap-entrance",
+    title: "У входа",
+    speaker: "Дима",
+    line: "Доехал. Всё, что придумал за дорогу, — «привет». Ладно, сначала найду библиотеку. Дальше разберусь.",
+    alt: "Дима поднимается по ступеням к главному входу ГУАПа.",
+    art: "guap-entrance",
+  },
+  {
     id: "library",
     title: "Великая библиотека",
     speaker: "Дима",
@@ -3285,11 +3309,13 @@ const dimaDlc = [
     alt: "Дима спит в своей комнате при свете из окна.",
   },
 ];
-for (const [index, { id, ...scene }] of dimaDlc.entries()) {
+// Scenes with named art do not shift the existing numbered illustrations.
+let dimaArtNumber = 0;
+for (const [index, { id, art, ...scene }] of dimaDlc.entries()) {
   const next = dimaDlc[index + 1]?.id ?? 'end';
   scenes[`dima-dlc-${id}`] = {
     ...scene,
-    art: `dlc/dima/${String(index + 1).padStart(2, '0')}`,
+    art: `dlc/dima/${art ?? String(++dimaArtNumber).padStart(2, '0')}`,
     next: `dima-dlc-${next}`,
   };
 }
