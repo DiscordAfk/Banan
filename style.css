@@ -2600,11 +2600,30 @@ h1, h2, h3, p { margin: 0; }
   .story-picture.is-lunch-hall > #scene-art { min-height: 20rem; object-position: right center; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .story-picture.is-lunch-reveal > #scene-art { animation: lunch-reveal-focus .85s ease-out both; }
+  .story-picture.is-lunch-reveal::before, .story-picture.is-lunch-reveal::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    backdrop-filter: blur(7px);
+  }
+  .story-picture.is-lunch-reveal::before {
+    mask-image: linear-gradient(to right, #000 38%, transparent 56%);
+    animation: lunch-shift-focus 1.15s ease-in-out both;
+  }
+  .story-picture.is-lunch-reveal::after {
+    mask-image: linear-gradient(to left, #000 36%, transparent 55%);
+    animation: lunch-shift-focus 1.15s ease-in-out reverse both;
+  }
+  body:has(#character-profile[open]) .is-lunch-reveal::before,
+  body:has(#character-profile[open]) .is-lunch-reveal::after {
+    animation-play-state: paused;
+  }
 }
-@keyframes lunch-reveal-focus {
-  from { filter: blur(7px) brightness(.65); }
-  to { filter: none; }
+@keyframes lunch-shift-focus {
+  0%, 20% { opacity: 0; }
+  80%, 100% { opacity: 1; }
 }
 
 .lunch-glasses {
