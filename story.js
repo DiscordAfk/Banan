@@ -3324,7 +3324,7 @@ scenes['dima-dlc-end'] = { onlyEndCard: true, endCard: 'Продолжение �
 const downloadableStories = [
   {
     character: 'kirill',
-    title: 'Утро душнилы',
+    title: 'История Кирилла',
     achievements: [piercedAce, jester],
     roadmap: [
       { scene: 'kirill-dlc-morning' },
@@ -3351,7 +3351,7 @@ const downloadableStories = [
   },
   {
     character: 'dima',
-    title: 'История Димы',
+    title: 'История Дима',
     roadmap: [
       { scene: 'dima-dlc-after-museum' },
       { scene: 'dima-dlc-library' },
