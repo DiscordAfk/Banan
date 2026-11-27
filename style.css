@@ -2414,11 +2414,11 @@ h1, h2, h3, p { margin: 0; }
 .lunch-score strong { margin-inline-start: .6rem; color: #e2c3ff; }
 .lunch-score ul { padding: 0; list-style: none; font-size: .9rem; }
 .story-picture.is-lunch-hall, .story-picture.is-lunch-table { isolation: isolate; }
+.story-picture.is-lunch-table > #scene-art { aspect-ratio: auto; }
 .story-picture.is-lunch-hall > #scene-art { object-fit: cover; min-height: 24rem; }
-.story-picture.is-lunch-table > #scene-art { filter: brightness(.47) blur(2px); }
 .story-picture.is-lunch-blackout { aspect-ratio: 16 / 9; background: #000; }
 .lunch-hotspots { position: absolute; inset: 0; display: flex; }
-.lunch-table, .lunch-seat {
+.lunch-table {
   color: #fff4ff;
   border: 1px solid #a889cf;
   background: #241a32ec;
@@ -2434,7 +2434,7 @@ h1, h2, h3, p { margin: 0; }
   width: clamp(5rem, 27%, 14rem);
   border-radius: .65rem;
 }
-.lunch-table:enabled:is(:hover, :focus-visible), .lunch-seat:enabled:is(:hover, :focus-visible), .lunch-door:is(:hover, :focus-visible) {
+.lunch-table:enabled:is(:hover, :focus-visible), .lunch-door:is(:hover, :focus-visible) {
   background: #51366c;
   border-color: #f1daff;
   outline: 2px solid #e5baff;
@@ -2442,7 +2442,7 @@ h1, h2, h3, p { margin: 0; }
   box-shadow: 0 0 1.1rem #d0a1ffbb;
   z-index: 1;
 }
-.lunch-table:disabled, .lunch-seat:disabled {
+.lunch-table:disabled {
   cursor: default;
   border-color: #7f748d;
   background: #191621ef;
@@ -2506,43 +2506,113 @@ h1, h2, h3, p { margin: 0; }
   background: #29172aeb;
   font-size: clamp(.7rem, 1.6vw, 1rem);
 }
-.is-lunch-table .lunch-hotspots {
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  align-content: center;
-  gap: clamp(.25rem, 2vw, 1rem);
-  padding: .5rem;
+.lunch-seat, .lunch-empty-seat, .lunch-poker-player {
+  position: absolute;
+  left: var(--seat-x);
+  top: var(--seat-y);
+  transform: translate(-50%, -50%);
 }
-.lunch-seat, .lunch-empty-seat {
-  display: grid;
-  justify-items: center;
-  align-content: center;
-  gap: .25rem;
-  width: min(17%, 10rem);
-  min-width: 3.25rem;
-  border-radius: .65rem;
-  font-size: clamp(.7rem, 1.7vw, 1rem);
+.lunch-seat {
+  width: clamp(2.75rem, 16%, 9rem);
+  height: max(2.75rem, 35%);
+  padding: 0;
+  border: 0;
+  border-radius: 46%;
+  color: #fff4ff;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+}
+.lunch-seat.is-mystery::before {
+  content: '';
+  position: absolute;
+  inset: -3% -2% 5%;
+  border-radius: 45%;
+  background:
+    radial-gradient(ellipse at 50% 28%, #18101f 0 28%, transparent 32%),
+    radial-gradient(ellipse at 50% 98%, #18101f 10% 47%, transparent 53%);
+  filter: blur(5px);
+}
+.lunch-seat:enabled:is(:hover, :focus-visible) {
+  outline: 2px solid #ebc9ff;
+  outline-offset: 1px;
+  box-shadow: 0 0 1.1rem #d0a1ffbb;
+  z-index: 1;
+}
+.lunch-seat:disabled { cursor: default; }
+.lunch-seat-caption, .lunch-empty-seat {
+  display: block;
+  width: max-content;
+  max-width: clamp(3.3rem, 15vw, 10rem);
+  padding: .16rem .38rem;
+  border: 1px solid #81669d;
+  border-radius: .3rem;
+  color: #fff4ff;
+  background: #20172aec;
+  font-size: clamp(.66rem, 1.65vw, 1rem);
+  line-height: 1.2;
   text-align: center;
   overflow-wrap: anywhere;
 }
-.lunch-seat .lunch-portrait { width: min(100%, 7rem); }
-.lunch-seat-hint { visibility: hidden; font-size: .75em; }
-.lunch-seat:disabled .lunch-seat-hint, .lunch-seat:is(:hover, :focus-visible) .lunch-seat-hint { visibility: visible; }
-.lunch-empty-seat { min-height: 3.5rem; color: #dad2df; background: #16121dc9; }
+.lunch-seat-caption {
+  position: absolute;
+  top: calc(100% + .1rem);
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.lunch-empty-seat { margin-top: clamp(1.4rem, 4vw, 3.6rem); }
+.lunch-seat-hint { display: none; color: #e7cdff; font-size: .82em; }
+.lunch-seat:disabled .lunch-seat-hint, .lunch-seat:is(:hover, :focus-visible) .lunch-seat-hint { display: block; }
+.lunch-poker-seats {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lunch-poker-player {
+  display: grid;
+  justify-items: center;
+  gap: .12rem;
+  width: clamp(2.15rem, 12%, 6.5rem);
+  color: #fff4ff;
+  text-align: center;
+}
+.lunch-poker-player .lunch-portrait {
+  width: min(86%, 5rem);
+  border: 2px solid #c8a6d9;
+  border-radius: 50%;
+  box-shadow: 0 .2rem .75rem #120c20b0;
+}
+.lunch-poker-player > span:last-child {
+  padding: .12rem .35rem;
+  border-radius: .3rem;
+  background: #20172af2;
+  font-size: clamp(.64rem, 1.55vw, 1rem);
+  line-height: 1.12;
+}
+.lunch-poker-player.is-lunch-winner > span:last-child { color: #ffdf90; }
+.lunch-poker-player.is-lunch-winner .lunch-portrait { border-color: #ffdc85; box-shadow: 0 0 1rem #ffcd64; }
 #scene-line.has-lunch-aside { white-space: pre-line; }
 
 @media (max-width: 42rem) {
   .story-picture.is-lunch-hall > #scene-art { min-height: 20rem; object-position: right center; }
-  .story-picture.is-lunch-table > #scene-art { min-height: 13rem; object-fit: cover; }
-  .lunch-seat-hint { visibility: visible; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .story-picture.is-lunch-reveal > #scene-art { animation: lunch-reveal-focus .85s ease-out both; }
+}
+@keyframes lunch-reveal-focus {
+  from { filter: blur(7px) brightness(.65); }
+  to { filter: none; }
 }
 
 .lunch-glasses {
   position: absolute;
-  top: 33%;
-  left: 39%;
-  width: 21%;
+  top: 25.8%;
+  left: 42%;
+  width: 14.8%;
+  transform: rotate(-10deg);
   overflow: hidden;
   color: #e9bcff;
   background: #160e29;
@@ -2557,3 +2627,15 @@ h1, h2, h3, p { margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   .lunch-glasses span { animation: none; }
 }
+
+.lunch-poker-seats.is-winner-line {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: clamp(.12rem, 1vw, .55rem);
+  padding: .35rem;
+  background: linear-gradient(transparent 66%, #1a1126de);
+}
+.is-winner-line .lunch-poker-player { position: static; transform: none; }
+.is-winner-line .lunch-portrait { width: min(74%, 3.8rem); }
+.lunch-poker-player > span:last-child { max-width: 100%; overflow-wrap: anywhere; }

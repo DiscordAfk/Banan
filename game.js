@@ -17,6 +17,7 @@ const lunchScore = document.querySelector('#lunch-score');
 const lunchCount = document.querySelector('#lunch-count');
 const lunchNames = document.querySelector('#lunch-names');
 const lunchHotspots = document.querySelector('#lunch-hotspots');
+const lunchPokerSeats = document.querySelector('#lunch-poker-seats');
 const lunchGlasses = document.querySelector('#lunch-glasses');
 const sceneAudio = document.querySelector('#scene-audio');
 const rewardAudio = document.querySelector('#reward-audio');
@@ -1152,13 +1153,15 @@ function showNextCharacterProfile() {
   let entry;
   do {
     entry = profileQueue.shift();
-  } while (entry && !entry.reveal && encountered.has(entry.id));
+  } while (entry && !entry.reveal && !entry.review && encountered.has(entry.id));
   if (!entry) return;
-  activeProfile = entry.id;
+  activeProfile = entry.review ? undefined : entry.id;
   const card = characterCard(entry.id, { popup: true, reveal: entry.reveal });
-  characterProfileBody.classList.toggle('character-unlock', !entry.reveal);
-  characterProfileBody.replaceChildren(...(entry.reveal ? [card] : [lockedCharacterCard(true), card]));
+  const showMask = !entry.reveal && !entry.review;
+  characterProfileBody.classList.toggle('character-unlock', showMask);
+  characterProfileBody.replaceChildren(...(showMask ? [lockedCharacterCard(true), card] : [card]));
   characterProfile.showModal();
+  if (entry.review) return;
   encountered.add(entry.id);
   if (developerMode) return;
   try {
@@ -1168,7 +1171,7 @@ function showNextCharacterProfile() {
   }
 }
 
-function showCharacterEncounters(key, meet = []) {
+function showCharacterEncounters(key, meet = [], reviewKnown = false) {
   if (key === 'morning' && !encounteredCharacters().has('seryozha') && morningProfileTimer === undefined) {
     morningProfileTimer = setTimeout(() => {
       morningProfileTimer = undefined;
@@ -1176,7 +1179,8 @@ function showCharacterEncounters(key, meet = []) {
       showNextCharacterProfile();
     }, 2000);
   }
-  profileQueue.push(...meet.map((id) => ({ id })));
+  const encountered = encounteredCharacters();
+  profileQueue.push(...meet.map((id) => ({ id, review: reviewKnown && encountered.has(id) })));
   showNextCharacterProfile();
 }
 
@@ -1464,11 +1468,12 @@ function renderHoldem(scene) {
   }
 }
 
-const lunchRegulars = ['Дима', 'Серёжа', 'Никита'];
+const lunchRegulars = ['dima', 'seryozha', 'nikita'];
+const pokerSeatPositions = [[43, 84], [32, 54], [50, 27], [64, 35], [69, 54], [59, 84], [37, 35]];
 const minimumPokerPlayers = 6;
 
 function lunchInvitees(progress) {
-  return progress.asked.filter((id) => cafeteriaGuests[id].joins).map((id) => characters[id].name);
+  return progress.asked.filter((id) => cafeteriaGuests[id].joins);
 }
 
 function lunchPartyComplete(party, progress) {
@@ -1532,7 +1537,32 @@ function lunchPortrait(id, known) {
   return portrait;
 }
 
+function positionLunchSeat(element, [x, y]) {
+  element.style.setProperty('--seat-x', x + '%');
+  element.style.setProperty('--seat-y', y + '%');
+}
+
+function renderLunchPoker(scene, progress) {
+  lunchPokerSeats.hidden = !scene.lunchPoker;
+  lunchPokerSeats.classList.toggle('is-winner-line', scene.lunchPoker === 'win');
+  lunchPokerSeats.replaceChildren();
+  if (!scene.lunchPoker) return;
+
+  const players = [...lunchRegulars, ...lunchInvitees(progress)];
+  for (const [index, id] of players.entries()) {
+    const seat = document.createElement('li');
+    seat.className = 'lunch-poker-player';
+    positionLunchSeat(seat, pokerSeatPositions[index]);
+    seat.classList.toggle('is-lunch-winner', scene.lunchPoker === 'win' && id === 'nikita');
+    const name = document.createElement('span');
+    name.textContent = characters[id].name;
+    seat.append(lunchPortrait(id, true), name);
+    lunchPokerSeats.append(seat);
+  }
+}
+
 function renderLunch(scene, progress) {
+  renderLunchPoker(scene, progress);
   lunchScore.hidden = !scene.lunchScore;
   lunchGlasses.hidden = !scene.lunchGlasses;
   lunchHotspots.hidden = !scene.cafeteria;
@@ -1540,9 +1570,10 @@ function renderLunch(scene, progress) {
   scenePicture.classList.toggle('is-lunch-hall', scene.cafeteria === 'hall');
   scenePicture.classList.toggle('is-lunch-table', Boolean(scene.cafeteria && scene.cafeteria !== 'hall'));
   scenePicture.classList.toggle('is-lunch-blackout', Boolean(scene.blackout));
+  scenePicture.classList.toggle('is-lunch-reveal', Boolean(scene.lunchReveal));
   sceneArt.hidden = Boolean(scene.blackout);
   if (scene.lunchScore) {
-    const names = [...lunchRegulars, ...lunchInvitees(progress)];
+    const names = [...lunchRegulars, ...lunchInvitees(progress)].map((id) => characters[id].name);
     lunchCount.textContent = names.length + '/' + minimumPokerPlayers;
     lunchNames.replaceChildren(...names.map((name) => {
       const item = document.createElement('li');
@@ -1562,7 +1593,7 @@ function renderLunch(scene, progress) {
       const label = party.title ? party.title + ' · ' + names : names;
       const complete = lunchPartyComplete(party, progress);
       const table = makeLunchButton('lunch-table', complete ? label + ' · Очарованы Серёжей' : label, () => {
-        goToScene('history-cafeteria-' + party.id, { lunch: { ...progress, spoke: false } });
+        goToScene('history-cafeteria-' + party.id, { lunch: { ...progress, spoke: false }, lunchArrival: true });
       });
       table.disabled = complete;
       table.classList.toggle('is-unknown', allUnknown);
@@ -1593,40 +1624,51 @@ function renderLunch(scene, progress) {
   }
 
   const party = cafeteriaParties.find(({ id }) => id === scene.cafeteria);
-  for (const id of party.seats) {
+  if (party.afterArt) preloadArt(artPath(party.afterArt));
+  const useEmptyFrame = party.afterArt && !visible('liza');
+  const faces = useEmptyFrame ? party.afterFaces : party.faces;
+  if (useEmptyFrame) sceneArt.src = artPath(party.afterArt);
+  for (const [index, id] of party.seats.entries()) {
     if (!visible(id)) {
       const empty = document.createElement('span');
       empty.className = 'lunch-empty-seat';
       empty.textContent = 'Пустой стул';
+      positionLunchSeat(empty, faces[index]);
       lunchHotspots.append(empty);
       continue;
     }
-    const name = known.has(id) ? lunchGuestName(id) : '???';
+    const name = lunchGuestName(id);
     const guest = cafeteriaGuests[id];
     const button = makeLunchButton('lunch-seat', 'Позвать в покер · ' + name, () => {
       const lunch = { ...progress, asked: [...progress.asked, id], spoke: true };
       goToScene(guest.reply ?? 'history-cafeteria-' + party.id + '-' + id, { lunch });
     });
     button.disabled = progress.asked.includes(id);
+    button.classList.toggle('is-mystery', !characters[id]);
+    positionLunchSeat(button, faces[index]);
     const caption = document.createElement('span');
-    caption.textContent = name;
-    const hint = document.createElement('span');
+    caption.className = 'lunch-seat-caption';
+    const label = document.createElement('span');
+    label.textContent = name;
+    const hint = document.createElement('small');
     hint.className = 'lunch-seat-hint';
     hint.textContent = button.disabled ? 'Уже спросили' : 'Позвать в покер';
-    button.append(lunchPortrait(id, known.has(id)), caption, hint);
+    caption.append(label, hint);
+    button.append(caption);
     lunchHotspots.append(button);
   }
 }
 
 function lunchSceneLine(scene, progress) {
-  if (scene.lunchDismissal) return lunchInvitees(progress).join(', ') + ' — в другой раз сыграем, извинитесь.';
-  if (scene.lunchPoker) {
-    return scene.line + ' За столом ' + [...lunchRegulars, ...lunchInvitees(progress)].join(', ') + '.';
+  if (scene.lunchDismissal) return lunchInvitees(progress).map((id) => characters[id].name).join(', ') + ' — в другой раз сыграем, извинитесь.';
+  if (scene.lunchPoker === 'deal') {
+    const players = [...lunchRegulars, ...lunchInvitees(progress)];
+    return scene.line + ' За столом ' + players.map((id) => characters[id].name).join(', ') + '.';
   }
   if (scene.lunchAside) {
     const party = cafeteriaParties.find(({ id }) => id === progress.aside);
     const remarks = party?.seats.filter((id) => !progress.asked.includes(id) && cafeteriaGuests[id].aside)
-      .map((id) => (encounteredCharacters().has(id) ? lunchGuestName(id) : '???') + ': «' + cafeteriaGuests[id].aside + '»') ?? [];
+      .map((id) => lunchGuestName(id) + ': «' + cafeteriaGuests[id].aside + '»') ?? [];
     const intro = party?.id === 'teachers'
       ? 'Учителя шепчутся за спиной. Я слышу краем уха, но иду дальше.'
       : 'Мы отходим от стола, и я слышу за спиной:';
@@ -1635,7 +1677,7 @@ function lunchSceneLine(scene, progress) {
   return scene.line ?? '';
 }
 
-function renderScene(key, { phone, lunch, remember = true } = {}) {
+function renderScene(key, { phone, lunch, lunchArrival = false, remember = true } = {}) {
   rewardAudio.pause();
   clearSceneTimers();
   const scene = activeCharacterStory?.nextByScene
@@ -1801,7 +1843,11 @@ function renderScene(key, { phone, lunch, remember = true } = {}) {
   const focusTarget = scene.intertitle ? intertitleNext : scene.silentFrame ? continueButton : sceneTitle;
   focusTarget.focus({ preventScroll: true });
   window.scrollTo(0, 0);
-  if (!activeCharacterStory || developerMode) showCharacterEncounters(key, scene.meet);
+  if (!activeCharacterStory || developerMode) {
+    const party = lunchArrival ? cafeteriaParties.find(({ id }) => id === scene.cafeteria) : undefined;
+    const tableGuests = party?.seats.filter((id) => characters[id] && (id !== 'liza' || !lunchProgress.asked.includes(id)));
+    showCharacterEncounters(key, tableGuests ?? scene.meet, Boolean(party));
+  }
 }
 
 function syncRoute(moveFocus = false) {
@@ -1880,7 +1926,9 @@ function syncRoute(moveFocus = false) {
   const start = pendingStoryStart;
   pendingStoryStart = undefined;
   if (inGame && start) {
-    startStory(start.scene, { phone: start.phone, lunch: start.lunch, characterStory: start.characterStory });
+    const cafeteria = scenes[start.scene].cafeteria;
+    startStory(start.scene, { phone: start.phone, lunch: start.lunch,
+      lunchArrival: Boolean(start.lunch && cafeteria && cafeteria !== 'hall'), characterStory: start.characterStory });
     return;
   }
 

@@ -1440,11 +1440,11 @@ for (const chapter of [doorShift, dianaDay, kirillAtUniversity, ozonEpisode, ozo
 }
 
 const cafeteriaParties = [
-  { id: 'girls', seats: ['yana', 'schoolDiana', 'anya', 'vika'], position: [23, 78] },
-  { id: 'classmates', seats: ['nastya', 'liza'], position: [58, 65] },
-  { id: 'teachers', title: 'Учительский стол', seats: ['chemistryTeacher', 'mathTeacher', 'russianTeacher', 'biologyTeacher', 'apparition'], position: [23, 47] },
-  { id: 'boys', seats: ['matvey', 'vova'], position: [57, 37] },
-  { id: 'mixed', seats: ['nika', 'sobolev', 'cake', 'gagarinova'], position: [81, 84] },
+  { id: 'girls', seats: ['yana', 'schoolDiana', 'anya', 'vika'], position: [23, 78], faces: [[18, 34], [39, 29], [59, 34], [82, 33]] },
+  { id: 'classmates', seats: ['nastya', 'liza'], position: [58, 65], faces: [[34, 29], [66, 32]], afterArt: 'history-lunch-table-classmates-empty', afterFaces: [[29, 24], [76, 36]] },
+  { id: 'teachers', title: 'Учительский стол', seats: ['chemistryTeacher', 'mathTeacher', 'russianTeacher', 'biologyTeacher', 'apparition'], position: [23, 47], faces: [[15, 29], [33, 31], [51, 29], [69, 34], [90, 38]] },
+  { id: 'boys', seats: ['matvey', 'vova'], position: [57, 37], faces: [[35, 29], [63, 29]] },
+  { id: 'mixed', seats: ['nika', 'sobolev', 'cake', 'gagarinova'], position: [81, 84], faces: [[17, 29], [38, 25], [62, 42], [84, 30]] },
 ];
 
 const cafeteriaGuests = {
@@ -1468,38 +1468,38 @@ const cafeteriaGuests = {
 };
 
 const schoolLunch = [
-  { id: 'history-chemistry-practice', title: 'Урок с заменой', art: 'history-chemistry-practice', line: 'Дрочеслав спрашивает, какой раствор поменяет цвет первым. Полкласса сразу тянет руки. Ямополк раздаёт очки и зовёт ребят к столу, а Филипп рисует на доске схему опыта. Скоро даже с задних парт слышно, как спорят о результатах.' },
-  { id: 'history-chemistry-bell', title: 'Звонок', art: 'history-chemistry-practice', sound: 'assets/route/history-school-bell.mp3', line: 'Звенит звонок. Мы высыпаем в коридор, и все наперебой обсуждают, как круто прошёл урок с заменой. Кто-то уже спрашивает, будут ли они вести следующий.' },
-  { id: 'history-chemistry-mine', title: 'Кирилл', art: 'history-chemistry-kirill-excited', speaker: 'Кирилл', line: 'Кирилл всё ещё смотрит на троих у доски. Еле слышно шепчет: «Мои…»' },
-  { id: 'history-chemistry-hall-poker', title: 'Реванш?', art: 'history-hall-friends-heights', speaker: 'Никита', line: 'Мы вчетвером выходим в коридор. Никита улыбается, прекрасно помня свою победу: «Ну что, ребята, ещё покер пойдём сыграем?»' },
-  { id: 'history-chemistry-kirill-returns', title: 'На минутку', art: 'history-chemistry-door-pause', speaker: 'Кирилл', line: '«Я сейчас не смогу. Мне надо с нашими учителями на замену поговорить». Он даже не дослушивает Никиту. У двери чуть прикусывает губу, хитро улыбается и ныряет в кабинет.' },
-  { id: 'history-chemistry-trio', title: 'За дверью', art: 'history-chemistry-door-pause', sound: 'assets/route/history-card-slam.mp3', speaker: 'Дрочеслав, Ямополк и Филипп', line: 'Дверь захлопывается. Из класса хором доносится: «Ха-ха-ха, мы знали, что ты к нам вернёшься, наш лысый дружок!»' },
-  { id: 'history-chemistry-slap', title: 'Хлопок', art: 'history-chemistry-door-pause', sound: 'assets/route/history-card-tap.mp3', line: 'Из кабинета доносится один звонкий шлепок. Мы переглядываемся.' },
-  { id: 'history-cafeteria-plan', title: 'Нужны ещё трое', art: 'history-hall-friends-heights', line: '«Втроём играть в покер не то», — говорит Дима. «Давайте позовём одноклассников. Начнём с девочек. Сейчас все в столовой».' },
-  { id: 'history-cafeteria', title: 'У входа в столовую', art: 'history-cafeteria', cafeteria: 'hall', lunchScore: true, line: 'Мы с Димой и Никитой останавливаемся у входа. За ближним столом уже обедают девочки. К кому подойдём?' },
-  { id: 'history-cafeteria-liza-vanishes', title: 'Пустой стул', speaker: 'Настя', line: 'Я поворачиваюсь к Лизе, и её стул вдруг пустеет. Настя даже не отрывается от тетради: «Она сегодня не пришла в школу».', next: 'history-cafeteria-classmates' },
-  { id: 'history-cafeteria-apparition', title: 'Лицо за столом', art: 'history-cafeteria-apparition', line: 'Рядом с учителями сидит Адольф Гитлер. Он молча указывает пальцем на приоткрытую дверь рядом с буфетом.', next: 'history-cafeteria-doorgaze' },
-  { id: 'history-cafeteria-doorgaze', title: 'У буфета', line: 'Смотрю туда. Дверь и правда приоткрыта. За ней горит красный свет.', next: 'history-cafeteria-hoi' },
-  { id: 'history-cafeteria-hoi', title: 'Показалось?', line: 'Оборачиваюсь. Стул пустой, учителя спокойно пьют чай. «Надо было меньше играть в хойку», — бормочу себе под нос.', achievement: hoiInfluence.id, next: 'history-cafeteria-teachers' },
-  { id: 'history-cafeteria-napoleon', title: 'Наполеон?', line: '«Наполеон?» — спрашиваю я. Расплывчатая фигура становится чётче. На столе торт с зажжёнными свечами.', next: 'history-cafeteria-cake' },
-  { id: 'history-cafeteria-cake', title: 'Со свечами', art: 'history-cafeteria-cake', line: 'Пожимаю плечами и тянусь за кусочком. Из пустоты раздаётся: «Не трогай!» Оглядываюсь. Все заняты своим обедом. Наверное, показалось.', next: 'history-cafeteria-cake-crash' },
-  { id: 'history-cafeteria-cake-crash', title: 'Это мой тоооо…', art: 'history-cafeteria-cake-crash', sound: 'assets/route/history-chemistry-door-crash.mp3', meet: ['dasha'], line: 'Снова тянусь к торту. «Это мой тоооо…!» Надо мной проламывается потолок. Даша приземляется прямо на меня, усаживается поудобнее и принимается за торт. «Это мой тортик», — повторяет она, уже гораздо спокойнее.', next: 'history-cafeteria-cake-rescue' },
-  { id: 'history-cafeteria-cake-rescue', title: 'Вытащили', art: 'history-cafeteria-cake-crash', line: 'Я не могу отдышаться. Никита хватает меня под руки, Дима подхватывает с другой стороны. Когда они меня вытаскивают, ни Даши, ни торта за столом уже нет.', next: 'history-cafeteria-mixed' },
-  { id: 'history-cafeteria-secret', title: 'Приоткрытая дверь', art: 'history-cafeteria-backstage', line: 'Оставляю ребят у входа и захожу один. За дверью склад школьного театра. Красная лампа, тяжёлые шторы и ящики с реквизитом. На стене висят картонные декорации средневекового замка.', next: 'history-cafeteria-secret-nika' },
-  { id: 'history-cafeteria-secret-nika', title: 'Кто там?', art: 'history-cafeteria-backstage', meet: ['nika'], line: 'Я наклоняюсь к старому деревянному реквизиту. За спиной хлопает дверь, и в свете лампы появляется Ника в театральном плаще с крыльями. «Ну что, Серёжа, ты поиграть хотел? Сейчас поиграем». Она дёргает за шнур, и декорации с грохотом оживают.', next: 'history-cafeteria-secret-friends' },
-  { id: 'history-cafeteria-secret-friends', title: 'Тем временем у входа', art: 'history-hall-friends-heights', speaker: 'Дима', line: 'Мы с Никитой видим, как девушка с крыльями заходит следом и захлопывает дверь. Переглядываемся. Мне показалось или это была Ника? Не, вряд ли.', next: 'history-cafeteria-secret-audio' },
+  { id: 'history-chemistry-practice', title: 'Урок с заменой', art: 'history-lunch-experiment', line: 'Дрочеслав спрашивает, какой раствор поменяет цвет первым. Полкласса сразу тянет руки. Ямополк раздаёт очки и зовёт ребят к столу, а Филипп рисует на доске схему опыта. Скоро даже с задних парт слышно, как спорят о результатах.' },
+  { id: 'history-chemistry-bell', title: 'Звонок', art: 'history-lunch-chemistry-bell', sound: 'assets/route/history-school-bell.mp3', line: 'Звенит звонок. Мы высыпаем в коридор, и все наперебой обсуждают, как круто прошёл урок с заменой. Кто-то уже спрашивает, будут ли они вести следующий.' },
+  { id: 'history-chemistry-mine', title: 'Кирилл', art: 'history-lunch-kirill-close', speaker: 'Кирилл', line: 'Кирилл всё ещё смотрит на троих у доски. Еле слышно шепчет: «Мои…»' },
+  { id: 'history-chemistry-hall-poker', title: 'Реванш?', art: 'history-lunch-chemistry-hall', speaker: 'Никита', line: 'Мы вчетвером выходим в коридор. Никита улыбается, прекрасно помня свою победу: «Ну что, ребята, ещё покер пойдём сыграем?»' },
+  { id: 'history-chemistry-kirill-returns', title: 'На минутку', art: 'history-lunch-kirill-door', speaker: 'Кирилл', line: '«Я сейчас не смогу. Мне надо с нашими учителями на замену поговорить». Он даже не дослушивает Никиту. У двери чуть прикусывает губу, хитро улыбается и ныряет в кабинет.' },
+  { id: 'history-chemistry-trio', title: 'За дверью', art: 'history-lunch-chemistry-door', sound: 'assets/route/history-card-slam.mp3', speaker: 'Дрочеслав, Ямополк и Филипп', line: 'Дверь захлопывается. Из класса хором доносится: «Ха-ха-ха, мы знали, что ты к нам вернёшься, наш лысый дружок!»' },
+  { id: 'history-chemistry-slap', title: 'Хлопок', art: 'history-lunch-hall-reaction', sound: 'assets/route/history-card-tap.mp3', line: 'Из кабинета доносится один звонкий шлепок. Мы переглядываемся.' },
+  { id: 'history-cafeteria-plan', title: 'Нужны ещё трое', art: 'history-lunch-walk', line: '«Втроём играть в покер не то», — говорит Дима. «Давайте позовём одноклассников. Начнём с девочек. Сейчас все в столовой».' },
+  { id: 'history-cafeteria', title: 'У входа в столовую', art: 'history-lunch-cafeteria', cafeteria: 'hall', lunchScore: true, line: 'Мы с Димой и Никитой останавливаемся у входа. За ближним столом уже обедают девочки. К кому подойдём?' },
+  { id: 'history-cafeteria-liza-vanishes', title: 'Пустой стул', art: 'history-lunch-table-classmates-empty', speaker: 'Настя', line: 'Я поворачиваюсь к Лизе, и её стул вдруг пустеет. Настя даже не отрывается от тетради: «Она сегодня не пришла в школу».', next: 'history-cafeteria-classmates' },
+  { id: 'history-cafeteria-apparition', title: 'Лицо за столом', art: 'history-lunch-apparition', line: 'Рядом с учителями сидит Адольф Гитлер. Он молча указывает пальцем на приоткрытую дверь рядом с буфетом.', next: 'history-cafeteria-doorgaze' },
+  { id: 'history-cafeteria-doorgaze', title: 'У буфета', art: 'history-lunch-door', line: 'Смотрю туда. Дверь и правда приоткрыта. За ней горит красный свет.', next: 'history-cafeteria-hoi' },
+  { id: 'history-cafeteria-hoi', title: 'Показалось?', art: 'history-lunch-table-teachers', line: 'Оборачиваюсь. Стул пустой, учителя спокойно пьют чай. «Надо было меньше играть в хойку», — бормочу себе под нос.', achievement: hoiInfluence.id, next: 'history-cafeteria-teachers' },
+  { id: 'history-cafeteria-napoleon', title: 'Наполеон?', art: 'history-lunch-cake-reveal', line: '«Наполеон?» — спрашиваю я. Расплывчатая фигура становится чётче. На столе торт с зажжёнными свечами.', next: 'history-cafeteria-cake' },
+  { id: 'history-cafeteria-cake', title: 'Со свечами', art: 'history-lunch-cake-reach', line: 'Пожимаю плечами и тянусь за кусочком. Из пустоты раздаётся: «Не трогай!» Оглядываюсь. Все заняты своим обедом. Наверное, показалось.', next: 'history-cafeteria-cake-crash' },
+  { id: 'history-cafeteria-cake-crash', title: 'Это мой тоооо…', art: 'history-lunch-cake-crash', sound: 'assets/route/history-chemistry-door-crash.mp3', meet: ['dasha'], line: 'Снова тянусь к торту. «Это мой тоооо…!» Надо мной проламывается потолок. Даша приземляется прямо на меня, усаживается поудобнее и принимается за торт. «Это мой тортик», — повторяет она, уже гораздо спокойнее.', next: 'history-cafeteria-cake-rescue' },
+  { id: 'history-cafeteria-cake-rescue', title: 'Вытащили', art: 'history-lunch-cake-rescue', line: 'Я не могу отдышаться. Никита хватает меня под руки, Дима подхватывает с другой стороны. Когда они меня вытаскивают, ни Даши, ни торта за столом уже нет.', next: 'history-cafeteria-mixed' },
+  { id: 'history-cafeteria-secret', title: 'Приоткрытая дверь', art: 'history-lunch-secret-room', line: 'Оставляю Диму и Никиту у входа. Захожу один. Под красными лампами едва различаю тёмные шторы, зеркало и чёрный диван. Посреди комнаты стоят старые деревянные колодки. Наклоняюсь посмотреть сквозь круглое отверстие. За спиной хлопает дверь.', next: 'history-cafeteria-secret-nika' },
+  { id: 'history-cafeteria-secret-nika', title: 'Кто там?', art: 'history-lunch-secret-nika', lunchReveal: true, meet: ['nika'], line: 'Я всё ещё смотрю сквозь колодки. Краем глаза замечаю силуэт. В красный свет выходит Ника в цельном красно-чёрном сценическом костюме с рогами и крыльями. В руке бутафорская плётка. «Ну что, Серёжа, ты там поиграть хотел? Сейчас поиграем». Ника щёлкает плёткой по пустому полу. В комнате отзывается эхо.', next: 'history-cafeteria-secret-friends' },
+  { id: 'history-cafeteria-secret-friends', title: 'Тем временем у входа', art: 'history-lunch-secret-friends', speaker: 'Дима', line: 'Мы с Никитой видим, как девушка с крыльями заходит следом и захлопывает дверь. Переглядываемся. Мне показалось или это была Ника? Не, вряд ли.', next: 'history-cafeteria-secret-audio' },
   { id: 'history-cafeteria-secret-audio', title: 'Звуки в комнате', blackout: true, sound: 'assets/route/whip-whip.mp3', waitForSound: true, next: 'history-cafeteria-secret-soon' },
   { id: 'history-cafeteria-secret-soon', title: 'Soon ...', onlyEndCard: true, endCard: 'Soon ...' },
-  { id: 'history-cafeteria-dismiss', title: 'В другой раз', line: '', lunchDismissal: true, next: 'history-golf-plan' },
-  { id: 'history-golf-plan', title: 'Ну что, тогда гольф?', art: 'history-informatics-heights', speaker: 'Никита', line: '«Ну что, тогда гольф?» Мы с Димой пожимаем плечами. Идём втроём в кабинет информатики и пробираемся в коморку.', next: 'history-golf-normal' },
-  { id: 'history-golf-normal', title: 'Golf It!', art: 'history-golf-storage', line: 'Никита открывает ноутбук. В Golf It! удар зависит от того, как отвести мышку. Первые лунки проходим по очереди. Через несколько раундов играть так уже скучно.', next: 'history-golf-blind' },
-  { id: 'history-golf-blind', title: 'Вслепую', art: 'history-golf-blind', line: 'Никита видит экран. Я стою сбоку с беспроводной мышкой и целюсь по его подсказкам. Потом меняемся с Димой. За несколько попыток мы даже случайно попадаем в лунку.', next: 'history-golf-relay' },
-  { id: 'history-golf-relay', title: 'Через коморку', art: 'history-golf-relay', line: 'Никита остаётся с ноутбуком. Я сажусь у раковины, а Дима с мышкой — за партой в классе. Никита видит только меня, Дима тоже. Никита подсказывает голосом, а я передаю Диме направление жестами.', next: 'history-golf-left' },
-  { id: 'history-golf-left', title: 'Чуть левее', art: 'history-golf-relay', line: 'Дима чуть двигает мышкой, смотрит на меня: «Так?» Поворачиваюсь к Никите: «Так?» Никита прищуривается: «Чуть левее». Так и играем до звонка.', next: 'history-golf-bell' },
-  { id: 'history-golf-bell', title: 'Урок за дверью', art: 'history-cabinet-door', sound: 'assets/route/history-school-bell.mp3', line: 'Ирина Анатольевна закрывает нас в коморке и начинает урок у другого класса. Сворачиваем гольф. Теперь надо тихо выбраться отсюда и попасть на свой урок.', next: 'history-lunch-class' },
-  { id: 'history-lunch-poker', title: 'Покер в коморке', art: 'history-card-felt', lunchPoker: true, line: 'Заходим в коморку Ирины Анатольевны. На стол ложатся карты и фишки.', next: 'history-lunch-poker-win' },
-  { id: 'history-lunch-poker-win', title: 'Опять Никита', art: 'history-card-felt', timeBadge: 'Чуть позже', line: 'Никита победно сгребает фишки. Мы дружно вздыхаем. В этот раз даже никто не удивлён.', next: 'history-lunch-class' },
-  { id: 'history-lunch-class', title: 'На урок', art: 'history-informatics-heights', line: 'Тихонько выходим в коридор и идём на урок.', next: 'history-lunch-soon' },
+  { id: 'history-cafeteria-dismiss', title: 'В другой раз', art: 'history-lunch-farewell', line: '', lunchDismissal: true, next: 'history-golf-plan' },
+  { id: 'history-golf-plan', title: 'Ну что, тогда гольф?', art: 'history-lunch-golf-door', speaker: 'Никита', line: '«Ну что, тогда гольф?» Мы с Димой пожимаем плечами. Идём втроём в кабинет информатики и пробираемся в коморку.', next: 'history-golf-normal' },
+  { id: 'history-golf-normal', title: 'Golf It!', art: 'history-lunch-golf-standard', line: 'Никита открывает ноутбук. В Golf It! удар зависит от того, как отвести мышку. Первые лунки проходим по очереди. Через несколько раундов играть так уже скучно.', next: 'history-golf-blind' },
+  { id: 'history-golf-blind', title: 'Вслепую', art: 'history-lunch-golf-blind', line: 'Никита видит экран. Я стою сбоку с беспроводной мышкой и целюсь по его подсказкам. Потом меняемся с Димой. За несколько попыток мы даже случайно попадаем в лунку.', next: 'history-golf-relay' },
+  { id: 'history-golf-relay', title: 'Через коморку', art: 'history-lunch-golf-relay', line: 'Никита остаётся с ноутбуком. Я сажусь у раковины, а Дима с мышкой — за партой в классе. Никита видит только меня, Дима тоже. Никита подсказывает голосом, а я передаю Диме направление жестами.', next: 'history-golf-left' },
+  { id: 'history-golf-left', title: 'Чуть левее', art: 'history-lunch-golf-left', line: 'Дима чуть двигает мышкой, смотрит на меня: «Так?» Поворачиваюсь к Никите: «Так?» Никита прищуривается: «Чуть левее». Так и играем до звонка.', next: 'history-golf-bell' },
+  { id: 'history-golf-bell', title: 'Урок за дверью', art: 'history-lunch-golf-bell', sound: 'assets/route/history-school-bell.mp3', line: 'Ирина Анатольевна закрывает нас в коморке и начинает урок у другого класса. Сворачиваем гольф. Теперь надо тихо выбраться отсюда и попасть на свой урок.', next: 'history-lunch-class' },
+  { id: 'history-lunch-poker', title: 'Покер в коморке', art: 'history-lunch-poker-board', lunchPoker: 'deal', line: 'Заходим в коморку Ирины Анатольевны. На стол ложатся карты и фишки.', next: 'history-lunch-poker-win' },
+  { id: 'history-lunch-poker-win', title: 'Опять Никита', art: 'history-lunch-poker-finish', timeBadge: 'Чуть позже', lunchPoker: 'win', line: 'Никита победно сгребает фишки. Мы дружно вздыхаем. В этот раз даже никто не удивлён.', next: 'history-lunch-class' },
+  { id: 'history-lunch-class', title: 'На урок', art: 'history-lunch-to-class', line: 'Тихонько выходим в коридор и идём на урок.', next: 'history-lunch-soon' },
   { id: 'history-lunch-soon', title: 'Soon ...', onlyEndCard: true, endCard: 'Soon ...' },
 ];
 
@@ -1507,7 +1507,7 @@ for (const [index, { id, ...scene }] of schoolLunch.entries()) {
   const insideCafeteria = id.startsWith('history-cafeteria-') && ![
     'history-cafeteria-plan', 'history-cafeteria-dismiss',
   ].includes(id) && !id.startsWith('history-cafeteria-secret');
-  scenes[id] = { art: 'history-cafeteria', lunchScore: insideCafeteria, ...scene,
+  scenes[id] = { lunchScore: insideCafeteria, ...scene,
     next: scene.next ?? (index < 8 ? schoolLunch[index + 1].id : undefined),
   };
 }
@@ -1516,17 +1516,17 @@ scenes['history-chemistry-kirill-excited'].next = schoolLunch[0].id;
 for (const party of cafeteriaParties) {
   const key = 'history-cafeteria-' + party.id;
   scenes[key] = { title: party.title ?? 'За столом', cafeteria: party.id, lunchScore: true,
-    art: 'history-cafeteria', line: 'Сыграете с нами в покер?', continueLabel: 'Отойти от стола' };
+    art: 'history-lunch-table-' + party.id, line: 'Сыграете с нами в покер?', continueLabel: 'Отойти от стола' };
   for (const id of party.seats) {
     const guest = cafeteriaGuests[id];
     if (guest.reply) continue;
     const name = guest.name ?? characters[id].name;
     scenes[key + '-' + id] = { title: name, speaker: name, line: guest.line,
-      art: characters[id].art, meet: [id], lunchScore: true, lunchGlasses: id === 'russianTeacher', next: key };
+      art: 'history-lunch-seat-' + id, meet: [id], lunchScore: true, lunchGlasses: id === 'russianTeacher', next: key };
   }
 }
 scenes['history-cafeteria-aside'] = {
-  title: 'В спину', art: 'history-cafeteria', lunchScore: true, lunchAside: true, next: 'history-cafeteria',
+  title: 'В спину', art: 'history-lunch-farewell', lunchScore: true, lunchAside: true, next: 'history-cafeteria',
 };
 
 const nightRoster = [
