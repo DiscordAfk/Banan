@@ -3351,7 +3351,7 @@ const downloadableStories = [
   },
   {
     character: 'dima',
-    title: 'История Дима',
+    title: 'История Димы',
     roadmap: [
       { scene: 'dima-dlc-after-museum' },
       { scene: 'dima-dlc-library' },
