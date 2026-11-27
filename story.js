@@ -1474,7 +1474,7 @@ const cafeteriaGuests = {
 const secretFinalBlackout = {
   title: 'За занавесом', blackout: true,
   line: 'В темноте за занавесом щёлкает сценический реквизит.',
-  sound: 'assets/route/whip-whip.mp3', waitForSound: true,
+  sound: 'assets/route/whip-whip.mp3',
 };
 
 const schoolLunch = [
@@ -1499,7 +1499,7 @@ const schoolLunch = [
   { id: 'history-cafeteria-secret-stocks', title: 'Колодки', art: 'history-lunch-stocks-close', alt: 'Серёжа пытается вытащить руки из захлопнувшихся деревянных колодок.', line: 'Из любопытства просовываю голову и руки в отверстия. Верхняя планка падает. Щёлкает защёлка. Пробую выпрямиться, но застрял. За спиной хлопает дверь. Повернуть голову не получается.', next: 'history-cafeteria-secret-nika' },
   { id: 'history-cafeteria-secret-nika', title: 'Кто там?', art: 'history-lunch-secret-portraits-approved', alt: 'Серёжа застрял в деревянных колодках. За его спиной под красным прожектором стоит Ника с плёткой.', lunchReveal: true, meet: ['nika'], sound: 'assets/route/history-card-slam.mp3', line: 'Позади меня загорается красный прожектор. Силуэт выходит из тени. Это Ника с плёткой. Она улыбается и тихо, с издёвкой, говорит: «Ну что, Серёжа, ты там поиграть хотел? Сейчас поиграем». С последним словом Ника щёлкает плёткой по полу.', next: 'history-cafeteria-secret-friends' },
   { id: 'history-cafeteria-secret-friends', title: 'Тем временем у входа', art: 'history-lunch-secret-friends', speaker: 'Дима', line: 'Мы с Никитой видим, как девушка в красном костюме заходит следом и захлопывает дверь. Мы испуганно переглядываемся. Мне показалось, или это была Ника? Не, вряд ли.', next: 'history-cafeteria-secret-audio' },
-  { id: 'history-cafeteria-secret-audio', title: 'Звуки в комнате', blackout: true, sound: 'assets/route/whip-whip.mp3', waitForSound: true, next: 'history-cafeteria-secret-mode' },
+  { id: 'history-cafeteria-secret-audio', title: 'Звуки в комнате', blackout: true, sound: 'assets/route/whip-whip.mp3', next: 'history-cafeteria-secret-mode' },
   {
     id: 'history-cafeteria-secret-mode', title: 'Выбор сложности', art: 'history-lunch-secret-mode',
     alt: 'Ника разговаривает с Серёжей. Деревянные колодки за ними открыты и пусты.',
